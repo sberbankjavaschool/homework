@@ -1,0 +1,10 @@
+plugins {
+    id 'groovy' apply true
+    id 'java' apply true
+    id 'checkstyle' apply true
+}
+
+group 'ru.sberbank.school.java'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8

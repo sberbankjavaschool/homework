@@ -1,0 +1,26 @@
+plugins {
+    id 'groovy' apply true
+    id 'java' apply true
+    id 'checkstyle' apply true
+}
+
+group 'ru.sberbank.school.java'
+version '0.1'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+compileJava {
+    options.encoding = 'UTF-8'
+}
+
+javadoc {
+    options.encoding = 'UTF-8'
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}

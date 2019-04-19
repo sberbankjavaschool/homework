@@ -1,0 +1,90 @@
+plugins {
+    id 'groovy'
+    id 'java'
+    id 'checkstyle'
+    id 'java-library'
+    id 'maven-publish'
+}
+
+group = 'ru.ulmc'
+version = '0.1.1'
+
+def nexusUser = hasProperty('nexusUser') ? nexusUser : "unknown"
+def nexusPass = hasProperty('nexusPass') ? nexusPass : "unknown"
+def repoUrl = hasProperty('repoUrl') ? repoUrl : "https://ulmc.ru/"
+
+repositories {
+    mavenCentral()
+
+}
+
+compileJava {
+    options.encoding = 'UTF-8'
+}
+
+javadoc {
+    options.encoding = 'UTF-8'
+}
+
+dependencies {
+    implementation 'org.codehaus.groovy:groovy-all:2.3.11'
+    compileOnly 'org.projectlombok:lombok:1.18.6'
+    annotationProcessor 'org.projectlombok:lombok:1.18.6'
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+task sourcesJar(type: Jar) {
+    archiveClassifier = 'sources'
+    from sourceSets.main.allJava
+}
+
+task javadocJar(type: Jar) {
+    archiveClassifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifactId = 'tasks'
+            from components.java
+            artifact sourcesJar
+            artifact javadocJar
+            versionMapping {
+                usage('java-api') {
+                    fromResolutionOf('runtimeClasspath')
+                }
+                usage('java-runtime') {
+                    fromResolutionResult()
+                }
+            }
+            pom {
+                name = 'Javaschool Tasks-lib'
+                description = 'Your tasks base classes and descriptions'
+                url = 'https://github.com/sberbankjavaschool/homework'
+                licenses {
+                    license {
+                        name = 'The Apache License, Version 2.0'
+                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'AlexK'
+                        name = 'Alexey Kolmogorov'
+                        email = 'al.kolmogorov@gmail.com'
+                    }
+                }
+            }
+        }
+    }
+    repositories {
+        maven {
+            credentials {
+                username "${nexusUser}"
+                password "${nexusPass}"
+            }
+            url "${repoUrl}nexus/content/repositories/javaschool"
+        }
+    }
+}
