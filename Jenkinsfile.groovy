@@ -56,7 +56,7 @@ pipeline {
             }
         }
         stage('Gradle Publish') {
-            when { branch 'master' }
+            when { branch 'source' }
             steps {
                 script {
                     sh './gradlew publish'
