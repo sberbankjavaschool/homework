@@ -55,6 +55,26 @@ pipeline {
                 }
             }
         }
+        stage('Sherlock') {
+            steps {
+                script {
+                    sh './gradlew copySherlock'
+                }
+                script {
+                    sh './gradlew :watson:test'
+                    for (comment in pullRequest.comments) {
+                        echo "Author: ${comment.user}, Comment: ${comment.body}"
+                        if (comment.body.startsWith("Hello, this is Sherlock.")) {
+                            pullRequest.deleteComment(comment.id)
+                        }
+                    }
+                    def comment = pullRequest.comment('Hello, this is Sherlock.')
+                }
+                script {
+                    sh './gradlew clearSherlock'
+                }
+            }
+        }
         stage('Gradle Publish') {
             when { branch 'source' }
             steps {

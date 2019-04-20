@@ -1,7 +1,11 @@
+import org.ajoberstar.grgit.Credentials
+import org.ajoberstar.grgit.Grgit
+
 plugins {
-    id 'groovy' apply true
-    id 'java' apply true
-    id 'checkstyle' apply true
+    id 'groovy'
+    id 'java'
+    id 'checkstyle'
+    id "org.ajoberstar.grgit" version "3.1.1"
 }
 
 group 'ru.sberbank.school'
@@ -10,4 +14,41 @@ sourceCompatibility = 1.8
 
 subprojects {
     version = project.properties['version']
+}
+
+def gitUser = hasProperty('gitUser') ? gitUser : "unknown"
+def gitPass = hasProperty('gitPass') ? gitPass : "unknown"
+def isWindows = System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')
+
+def sherlockPath = File.createTempDir()
+
+
+task checkoutSherlock {
+    doFirst {
+        println sherlockPath
+        def grgit = Grgit.clone(dir: sherlockPath,
+                uri: "https://github.com/jenkins-java-school-2019/sherlock.git",
+                credentials: new Credentials(gitUser, gitPass))
+    }
+}
+task clearSherlock {
+    def file = new File("./watson/src")
+    println file.absolutePath
+    file.deleteDir()
+}
+
+task copySherlock(type: Copy) {
+    dependsOn checkoutSherlock, clearSherlock
+
+    from file("${sherlockPath}/src/test/")
+    into file("./watson/src/test/")
+
+}
+
+task runSherlock(type: Exec) {
+    dependsOn ':watson:test'
+}
+
+dependencies {
+    compile 'org.ajoberstar.grgit:grgit-core:3.1.1'
 }

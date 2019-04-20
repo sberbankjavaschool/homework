@@ -1,7 +1,6 @@
 package ru.sberbank.school.task02.util;
 
 import java.math.BigDecimal;
-import java.util.Optional;
 import java.util.UUID;
 
 import lombok.Builder;
@@ -10,17 +9,15 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.ToString;
 
+@Getter
 @ToString
 @EqualsAndHashCode(of = "id")
 public class Quote {
     private final String id = UUID.randomUUID().toString();
-
-    @Getter
     private final Symbol symbol;
     /**
      * Верхняя граница объема.
      */
-    @Getter
     private final Volume volume;
     private final BigDecimal bid;
     private final BigDecimal offer;
@@ -44,11 +41,4 @@ public class Quote {
         return volume.getVolume();
     }
 
-    public Optional<BigDecimal> getBid() {
-        return Optional.ofNullable(bid);
-    }
-
-    public Optional<BigDecimal> getOffer() {
-        return Optional.ofNullable(offer);
-    }
 }
