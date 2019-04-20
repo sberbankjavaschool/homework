@@ -33,12 +33,12 @@ dependencies {
 }
 
 task sourcesJar(type: Jar) {
-//    archiveClassifier = 'sources'
+    archiveClassifier = 'sources'
     from sourceSets.main.allJava
 }
 
 task javadocJar(type: Jar) {
-//    archiveClassifier = 'javadoc'
+    archiveClassifier = 'javadoc'
     from javadoc.destinationDir
 }
 
