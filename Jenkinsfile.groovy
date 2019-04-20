@@ -56,6 +56,7 @@ pipeline {
             }
         }
         stage('Sherlock') {
+            when { expression { env.CHANGE_ID } }
             steps {
                 script {
                     sh './gradlew copySherlock'

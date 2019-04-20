@@ -21,6 +21,7 @@ def gitPass = hasProperty('gitPass') ? gitPass : "unknown"
 def isWindows = System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')
 
 def sherlockPath = File.createTempDir()
+sherlockPath.deleteOnExit()
 
 
 task checkoutSherlock {
