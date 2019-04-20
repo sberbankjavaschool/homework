@@ -16,9 +16,8 @@ subprojects {
     version = project.properties['version']
 }
 
-def gitUser = hasProperty('gitUser') ? gitUser : "unknown"
-def gitPass = hasProperty('gitPass') ? gitPass : "unknown"
-def isWindows = System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')
+def gitUser = hasProperty('gitUser') ? gitUser : null
+def gitPass = hasProperty('gitPass') ? gitPass : null
 
 def sherlockPath = File.createTempDir()
 sherlockPath.deleteOnExit()
@@ -26,6 +25,9 @@ sherlockPath.deleteOnExit()
 
 task checkoutSherlock {
     doFirst {
+        if(gitUser == null) {
+            println "MISSING 'GIT USER'"
+        }
         println sherlockPath
         def grgit = Grgit.clone(dir: sherlockPath,
                 uri: "https://github.com/jenkins-java-school-2019/sherlock.git",
