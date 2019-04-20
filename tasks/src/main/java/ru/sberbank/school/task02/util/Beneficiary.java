@@ -1,4 +1,4 @@
-package ru.sberbank.java.school.task02.util;
+package ru.sberbank.school.task02.util;
 
 /**
  * В чью пользу принимается решение выборв курса.

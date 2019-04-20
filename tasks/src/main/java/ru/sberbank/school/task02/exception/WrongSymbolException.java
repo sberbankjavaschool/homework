@@ -1,4 +1,4 @@
-package ru.sberbank.java.school.task02.exception;
+package ru.sberbank.school.task02.exception;
 
 public class WrongSymbolException extends RuntimeException {
     public WrongSymbolException(String message) {

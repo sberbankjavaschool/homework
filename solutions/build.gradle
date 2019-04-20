@@ -4,9 +4,7 @@ plugins {
     id 'checkstyle' apply true
 }
 
-group 'ru.sberbank.school.java'
-version '0.1'
-
+group 'ru.sberbank.school'
 sourceCompatibility = 1.8
 
 repositories {
@@ -22,5 +20,6 @@ javadoc {
 }
 
 dependencies {
+    implementation project(":tasks")
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }

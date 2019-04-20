@@ -1,5 +1,7 @@
 rootProject.name = 'homework'
 
 include 'tasks'
+project(':tasks').projectDir = new File('./tasks')
 include 'solutions'
+project(':solutions').projectDir = new File('./solutions')
 

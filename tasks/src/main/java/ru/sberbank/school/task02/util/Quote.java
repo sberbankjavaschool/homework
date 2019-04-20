@@ -1,4 +1,4 @@
-package ru.sberbank.java.school.task02.util;
+package ru.sberbank.school.task02.util;
 
 import java.math.BigDecimal;
 import java.util.Optional;

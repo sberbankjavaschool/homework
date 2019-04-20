@@ -1,9 +1,9 @@
-package ru.sberbank.java.school.task02;
+package ru.sberbank.school.task02;
 
 /**
  * Фабрика сервиса - валютного калькулятора.
  */
-interface ServiceFactory {
+public interface ServiceFactory {
     /**
      * Возвращает инстанс FxConversionService реализованнную студентом.
      *

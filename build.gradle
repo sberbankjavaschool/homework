@@ -4,7 +4,10 @@ plugins {
     id 'checkstyle' apply true
 }
 
-group 'ru.sberbank.school.java'
-version '1.0-SNAPSHOT'
+group 'ru.sberbank.school'
 
 sourceCompatibility = 1.8
+
+subprojects {
+    version = project.properties['version']
+}

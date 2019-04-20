@@ -6,8 +6,8 @@ plugins {
     id 'maven-publish'
 }
 
-group = 'ru.ulmc'
-version = '0.1.2'
+group = 'ru.sberbank.school'
+sourceCompatibility = 1.8
 
 def nexusUser = hasProperty('nexusUser') ? nexusUser : "unknown"
 def nexusPass = hasProperty('nexusPass') ? nexusPass : "unknown"
@@ -15,7 +15,6 @@ def repoUrl = hasProperty('repoUrl') ? repoUrl : "https://ulmc.ru/"
 
 repositories {
     mavenCentral()
-
 }
 
 compileJava {
