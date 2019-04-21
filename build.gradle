@@ -12,6 +12,11 @@ group 'ru.sberbank.school'
 
 sourceCompatibility = 1.8
 
+repositories {
+    mavenCentral()
+    jcenter()
+}
+
 subprojects {
     version = project.properties['version']
 }
@@ -22,36 +27,38 @@ def gitPass = hasProperty('gitPass') ? gitPass : null
 def sherlockPath = File.createTempDir()
 sherlockPath.deleteOnExit()
 
-
 task checkoutSherlock {
     doFirst {
-        if(gitUser == null) {
+        if (gitUser == null) {
             println "MISSING 'GIT USER'"
         }
-        println sherlockPath
         def grgit = Grgit.clone(dir: sherlockPath,
                 uri: "https://github.com/jenkins-java-school-2019/sherlock.git",
                 credentials: new Credentials(gitUser, gitPass))
     }
 }
+
 task clearSherlock {
-    def file = new File("./watson/src")
-    println file.absolutePath
-    file.deleteDir()
+    doFirst {
+        def file = new File("./watson/src")
+        println file.absolutePath
+        file.deleteDir()
+    }
 }
 
 task copySherlock(type: Copy) {
-    dependsOn checkoutSherlock, clearSherlock
+    dependsOn clearSherlock
+    dependsOn checkoutSherlock
 
     from file("${sherlockPath}/src/test/")
     into file("./watson/src/test/")
-
 }
 
-task runSherlock(type: Exec) {
+task runSherlock() {
     dependsOn ':watson:test'
 }
 
 dependencies {
+    compile 'commons-io:commons-io:2.6'
     compile 'org.ajoberstar.grgit:grgit-core:3.1.1'
 }
