@@ -121,8 +121,6 @@ pipeline {
                         status = 'success'
                         pullRequest.labels = ['OK']
                         statusMsg = 'Всё чисто. Можно звать преподователя. '
-                        pullRequest.addAssignee('kolmogorov-aa')
-                        pullRequest.addAssignee('AlexeyDomnin')
                     }
                     def uri = "https://ulmc.ru/reports/${env.CHANGE_ID}/"
                     pullRequest.createStatus(status: status,
