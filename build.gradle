@@ -1,5 +1,8 @@
 import org.ajoberstar.grgit.Credentials
 import org.ajoberstar.grgit.Grgit
+import org.ajoberstar.grgit.Remote
+
+import java.util.function.Predicate
 
 plugins {
     id 'groovy'
@@ -36,12 +39,29 @@ task forceRebase {
             println 'MISSING PARAMS'
         }
         def grgit = Grgit.open(dir: project.file('.'))
-        try {
-            grgit.fetch(remote: 'https://github.com/sberbankjavaschool/homework.git', refSpecs: ['refs/heads/source:refs/heads/source'])
-        } catch (ignore)
-        grgit.pull(remote: 'https://github.com/sberbankjavaschool/homework.git', branch: 'source', rebase: true)
-        grgit.push(remote: 'https://github.com/sberbankjavaschool/homework.git', branch: target)
-        grgit.push(remote: sourceUrl, branch: source)
+        if (!grgit.remote.list().stream().anyMatch(getPredicate('home'))) {
+            grgit.remote.add(name: 'home', url: 'https://github.com/sberbankjavaschool/homework.git')
+        }
+        if (!grgit.remote.list().stream().anyMatch(getPredicate('external'))) {
+            grgit.remote.add(name: 'external', url: 'https://github.com/sberbankjavaschool/homework.git')
+        }
+        grgit.fetch(remote: 'home')
+        def pull = grgit.pull(remote: 'home', branch: 'source', rebase: true)
+        println pull
+        println "pulled from source"
+        grgit.push(remote: 'home', branch: target)
+        println "pushed to target"
+        grgit.push(remote: 'external', branch: source)
+        println "pushed to PR-source"
+    }
+}
+
+private Predicate<Remote> getPredicate(String param) {
+    new Predicate<Remote>() {
+        @Override
+        boolean test(Remote remote) {
+            return remote.name == param
+        }
     }
 }
 
