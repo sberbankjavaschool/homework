@@ -27,6 +27,22 @@ def gitPass = hasProperty('gitPass') ? gitPass : null
 def sherlockPath = File.createTempDir()
 sherlockPath.deleteOnExit()
 
+task forceRebase {
+    doFirst {
+        def target = project.hasProperty("targetBranch")
+        def source = project.hasProperty("sourceBranch")
+        def sourceUrl = project.hasProperty("sourceUrl")
+        if (!target || !source || !sourceUrl) {
+            println 'MISSING PARAMS'
+        }
+        def grgit = Grgit.open(dir: project.file('.'))
+        grgit.fetch { remote: 'https://github.com/sberbankjavaschool/homework.git' }
+        grgit.pull(remote: 'https://github.com/sberbankjavaschool/homework.git', branch: 'source', rebase: true)
+        grgit.push(remote: 'https://github.com/sberbankjavaschool/homework.git', branch: target)
+        grgit.push(remote: sourceUrl, branch: source)
+    }
+}
+
 task checkoutSherlock {
     doFirst {
         if (gitUser == null) {
