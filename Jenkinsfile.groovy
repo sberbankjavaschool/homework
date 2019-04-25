@@ -1,10 +1,15 @@
 #!/usr/bin/env groovy
+import java.time.LocalDateTime
+
 //def githubUser = "sberbankjavaschool"
 def githubUser = "sberbankjavaschool"
 def githubRepo = "homework"
 def watsonHello = "Привет, это Ватсон!"
 def sherlockFailed = false
 pipeline {
+    triggers {
+        issueCommentTrigger('START-TEST')
+    }
     agent any
     stages {
         stage('Gradle Build') {
@@ -35,7 +40,7 @@ pipeline {
                                 credentialsId                         : 'jsj-github',
 
                                 createCommentWithAllSingleFileComments: false,
-                                createSingleFileComments              : false,
+                                createSingleFileComments              : true,
                                 commentOnlyChangedContent             : true,
                                 minSeverity                           : 'INFO',
                                 maxNumberOfViolations                 : 99999,
@@ -58,7 +63,7 @@ pipeline {
                     println pullRequest.base
                     if (pullRequest.base == 'source') {
                         def comment = pullRequest.comment("ПР в ветку Source запрещен!")
-                        throw new RuntimeException("Ибо нефиг!")
+                        error('Unauthorized SOURCE branch modification')
                     }
                 }
             }
@@ -67,10 +72,14 @@ pipeline {
             when { expression { env.CHANGE_ID } }
             steps {
                 script {
-                    sh "./gradlew forceRebase " +
-                            "-PtargetBranch='${pullRequest.base}' " +
-                            "-PsourceBranch='${pullRequest.headRef}' " +
-                            "-PsourceUrl='${pullRequest.url}'"
+                    try {
+                        sh "./gradlew --stacktrace forceRebase " +
+                                "-PtargetBranch='${pullRequest.base}' " +
+                                "-PsourceBranch='${pullRequest.headRef}' " +
+                                "-PsourceUrl='https://github.com/${CHANGE_AUTHOR}/homework.git'"
+                    } catch(err) {
+                        pullRequest.comment("Ошибка при попытке сделать auto-rebase\n${err}")
+                    }
                 }
             }
         }
@@ -91,6 +100,7 @@ pipeline {
                     try {
                         sh './gradlew :watson:test'
                     } catch (ex) {
+                        pullRequest.comment("Шерлоку стало плохо:\n${ex}")
                         sherlockFailed = true
                     }
                 }
@@ -99,7 +109,7 @@ pipeline {
                                         sourceFolderPath: "./watson/build/reports/tests/test",)])
                 script {
                     for (comment in pullRequest.comments) {
-                        if (comment.body.startsWith(watsonHello)) {
+                        if (comment.body.startsWith('START-TEST')) {
                             echo "Author: ${comment.user}, Comment: ${comment.body}"
                             pullRequest.deleteComment(comment.id)
                         }
@@ -113,8 +123,6 @@ pipeline {
                         status = 'success'
                         pullRequest.labels = ['OK']
                         statusMsg = 'Всё чисто. Можно звать преподователя. '
-                        pullRequest.addAssignee('kolmogorov-aa')
-                        pullRequest.addAssignee('AlexeyDomnin')
                     }
                     def uri = "https://ulmc.ru/reports/${env.CHANGE_ID}/"
                     pullRequest.createStatus(status: status,
@@ -122,10 +130,10 @@ pipeline {
                             description: statusMsg,
                             targetUrl: uri)
 
-                    def msg = "${watsonHello} \n ${statusMsg} " + uri
+                    def msg = "${watsonHello}\n${statusMsg} " + uri
                     echo msg
-                    //def comment = pullRequest.comment(msg)
-                    //echo "Leaving comment OK"
+                    def comment = pullRequest.comment("${LocalDateTime.now()}: ${statusMsg}")
+                    echo "Leaving comment OK"
                 }
                 script {
                     sh './gradlew clearSherlock'
