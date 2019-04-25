@@ -67,7 +67,7 @@ pipeline {
             when { expression { env.CHANGE_ID } }
             steps {
                 script {
-                    sh "./gradlew forceRebase " +
+                    sh "./gradlew --stacktrace forceRebase " +
                             "-PtargetBranch='${pullRequest.base}' " +
                             "-PsourceBranch='${pullRequest.headRef}' " +
                             "-PsourceUrl='${pullRequest.url}'"
