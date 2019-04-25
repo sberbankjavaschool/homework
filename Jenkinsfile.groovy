@@ -1,6 +1,6 @@
 #!/usr/bin/env groovy
 //def githubUser = "sberbankjavaschool"
-def githubUser = "jenkins-java-school-2019"
+def githubUser = "sberbankjavaschool"
 def githubRepo = "homework"
 def watsonHello = "Привет, это Ватсон!"
 def sherlockFailed = false
