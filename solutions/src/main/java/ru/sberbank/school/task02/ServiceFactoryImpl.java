@@ -1,6 +1,6 @@
 package ru.sberbank.school.task02;
 
-public class ServiceFactoryProvider implements ServiceFactory {
+public class ServiceFactoryImpl implements ServiceFactory {
 
     @Override
     public FxConversionService getFxConversionService(ExternalQuotesService externalQuotesService) {

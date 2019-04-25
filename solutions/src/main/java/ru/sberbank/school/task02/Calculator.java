@@ -42,21 +42,4 @@ public class Calculator implements FxConversionService {
         }
         return operation == ClientOperation.BUY ? current.getOffer() : current.getBid();
     }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        Calculator that = (Calculator) o;
-        return provider.equals(that.provider);
-    }
-
-    @Override
-    public int hashCode() {
-        return provider != null ? provider.hashCode() : 0;
-    }
 }
