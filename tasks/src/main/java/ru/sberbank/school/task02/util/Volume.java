@@ -26,4 +26,9 @@ public class Volume {
         }
         return new Volume(vol);
     }
+
+    @Override
+    public String toString() {
+        return isInfinity ? "Infinity" : volume.toString();
+    }
 }

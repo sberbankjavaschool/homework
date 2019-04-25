@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.util.Optional;
 
 import ru.sberbank.school.task02.util.Beneficiary;
-import ru.sberbank.school.task02.util.Operation;
+import ru.sberbank.school.task02.util.ClientOperation;
 import ru.sberbank.school.task02.util.Symbol;
 
 public interface ExtendedFxConversionService extends FxConversionService {
@@ -18,7 +18,7 @@ public interface ExtendedFxConversionService extends FxConversionService {
      * @param beneficiary В чью пользу осуществляется округление
      * @return Цена для указанного объема
      */
-    Optional<BigDecimal> convertReversed(Operation operation,
+    Optional<BigDecimal> convertReversed(ClientOperation operation,
                                          Symbol symbol,
                                          BigDecimal amount,
                                          Beneficiary beneficiary);
@@ -33,7 +33,7 @@ public interface ExtendedFxConversionService extends FxConversionService {
      * @param beneficiary В чью пользу осуществляется округление
      * @return Цена для указанного объема
      */
-    default Optional<BigDecimal> convertReversed(Operation operation,
+    default Optional<BigDecimal> convertReversed(ClientOperation operation,
                                                  Symbol symbol,
                                                  BigDecimal amount,
                                                  double delta,

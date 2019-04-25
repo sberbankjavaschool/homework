@@ -2,7 +2,7 @@ package ru.sberbank.school.task02;
 
 import java.math.BigDecimal;
 
-import ru.sberbank.school.task02.util.Operation;
+import ru.sberbank.school.task02.util.ClientOperation;
 import ru.sberbank.school.task02.util.Symbol;
 
 public interface FxConversionService {
@@ -14,6 +14,6 @@ public interface FxConversionService {
      * @param amount    Объем
      * @return Цена для указанного объема
      */
-    BigDecimal convert(Operation operation, Symbol symbol, BigDecimal amount);
+    BigDecimal convert(ClientOperation operation, Symbol symbol, BigDecimal amount);
 
 }
