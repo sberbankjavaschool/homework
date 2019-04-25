@@ -36,8 +36,8 @@ pipeline {
 
                                 createCommentWithAllSingleFileComments: true,
                                 createSingleFileComments              : true,
-                                commentOnlyChangedContent             : false,
-                                minSeverity                           : 'TRACE',
+                                commentOnlyChangedContent             : true,
+                                minSeverity                           : 'INFO',
                                 maxNumberOfViolations                 : 99999,
                                 keepOldComments                       : false,
 
