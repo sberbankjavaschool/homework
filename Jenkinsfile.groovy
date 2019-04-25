@@ -41,9 +41,7 @@ pipeline {
                                 maxNumberOfViolations                 : 99999,
                                 keepOldComments                       : false,
 
-                                commentTemplate                       : """
-    **Reporter**: {{violation.reporter}}{{#violation.rule}}  **Rule**: {{violation.rule}}{{/violation.rule}} **Severity**: {{violation.severity}}
-{{violation.message}}""",
+                                commentTemplate                       : """{{violation.message}}""",
 
                                 violationConfigs                      : [
                                         [pattern: '.*/reports/checkstyle/.*\\.xml$', parser: 'CHECKSTYLE', reporter: 'Checkstyle']
