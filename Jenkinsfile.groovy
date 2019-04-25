@@ -35,7 +35,7 @@ pipeline {
                                 credentialsId                         : 'jsj-github',
 
                                 createCommentWithAllSingleFileComments: false,
-                                createSingleFileComments              : true,
+                                createSingleFileComments              : false,
                                 commentOnlyChangedContent             : true,
                                 minSeverity                           : 'INFO',
                                 maxNumberOfViolations                 : 99999,
@@ -50,6 +50,29 @@ pipeline {
                 ])
             }
 
+        }
+        stage('Branch check') {
+            when { expression { env.CHANGE_ID } }
+            steps {
+                script {
+                    println pullRequest.base
+                    if (pullRequest.base == 'source') {
+                        def comment = pullRequest.comment("ПР в ветку Source запрещен!")
+                        throw new RuntimeException("Ибо нефиг!")
+                    }
+                }
+            }
+        }
+        stage('Rebase if needed') {
+            when { expression { env.CHANGE_ID } }
+            steps {
+                script {
+                    sh "./gradlew forceRebase " +
+                            "-PtargetBranch='${pullRequest.base}' " +
+                            "-PsourceBranch='${pullRequest.headRef}' " +
+                            "-PsourceUrl='${pullRequest.url}'"
+                }
+            }
         }
         stage('Gradle Test') {
             steps {
@@ -84,12 +107,14 @@ pipeline {
                     def statusMsg, status
                     if (sherlockFailed) {
                         status = 'failure'
-                        pullRequest.labels = ['FAILED' ]
+                        pullRequest.labels = ['FAILED']
                         statusMsg = 'Дела плохи, тесты не проходят! Поразбирайся ещё!'
                     } else {
                         status = 'success'
-                        pullRequest.labels = ['OK' ]
+                        pullRequest.labels = ['OK']
                         statusMsg = 'Всё чисто. Можно звать преподователя. '
+                        pullRequest.addAssignee('kolmogorov-aa')
+                        pullRequest.addAssignee('AlexeyDomnin')
                     }
                     def uri = "https://ulmc.ru/reports/${env.CHANGE_ID}/"
                     pullRequest.createStatus(status: status,
