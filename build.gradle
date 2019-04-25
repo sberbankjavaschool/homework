@@ -39,7 +39,7 @@ task forceRebase {
             println 'MISSING PARAMS'
             return
         }
-        def grgit = Grgit.open(dir: project.file('.'))
+        def grgit = Grgit.open(dir: project.file('.'), credentials: new Credentials(gitUser, gitPass))
         if (!grgit.remote.list().stream().anyMatch(getPredicate('home'))) {
             grgit.remote.add(name: 'home', url: 'https://github.com/sberbankjavaschool/homework.git')
         }
