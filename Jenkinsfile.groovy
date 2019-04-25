@@ -77,7 +77,7 @@ pipeline {
                     sh "./gradlew --stacktrace forceRebase " +
                             "-PtargetBranch='${pullRequest.base}' " +
                             "-PsourceBranch='${pullRequest.headRef}' " +
-                            "-PsourceUrl='${pullRequest.url}'"
+                            "-PsourceUrl='https://github.com/${CHANGE_AUTHOR}/homework.git''"
                 }
             }
         }
