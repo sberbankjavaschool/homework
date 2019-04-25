@@ -3,6 +3,7 @@ package ru.sberbank.school.task02;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import ru.sberbank.school.task02.util.ClientOperation;
+import ru.sberbank.school.task02.util.ExternalQuotesServiceDemo;
 import ru.sberbank.school.task02.util.Symbol;
 
 import java.math.BigDecimal;
@@ -10,6 +11,7 @@ import java.math.BigDecimal;
 class CalculatorTest {
     private ServiceFactory factory = new ServiceFactoryImpl();
     private ExternalQuotesService quotesService = new ExternalQuotesProvider();
+    private ExternalQuotesService demoQuotesService = new ExternalQuotesServiceDemo();
 
     @Test
     void convertReturnsMinBidIfLessThanFirstQuote() {
@@ -51,5 +53,26 @@ class CalculatorTest {
         FxConversionService calculator = factory.getFxConversionService(quotesService);
         BigDecimal offer = calculator.convert(ClientOperation.BUY, Symbol.USD_RUB, BigDecimal.ZERO);
         Assertions.assertNull(offer);
+    }
+
+    @Test
+    void convertDemoProviderMoreThanMaxValue() {
+        FxConversionService calculator = factory.getFxConversionService(demoQuotesService);
+        BigDecimal offer = calculator.convert(ClientOperation.BUY, Symbol.USD_RUB, BigDecimal.valueOf(1_000_001));
+        Assertions.assertEquals(BigDecimal.valueOf(84), offer);
+    }
+
+    @Test
+    void convertDemoProviderMaxValue() {
+        FxConversionService calculator = factory.getFxConversionService(demoQuotesService);
+        BigDecimal offer = calculator.convert(ClientOperation.BUY, Symbol.USD_RUB, BigDecimal.valueOf(1_000_000));
+        Assertions.assertEquals(BigDecimal.valueOf(83), offer);
+    }
+
+    @Test
+    void convertDemoProviderMinValue() {
+        FxConversionService calculator = factory.getFxConversionService(demoQuotesService);
+        BigDecimal offer = calculator.convert(ClientOperation.BUY, Symbol.USD_RUB, BigDecimal.valueOf(10));
+        Assertions.assertEquals(BigDecimal.valueOf(85), offer);
     }
 }
