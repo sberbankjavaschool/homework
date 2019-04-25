@@ -12,7 +12,7 @@ public class ExternalQuotesProvider implements ExternalQuotesService {
     @Override
     public List<Quote> getQuotes(Symbol symbol) {
         List<Quote> quotes = new ArrayList<>();
-        for(int i = 9; i > 0; i--) {
+        for (int i = 9; i > 0; i--) {
             quotes.add(new Quote(symbol, Volume.from(i * 10), new BigDecimal(i * 100), new BigDecimal(i * 1000)));
         }
         quotes.add(new Quote(symbol, Volume.from(-1), new BigDecimal(1000), new BigDecimal(10000)));

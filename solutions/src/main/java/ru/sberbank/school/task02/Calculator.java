@@ -17,9 +17,9 @@ public class Calculator implements FxConversionService {
     @Override
     public BigDecimal convert(ClientOperation operation, Symbol symbol, BigDecimal amount) {
         List<Quote> quotes = provider.getQuotes(symbol);
-        quotes.sort((right, left)-> {
-            if (left.isInfinity()) return 1;
-            if (right.isInfinity()) return -1;
+        quotes.sort((right, left) -> {
+            if (left.isInfinity()) { return 1; }
+            if (right.isInfinity()) { return -1; }
             return left.getVolumeSize().compareTo(right.getVolumeSize());
         });
         BigDecimal currentOffer = BigDecimal.ZERO;
@@ -37,8 +37,8 @@ public class Calculator implements FxConversionService {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) { return true; }
+        if (o == null || getClass() != o.getClass()) { return false; }
         Calculator that = (Calculator) o;
         return provider != null ? provider.equals(that.provider) : that.provider == null;
     }
