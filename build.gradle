@@ -50,9 +50,9 @@ task forceRebase {
         def pull = grgit.pull(remote: 'home', branch: 'source', rebase: true)
         println pull
         println "pulled from source"
-        grgit.push(remote: 'home', refsOrSpecs : ["refs/heads/${targetBranch}:refs/heads/${targetBranch}"])
+        grgit.push(remote: 'home', refsOrSpecs : ["refs/remotes/home/${targetBranch}:refs/remotes/home/${targetBranch}"])
         println "pushed to target"
-        grgit.push(remote: 'external', refsOrSpecs : ["refs/heads/${sourceBranch}:refs/heads/${sourceBranch}"])
+        grgit.push(remote: 'external', refsOrSpecs : ["refs/remotes/external/${sourceBranch}:refs/remotes/external/${sourceBranch}"])
         println "pushed to PR-source"
     }
 }
