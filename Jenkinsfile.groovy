@@ -5,6 +5,9 @@ def githubRepo = "homework"
 def watsonHello = "Привет, это Ватсон!"
 def sherlockFailed = false
 pipeline {
+    triggers {
+        issueCommentTrigger('.*(TEST ME)|(Шерлок!)|([Зз]апусти(ть)? тест).*')
+    }
     agent any
     stages {
         stage('Gradle Build') {
@@ -67,6 +70,10 @@ pipeline {
             when { expression { env.CHANGE_ID } }
             steps {
                 script {
+                    println pullRequest
+                    println pullRequest.patchUrl
+                    println pullRequest.number
+                    println pullRequest.head
                     sh "./gradlew --stacktrace forceRebase " +
                             "-PtargetBranch='${pullRequest.base}' " +
                             "-PsourceBranch='${pullRequest.headRef}' " +
