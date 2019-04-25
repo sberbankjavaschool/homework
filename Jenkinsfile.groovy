@@ -70,14 +70,14 @@ pipeline {
             when { expression { env.CHANGE_ID } }
             steps {
                 script {
-                    println pullRequest
-                    println pullRequest.patchUrl
-                    println pullRequest.number
-                    println pullRequest.head
-                    sh "./gradlew --stacktrace forceRebase " +
-                            "-PtargetBranch='${pullRequest.base}' " +
-                            "-PsourceBranch='${pullRequest.headRef}' " +
-                            "-PsourceUrl='https://github.com/${CHANGE_AUTHOR}/homework.git''"
+                    try {
+                        sh "./gradlew --stacktrace forceRebase " +
+                                "-PtargetBranch='${pullRequest.base}' " +
+                                "-PsourceBranch='${pullRequest.headRef}' " +
+                                "-PsourceUrl='https://github.com/${CHANGE_AUTHOR}/homework.git''"
+                    } catch(err) {
+                        pullRequest.comment("Ошибка при попытке сделать auto-rebase\n${err}")
+                    }
                 }
             }
         }
@@ -98,6 +98,7 @@ pipeline {
                     try {
                         sh './gradlew :watson:test'
                     } catch (ex) {
+                        pullRequest.comment("Шерлоку стало плохо:\n${ex}")
                         sherlockFailed = true
                     }
                 }
