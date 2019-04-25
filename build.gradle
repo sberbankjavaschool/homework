@@ -37,21 +37,22 @@ task forceRebase {
         def sourceUrl = project.hasProperty("sourceUrl")
         if (!target || !source || !sourceUrl) {
             println 'MISSING PARAMS'
+            return
         }
         def grgit = Grgit.open(dir: project.file('.'))
         if (!grgit.remote.list().stream().anyMatch(getPredicate('home'))) {
             grgit.remote.add(name: 'home', url: 'https://github.com/sberbankjavaschool/homework.git')
         }
         if (!grgit.remote.list().stream().anyMatch(getPredicate('external'))) {
-            grgit.remote.add(name: 'external', url: 'https://github.com/sberbankjavaschool/homework.git')
+            grgit.remote.add(name: 'external', url: sourceUrl)
         }
         grgit.fetch(remote: 'home')
         def pull = grgit.pull(remote: 'home', branch: 'source', rebase: true)
         println pull
         println "pulled from source"
-        grgit.push(remote: 'home', refsOrSpecs : ["refs/heads/${target}:refs/heads/${target}"])
+        grgit.push(remote: 'home', refsOrSpecs : ["refs/heads/${targetBranch}:refs/heads/${targetBranch}"])
         println "pushed to target"
-        grgit.push(remote: 'external', refsOrSpecs : ["refs/heads/${source}:refs/heads/${source}"])
+        grgit.push(remote: 'external', refsOrSpecs : ["refs/heads/${sourceBranch}:refs/heads/${sourceBranch}"])
         println "pushed to PR-source"
     }
 }
