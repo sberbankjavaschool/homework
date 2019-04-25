@@ -36,7 +36,7 @@ task forceRebase {
             println 'MISSING PARAMS'
         }
         def grgit = Grgit.open(dir: project.file('.'))
-        grgit.fetch(remote: 'https://github.com/sberbankjavaschool/homework.git')
+        grgit.fetch(remote: 'https://github.com/sberbankjavaschool/homework.git', refSpecs: ['refs/heads/source:refs/heads/source'])
         grgit.pull(remote: 'https://github.com/sberbankjavaschool/homework.git', branch: 'source', rebase: true)
         grgit.push(remote: 'https://github.com/sberbankjavaschool/homework.git', branch: target)
         grgit.push(remote: sourceUrl, branch: source)
