@@ -18,6 +18,9 @@ public class CurrencyCalc implements FxConversionService {
 
     @Override
     public BigDecimal convert( ClientOperation operation, Symbol symbol, BigDecimal amount) {
+        if(amount.equals(BigDecimal.ZERO))
+            return null;
+
         List<Quote> quotes = externalQuotesService.getQuotes(symbol);
         Quote currentQuote = quotes.get(0);
 
