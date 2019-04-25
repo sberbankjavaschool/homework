@@ -34,8 +34,8 @@ task forceRebase {
     doFirst {
         def target = project.hasProperty("targetBranch")
         def source = project.hasProperty("sourceBranch")
-        def sourceUrl = project.hasProperty("sourceUrl")
-        if (!target || !source || !sourceUrl) {
+        def sourceUrlExists = project.hasProperty("sourceUrl")
+        if (!target || !source || !sourceUrlExists) {
             println 'MISSING PARAMS'
             return
         }
