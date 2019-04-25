@@ -58,7 +58,7 @@ pipeline {
                     println pullRequest.base
                     if (pullRequest.base == 'source') {
                         def comment = pullRequest.comment("ПР в ветку Source запрещен!")
-                        401
+                        error('Unauthorized SOURCE branch modification')
                     }
                 }
             }
