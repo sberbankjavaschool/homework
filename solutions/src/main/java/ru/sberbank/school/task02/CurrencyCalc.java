@@ -22,7 +22,7 @@ public class CurrencyCalc implements FxConversionService {
         Quote currentQuote = quotes.get(0);
 
         for(Quote quote : quotes){
-            if(amount.compareTo(quote.getVolume().getVolume()) < 0){
+            if(amount.compareTo(quote.getVolume().getVolume()) <= 0){
                 currentQuote = quote;
                 break;
             }
