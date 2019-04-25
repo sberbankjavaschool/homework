@@ -58,7 +58,7 @@ pipeline {
                     println pullRequest.base
                     if (pullRequest.base == 'source') {
                         def comment = pullRequest.comment("ПР в ветку Source запрещен!")
-                        throw new RuntimeException("Ибо нефиг!")
+                        401
                     }
                 }
             }
