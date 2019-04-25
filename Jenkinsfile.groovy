@@ -40,7 +40,7 @@ pipeline {
                                 credentialsId                         : 'jsj-github',
 
                                 createCommentWithAllSingleFileComments: false,
-                                createSingleFileComments              : false,
+                                createSingleFileComments              : true,
                                 commentOnlyChangedContent             : true,
                                 minSeverity                           : 'INFO',
                                 maxNumberOfViolations                 : 99999,
@@ -76,7 +76,7 @@ pipeline {
                         sh "./gradlew --stacktrace forceRebase " +
                                 "-PtargetBranch='${pullRequest.base}' " +
                                 "-PsourceBranch='${pullRequest.headRef}' " +
-                                "-PsourceUrl='https://github.com/${CHANGE_AUTHOR}/homework.git''"
+                                "-PsourceUrl='https://github.com/${CHANGE_AUTHOR}/homework.git'"
                     } catch(err) {
                         pullRequest.comment("Ошибка при попытке сделать auto-rebase\n${err}")
                     }
