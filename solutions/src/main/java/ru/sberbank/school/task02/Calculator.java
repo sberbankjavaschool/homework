@@ -16,7 +16,13 @@ public class Calculator implements FxConversionService {
 
     @Override
     public BigDecimal convert(ClientOperation operation, Symbol symbol, BigDecimal amount) {
+        if (amount.compareTo(BigDecimal.ZERO) < 1) {
+            return null;
+        }
         List<Quote> quotes = provider.getQuotes(symbol);
+        if (quotes.size() == 0) {
+            return null;
+        }
         quotes.sort((right, left) -> {
             if (left.isInfinity()) {
                 return 1;
@@ -26,17 +32,15 @@ public class Calculator implements FxConversionService {
             }
             return left.getVolumeSize().compareTo(right.getVolumeSize());
         });
-        BigDecimal currentOffer = BigDecimal.ZERO;
+        Quote current = quotes.get(0);
         for (Quote quote: quotes) {
-            if (quote.isInfinity()) {
-                currentOffer = quote.getOffer();
-            } else if (amount.compareTo(quote.getVolumeSize()) < 0) {
-                currentOffer = quote.getOffer();
+            if (quote.isInfinity() || amount.compareTo(quote.getVolumeSize()) < 0) {
+                current = quote;
             } else {
                 break;
             }
         }
-        return currentOffer;
+        return operation == ClientOperation.BUY ? current.getOffer() : current.getBid();
     }
 
     @Override

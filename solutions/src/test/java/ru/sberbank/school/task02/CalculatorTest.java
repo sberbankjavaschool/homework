@@ -38,4 +38,11 @@ class CalculatorTest {
         BigDecimal offer = calculator.convert(ClientOperation.BUY, Symbol.USD_RUB, BigDecimal.valueOf(20));
         Assertions.assertEquals(BigDecimal.valueOf(3000), offer);
     }
+
+    @Test
+    void convertIfProvidedNegativeAmount() {
+        FxConversionService calculator = factory.getFxConversionService(quotesService);
+        BigDecimal offer = calculator.convert(ClientOperation.BUY, Symbol.USD_RUB, BigDecimal.valueOf(-1));
+        Assertions.assertNull(offer);
+    }
 }
