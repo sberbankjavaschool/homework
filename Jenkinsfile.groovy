@@ -1,6 +1,6 @@
 #!/usr/bin/env groovy
 //def githubUser = "sberbankjavaschool"
-def githubUser = "jenkins-java-school-2019"
+def githubUser = "sberbankjavaschool"
 def githubRepo = "homework"
 def watsonHello = "Привет, это Ватсон!"
 def sherlockFailed = false
@@ -41,9 +41,7 @@ pipeline {
                                 maxNumberOfViolations                 : 99999,
                                 keepOldComments                       : false,
 
-                                commentTemplate                       : """
-    **Reporter**: {{violation.reporter}}{{#violation.rule}}  **Rule**: {{violation.rule}}{{/violation.rule}} **Severity**: {{violation.severity}}
-{{violation.message}}""",
+                                commentTemplate                       : """{{violation.message}}""",
 
                                 violationConfigs                      : [
                                         [pattern: '.*/reports/checkstyle/.*\\.xml$', parser: 'CHECKSTYLE', reporter: 'Checkstyle']
@@ -83,14 +81,26 @@ pipeline {
                             pullRequest.deleteComment(comment.id)
                         }
                     }
-                    def statusMsg = sherlockFailed
-                            ? 'Дела плохи, тесты не проходят! Поразбирайся ещё!'
-                            : 'Всё чисто. Можно звать преподователя.'
-                    def msg = "${watsonHello} \n ${statusMsg}\n Улики, которые нашел Шерлок: " +
-                            "https://ulmc.ru/reports/${env.CHANGE_ID}/"
+                    def statusMsg, status
+                    if (sherlockFailed) {
+                        status = 'failure'
+                        pullRequest.labels = ['FAILED' ]
+                        statusMsg = 'Дела плохи, тесты не проходят! Поразбирайся ещё!'
+                    } else {
+                        status = 'success'
+                        pullRequest.labels = ['OK' ]
+                        statusMsg = 'Всё чисто. Можно звать преподователя. '
+                    }
+                    def uri = "https://ulmc.ru/reports/${env.CHANGE_ID}/"
+                    pullRequest.createStatus(status: status,
+                            context: 'continuous-integration/jenkins/pr-merge/sherlock',
+                            description: statusMsg,
+                            targetUrl: uri)
+
+                    def msg = "${watsonHello} \n ${statusMsg} " + uri
                     echo msg
-                    def comment = pullRequest.comment(msg)
-                    echo "Leaving comment OK"
+                    //def comment = pullRequest.comment(msg)
+                    //echo "Leaving comment OK"
                 }
                 script {
                     sh './gradlew clearSherlock'
