@@ -32,6 +32,7 @@ public class Calculator implements FxConversionService {
             }
             return left.getVolumeSize().compareTo(right.getVolumeSize());
         });
+
         Quote current = quotes.get(0);
         for (Quote quote: quotes) {
             if (quote.isInfinity() || amount.compareTo(quote.getVolumeSize()) <= 0) {
