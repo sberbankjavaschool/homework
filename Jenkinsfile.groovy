@@ -34,9 +34,9 @@ pipeline {
 
                                 credentialsId                         : 'jsj-github',
 
-                                createCommentWithAllSingleFileComments: false,
+                                createCommentWithAllSingleFileComments: true,
                                 createSingleFileComments              : true,
-                                commentOnlyChangedContent             : true,
+                                commentOnlyChangedContent             : false,
                                 minSeverity                           : 'INFO',
                                 maxNumberOfViolations                 : 99999,
                                 keepOldComments                       : false,
