@@ -39,15 +39,17 @@ task forceRebase {
         return
     }
     def homeUrl = 'https://github.com/sberbankjavaschool/homework.git'
-   
-    println "clonning"
-   
-    def grgit = Grgit.clone(dir: File.createTempDir(),
+
+    print "clonning... "
+
+    def tempDir = File.createTempDir()
+    tempDir.deleteOnExit()
+    def grgit = Grgit.clone(dir: tempDir,
             uri: homeUrl,
             credentials: new Credentials(gitUser, gitPass))
-    
-    println "clonning complete"
-    
+
+    println "OK"
+
     if (grgit.remote.list().stream().noneMatch(getPredicate('home'))) {
         grgit.remote.add(name: 'home', url: homeUrl)
     }
@@ -55,12 +57,12 @@ task forceRebase {
         grgit.remote.add(name: 'external', url: studentRepo)
     }
     grgit.fetch(remote: 'home')
-    
+
     def pull = grgit.pull(remote: 'home', branch: 'source', rebase: true)
     println "pulled from source"
-    grgit.push(remote: 'home', refsOrSpecs: ["refs/remotes/home/${targetBranch}:refs/remotes/home/${targetBranch}"])
+    grgit.push(remote: 'home', refsOrSpecs: ["refs/heads/source:refs/remote/home/${targetBranch}"])
     println "pushed to target"
-    grgit.push(remote: 'external', refsOrSpecs: ["refs/remotes/external/${sourceBranch}:refs/remotes/external/${sourceBranch}"])
+    grgit.push(remote: 'external', refsOrSpecs: ["refs/heads/source:refs/remote/external/${sourceBranch}"])
     println "pushed to PR-source"
 }
 
