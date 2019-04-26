@@ -18,6 +18,10 @@ public class Converter implements FxConversionService {
     @Override
     public BigDecimal convert(ClientOperation operation, Symbol symbol, BigDecimal amount) {
         List<Quote> quotes = service.getQuotes(symbol);
+        if(amount.compareTo(BigDecimal.ZERO) <= 0 || quotes.size() <= 0){
+            return null;
+        }
+
         quotes.sort((o1, o2) -> {
             if (o1.isInfinity()) {
                 return 1;
@@ -27,15 +31,34 @@ public class Converter implements FxConversionService {
             }
             return o1.getVolumeSize().compareTo(o2.getVolumeSize());
         });
-        BigDecimal lastVolume = BigDecimal.ZERO;
-        Quote matchedQuote = null;
-        for (Quote quote : quotes) {
-            if (amount.compareTo(lastVolume) > 0) {
-                if (amount.compareTo(quote.getVolumeSize()) < 0) {
-                    matchedQuote = quote;
-                }
-            }
+
+        Quote matchedQuote = getMatchedQuote(quotes, amount);
+        if(matchedQuote == null){
+            return null;
         }
         return operation == ClientOperation.SELL ? matchedQuote.getBid() : matchedQuote.getOffer();
+    }
+
+    private Quote getMatchedQuote(List<Quote> quotes, BigDecimal amount){
+        Quote res = null;
+        for (Quote q : quotes) {
+            if(amount.compareTo(q.getVolumeSize()) < 0){
+                res = q;
+                break;
+            }
+        }
+        if(res == null){
+            res = getInfQuote(quotes);
+        }
+        return res;
+    }
+
+    private Quote getInfQuote(List<Quote> quotes){
+        for (Quote q : quotes) {
+            if(q.isInfinity()){
+                return q;
+            }
+        }
+        return null;
     }
 }
