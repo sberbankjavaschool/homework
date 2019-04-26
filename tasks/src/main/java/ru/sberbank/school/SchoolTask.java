@@ -1,0 +1,16 @@
+package ru.sberbank.school;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
+public enum SchoolTask {
+    FX_CALC_02_01("Вал. Калькулятор ч.1", 2),
+    FX_CALC_02_02("Вал. Калькулятор ч.2", 3),
+    FX_CALC_02_03("Вал. Калькулятор ч.3", 4);
+
+    private final String name;
+    private final int code;
+
+}
