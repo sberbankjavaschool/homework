@@ -18,11 +18,19 @@ compileJava {
 javadoc {
     options.encoding = 'UTF-8'
 }
+tasks.withType(Test) {
+    if (project.hasProperty("prTitle")) {
+        environment 'PR_TITLE', prTitle
+    } else {
+        environment 'PR_TITLE', "0"
+    }
+}
+
 dependencies {
     implementation project(":tasks")
     implementation project(":solutions")
     compileOnly 'org.projectlombok:lombok:1.18.6'
-    testCompileOnly  'org.projectlombok:lombok:1.18.6'
+    testCompileOnly 'org.projectlombok:lombok:1.18.6'
     annotationProcessor 'org.projectlombok:lombok:1.18.6'
     compile 'io.github.classgraph:classgraph:+'
     compile 'org.codehaus.groovy:groovy-all:2.3.11'

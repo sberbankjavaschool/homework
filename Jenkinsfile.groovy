@@ -12,15 +12,22 @@ pipeline {
     }
     agent any
     stages {
-
         stage('Branch check') {
             when { expression { env.CHANGE_ID } }
             steps {
                 script {
-                    println pullRequest.base
+                    print "${pullReques.headRef} ${pullRequest.base}"
                     if (pullRequest.base == 'source') {
                         def comment = pullRequest.comment("ПР в ветку Source запрещен!")
                         error('Unauthorized SOURCE branch modification')
+                        return
+                    }
+                    try {
+                        sh "./gradlew --stacktrace checkIfSourceBranckPulled " +
+                                "-PsourceBranch='${pullRequest.headRef}' " +
+                                "-PforkRepo='https://github.com/${CHANGE_AUTHOR}/homework.git'"
+                    } catch(err) {
+                        pullRequest.comment("Ошибка при сверке веток, попробуй сделать Pull из ветки source с Rebase.\n${err}")
                     }
                 }
             }
@@ -31,9 +38,7 @@ pipeline {
                 script {
                     try {
                         sh "./gradlew --stacktrace forceRebase " +
-                                "-PtargetBranch='${pullRequest.base}' " +
-                                "-PsourceBranch='${pullRequest.headRef}' " +
-                                "-PsourceUrl='https://github.com/${CHANGE_AUTHOR}/homework.git'"
+                                "-PtargetBranch='${pullRequest.base}'"
                     } catch(err) {
                         pullRequest.comment("Ошибка при попытке сделать auto-rebase\n${err}")
                     }
@@ -56,7 +61,6 @@ pipeline {
             when { expression { env.CHANGE_ID } }
             steps {
                 //sh './gradlew check -x test'
-
                 step([
                         $class: 'ViolationsToGitHubRecorder',
                         config: [
@@ -99,7 +103,9 @@ pipeline {
                 }
                 script {
                     try {
-                        sh './gradlew :watson:test'
+                        String title = pullRequest.title
+
+                        sh "./gradlew :watson:test -PprTitle=${title}"
                     } catch (ex) {
                         pullRequest.comment("Шерлоку стало плохо:\n${ex}")
                         sherlockFailed = true
