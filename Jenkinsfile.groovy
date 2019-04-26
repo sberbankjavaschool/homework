@@ -12,6 +12,34 @@ pipeline {
     }
     agent any
     stages {
+
+        stage('Branch check') {
+            when { expression { env.CHANGE_ID } }
+            steps {
+                script {
+                    println pullRequest.base
+                    if (pullRequest.base == 'source') {
+                        def comment = pullRequest.comment("ПР в ветку Source запрещен!")
+                        error('Unauthorized SOURCE branch modification')
+                    }
+                }
+            }
+        }
+        stage('Rebase if needed') {
+            when { expression { env.CHANGE_ID } }
+            steps {
+                script {
+                    try {
+                        sh "./gradlew --stacktrace forceRebase " +
+                                "-PtargetBranch='${pullRequest.base}' " +
+                                "-PsourceBranch='${pullRequest.headRef}' " +
+                                "-PsourceUrl='https://github.com/${CHANGE_AUTHOR}/homework.git'"
+                    } catch(err) {
+                        pullRequest.comment("Ошибка при попытке сделать auto-rebase\n${err}")
+                    }
+                }
+            }
+        }
         stage('Gradle Build') {
             steps {
                 script {
@@ -55,33 +83,6 @@ pipeline {
                 ])
             }
 
-        }
-        stage('Branch check') {
-            when { expression { env.CHANGE_ID } }
-            steps {
-                script {
-                    println pullRequest.base
-                    if (pullRequest.base == 'source') {
-                        def comment = pullRequest.comment("ПР в ветку Source запрещен!")
-                        error('Unauthorized SOURCE branch modification')
-                    }
-                }
-            }
-        }
-        stage('Rebase if needed') {
-            when { expression { env.CHANGE_ID } }
-            steps {
-                script {
-                    try {
-                        sh "./gradlew --stacktrace forceRebase " +
-                                "-PtargetBranch='${pullRequest.base}' " +
-                                "-PsourceBranch='${pullRequest.headRef}' " +
-                                "-PsourceUrl='https://github.com/${CHANGE_AUTHOR}/homework.git'"
-                    } catch(err) {
-                        pullRequest.comment("Ошибка при попытке сделать auto-rebase\n${err}")
-                    }
-                }
-            }
         }
         stage('Gradle Test') {
             steps {
