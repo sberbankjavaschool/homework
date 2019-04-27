@@ -64,8 +64,7 @@ task forceRebase {
     }
 }
 
-task checkIfSourceBranckPulled {
-    // Оставь надежду всякий сюда смотрящий
+task checkIfSourceBranchPulled {
     doFirst {
         def source = project.hasProperty("sourceBranch")
         def sourceUrlExists = project.hasProperty("forkRepo")

@@ -26,7 +26,7 @@ pipeline {
                         pullRequest.removeLabel('WRONG BRANCH')
                     }
                     try {
-                        sh "./gradlew --stacktrace checkIfSourceBranckPulled " +
+                        sh "./gradlew --stacktrace checkIfSourceBranchPulled " +
                                 "-PsourceBranch='${pullRequest.headRef}' " +
                                 "-PforkRepo='https://github.com/${CHANGE_AUTHOR}/homework.git'"
                         pullRequest.removeLabel('REBASE NEEDED')
@@ -112,7 +112,7 @@ pipeline {
                     try {
                         String title = pullRequest.title
 
-                        sh "./gradlew :watson:test -PprTitle=${title}"
+                        sh "./gradlew :watson:test -PprTitle=\"${title}\""
                     } catch (ex) {
                         pullRequest.comment("Шерлоку стало плохо:\n${ex}")
                         sherlockFailed = true
