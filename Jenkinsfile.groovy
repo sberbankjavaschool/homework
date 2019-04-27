@@ -150,7 +150,7 @@ pipeline {
                 }
                 script {
                    //sh './gradlew clearSherlock'
-                   //sherlockFailed ? 1 : 0
+                   sherlockFailed ? 1 : 0
                 }
             }
         }
