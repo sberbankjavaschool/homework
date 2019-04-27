@@ -149,7 +149,7 @@ pipeline {
                     echo "Leaving comment OK"
                 }
                 script {
-                   //sh './gradlew clearSherlock'
+                   sh './gradlew clearSherlock'
                    sherlockFailed ? 1 : 0
                 }
             }
