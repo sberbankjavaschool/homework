@@ -111,7 +111,7 @@ pipeline {
                 script {
                     try {
                         String title = pullRequest.title
-                        sh "./gradlew :watson:test -PprTitle='${title}'"
+                        sh "./gradlew --info :watson:test -PprTitle='${title}'"
                     } catch (ex) {
                         pullRequest.comment("Шерлоку стало плохо:\n${ex}")
                         sherlockFailed = true
@@ -135,7 +135,7 @@ pipeline {
                     } else {
                         status = 'success'
                         pullRequest.labels = ['OK']
-                        statusMsg = 'Похое, что всё чисто. Проверь что все тесты прошли и зови преподователя. '
+                        statusMsg = 'Похоже, что всё чисто. Проверь все тесты и зови преподователя. '
                     }
                     def uri = "https://ulmc.ru/reports/${env.CHANGE_ID}/"
                     pullRequest.createStatus(status: status,
