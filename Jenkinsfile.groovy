@@ -112,7 +112,7 @@ pipeline {
                     try {
                         String title = pullRequest.title
 
-                        sh "./gradlew :watson:test -PprTitle=\"${title}\""
+                        sh "./gradlew --info :watson:test -PprTitle='${title}'"
                     } catch (ex) {
                         pullRequest.comment("Шерлоку стало плохо:\n${ex}")
                         sherlockFailed = true
@@ -136,7 +136,7 @@ pipeline {
                     } else {
                         status = 'success'
                         pullRequest.labels = ['OK']
-                        statusMsg = 'Всё чисто. Можно звать преподователя. '
+                        statusMsg = 'Похоже, что всё чисто. Проверь все тесты и зови преподователя. '
                     }
                     def uri = "https://ulmc.ru/reports/${env.CHANGE_ID}/"
                     pullRequest.createStatus(status: status,
@@ -150,8 +150,8 @@ pipeline {
                     echo "Leaving comment OK"
                 }
                 script {
-                    sh './gradlew clearSherlock'
-                    sherlockFailed ? 1 : 0
+                   sh './gradlew clearSherlock'
+                   sherlockFailed ? 1 : 0
                 }
             }
         }
@@ -176,7 +176,7 @@ pipeline {
 
 private void removeLabel(String labelToRemove) {
     Iterable<String> labels = pullRequest.labels
-    labels.forEach { label ->
+    labels.each { label ->
         if (label.equalsIgnoreCase(labelToRemove)) {
             pullRequest.removeLabel(labelToRemove)
         }
