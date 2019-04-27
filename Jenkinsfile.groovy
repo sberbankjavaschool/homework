@@ -16,13 +16,12 @@ pipeline {
             when { expression { env.CHANGE_ID } }
             steps {
                 script {
-                    print "${pullReques.headRef} ${pullRequest.base}"
+                    print "${pullRequest.headRef} ${pullRequest.base}"
                     if (pullRequest.base == 'source') {
                         def comment = pullRequest.comment("ПР в ветку Source запрещен!")
                         pullRequest.labels = ['WRONG BRANCH']
-                        //error('Unauthorized SOURCE branch modification')
                         println "To source branch! Forbidden!"
-                        return 1
+                        error('Unauthorized SOURCE branch modification')
                     }
                     try {
                         sh "./gradlew --stacktrace checkIfSourceBranckPulled " +
