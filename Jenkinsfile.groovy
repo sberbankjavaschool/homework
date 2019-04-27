@@ -1,12 +1,51 @@
 #!/usr/bin/env groovy
+import java.time.LocalDateTime
+
 //def githubUser = "sberbankjavaschool"
 def githubUser = "sberbankjavaschool"
 def githubRepo = "homework"
 def watsonHello = "Привет, это Ватсон!"
 def sherlockFailed = false
 pipeline {
+    triggers {
+        issueCommentTrigger('START-TEST')
+    }
     agent any
     stages {
+        stage('Branch check') {
+            when { expression { env.CHANGE_ID } }
+            steps {
+                script {
+                    print "${pullReques.headRef} ${pullRequest.base}"
+                    if (pullRequest.base == 'source') {
+                        def comment = pullRequest.comment("ПР в ветку Source запрещен!")
+                        pullRequest.labels = ['WRONG BRANCH']
+                        error('Unauthorized SOURCE branch modification')
+                        return
+                    }
+                    try {
+                        sh "./gradlew --stacktrace checkIfSourceBranckPulled " +
+                                "-PsourceBranch='${pullRequest.headRef}' " +
+                                "-PforkRepo='https://github.com/${CHANGE_AUTHOR}/homework.git'"
+                    } catch(err) {
+                        pullRequest.comment("Ошибка при сверке веток, попробуй сделать Pull из ветки source с Rebase.\n${err}")
+                    }
+                }
+            }
+        }
+        stage('Rebase if needed') {
+            when { expression { env.CHANGE_ID } }
+            steps {
+                script {
+                    try {
+                        sh "./gradlew --stacktrace forceRebase " +
+                                "-PtargetBranch='${pullRequest.base}'"
+                    } catch(err) {
+                        pullRequest.comment("Ошибка при попытке сделать auto-rebase\n${err}")
+                    }
+                }
+            }
+        }
         stage('Gradle Build') {
             steps {
                 script {
@@ -23,7 +62,6 @@ pipeline {
             when { expression { env.CHANGE_ID } }
             steps {
                 //sh './gradlew check -x test'
-
                 step([
                         $class: 'ViolationsToGitHubRecorder',
                         config: [
@@ -41,9 +79,7 @@ pipeline {
                                 maxNumberOfViolations                 : 99999,
                                 keepOldComments                       : false,
 
-                                commentTemplate                       : """
-    **Reporter**: {{violation.reporter}}{{#violation.rule}}  **Rule**: {{violation.rule}}{{/violation.rule}} **Severity**: {{violation.severity}}
-{{violation.message}}""",
+                                commentTemplate                       : """{{violation.message}}""",
 
                                 violationConfigs                      : [
                                         [pattern: '.*/reports/checkstyle/.*\\.xml$', parser: 'CHECKSTYLE', reporter: 'Checkstyle']
@@ -68,8 +104,11 @@ pipeline {
                 }
                 script {
                     try {
-                        sh './gradlew :watson:test'
+                        String title = pullRequest.title
+
+                        sh "./gradlew :watson:test -PprTitle=${title}"
                     } catch (ex) {
+                        pullRequest.comment("Шерлоку стало плохо:\n${ex}")
                         sherlockFailed = true
                     }
                 }
@@ -78,7 +117,7 @@ pipeline {
                                         sourceFolderPath: "./watson/build/reports/tests/test",)])
                 script {
                     for (comment in pullRequest.comments) {
-                        if (comment.body.startsWith(watsonHello)) {
+                        if (comment.body.startsWith('START-TEST')) {
                             echo "Author: ${comment.user}, Comment: ${comment.body}"
                             pullRequest.deleteComment(comment.id)
                         }
@@ -86,11 +125,11 @@ pipeline {
                     def statusMsg, status
                     if (sherlockFailed) {
                         status = 'failure'
-                        pullRequest.labels = ['FAILED' ]
+                        pullRequest.labels = ['FAILED']
                         statusMsg = 'Дела плохи, тесты не проходят! Поразбирайся ещё!'
                     } else {
                         status = 'success'
-                        pullRequest.labels = ['OK' ]
+                        pullRequest.labels = ['OK']
                         statusMsg = 'Всё чисто. Можно звать преподователя. '
                     }
                     def uri = "https://ulmc.ru/reports/${env.CHANGE_ID}/"
@@ -99,10 +138,10 @@ pipeline {
                             description: statusMsg,
                             targetUrl: uri)
 
-                    def msg = "${watsonHello} \n ${statusMsg} " + uri
+                    def msg = "${watsonHello}\n${statusMsg} " + uri
                     echo msg
-                    //def comment = pullRequest.comment(msg)
-                    //echo "Leaving comment OK"
+                    def comment = pullRequest.comment("${LocalDateTime.now()}: ${statusMsg}")
+                    echo "Leaving comment OK"
                 }
                 script {
                     sh './gradlew clearSherlock'
