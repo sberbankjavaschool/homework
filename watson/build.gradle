@@ -14,7 +14,6 @@ repositories {
 compileJava {
     options.encoding = 'UTF-8'
 }
-
 compileTestJava {
     options.encoding = 'UTF-8'
 }
@@ -22,6 +21,11 @@ compileTestJava {
 javadoc {
     options.encoding = 'UTF-8'
 }
+
+test {
+    useJUnitPlatform()
+}
+
 tasks.withType(Test) {
     if (project.hasProperty("prTitle")) {
         environment 'PR_TITLE', prTitle
