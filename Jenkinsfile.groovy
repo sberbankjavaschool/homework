@@ -111,7 +111,6 @@ pipeline {
                 script {
                     try {
                         String title = pullRequest.title
-
                         sh "./gradlew :watson:test -PprTitle=\"${title}\""
                     } catch (ex) {
                         pullRequest.comment("Шерлоку стало плохо:\n${ex}")
@@ -176,7 +175,7 @@ pipeline {
 
 private void removeLabel(String labelToRemove) {
     Iterable<String> labels = pullRequest.labels
-    labels.forEach { label ->
+    labels.each { label ->
         if (label.equalsIgnoreCase(labelToRemove)) {
             pullRequest.removeLabel(labelToRemove)
         }
