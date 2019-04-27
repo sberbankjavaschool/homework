@@ -135,7 +135,7 @@ pipeline {
                     } else {
                         status = 'success'
                         pullRequest.labels = ['OK']
-                        statusMsg = 'Всё чисто. Можно звать преподователя. '
+                        statusMsg = 'Похое, что всё чисто. Проверь что все тесты прошли и зови преподователя. '
                     }
                     def uri = "https://ulmc.ru/reports/${env.CHANGE_ID}/"
                     pullRequest.createStatus(status: status,
