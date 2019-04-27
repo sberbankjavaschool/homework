@@ -111,7 +111,7 @@ pipeline {
                 script {
                     try {
                         String title = pullRequest.title
-                        sh "./gradlew :watson:test -PprTitle=\"${title}\""
+                        sh "./gradlew :watson:test -PprTitle='${title}'"
                     } catch (ex) {
                         pullRequest.comment("Шерлоку стало плохо:\n${ex}")
                         sherlockFailed = true
