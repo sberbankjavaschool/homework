@@ -23,14 +23,14 @@ pipeline {
                         println "To source branch! Forbidden!"
                         error('Unauthorized SOURCE branch modification')
                     } else {
-                        pullRequest.removeLabel('WRONG BRANCH')
+                        removeLabel('WRONG BRANCH')
                     }
                     try {
                         sh "./gradlew --stacktrace checkIfSourceBranchPulled " +
                                 "-PsourceBranch='${pullRequest.headRef}' " +
                                 "-PforkRepo='https://github.com/${CHANGE_AUTHOR}/homework.git'"
-                        pullRequest.removeLabel('REBASE NEEDED')
-                    } catch(err) {
+                        removeLabel('REBASE NEEDED')
+                    } catch (err) {
                         pullRequest.comment("Ошибка при сверке веток," +
                                 " попробуй сделать Pull из ветки source с Rebase.\n${err}")
                         println "Da a barrel roll!"
@@ -46,7 +46,7 @@ pipeline {
                     try {
                         sh "./gradlew --stacktrace forceRebase " +
                                 "-PtargetBranch='${pullRequest.base}'"
-                    } catch(err) {
+                    } catch (err) {
                         pullRequest.comment("Ошибка при попытке сделать auto-rebase\n${err}")
                     }
                 }
@@ -170,6 +170,15 @@ pipeline {
                     sh './gradlew clean'
                 }
             }
+        }
+    }
+}
+
+private void removeLabel(String labelToRemove) {
+    Iterable<String> labels = pullRequest.labels
+    labels.forEach { label ->
+        if (label.equalsIgnoreCase(labelToRemove)) {
+            pullRequest.removeLabel(labelToRemove)
         }
     }
 }
