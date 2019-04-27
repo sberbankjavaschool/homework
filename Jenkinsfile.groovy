@@ -20,15 +20,18 @@ pipeline {
                     if (pullRequest.base == 'source') {
                         def comment = pullRequest.comment("ПР в ветку Source запрещен!")
                         pullRequest.labels = ['WRONG BRANCH']
-                        error('Unauthorized SOURCE branch modification')
-                        return
+                        //error('Unauthorized SOURCE branch modification')
+                        println "To source branch! Forbidden!"
+                        return 1
                     }
                     try {
                         sh "./gradlew --stacktrace checkIfSourceBranckPulled " +
                                 "-PsourceBranch='${pullRequest.headRef}' " +
                                 "-PforkRepo='https://github.com/${CHANGE_AUTHOR}/homework.git'"
                     } catch(err) {
-                        pullRequest.comment("Ошибка при сверке веток, попробуй сделать Pull из ветки source с Rebase.\n${err}")
+                        pullRequest.comment("Ошибка при сверке веток," +
+                                " попробуй сделать Pull из ветки source с Rebase.\n${err}")
+                        println "Da a barrel roll!"
                     }
                 }
             }
