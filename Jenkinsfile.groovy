@@ -19,6 +19,7 @@ pipeline {
                     print "${pullReques.headRef} ${pullRequest.base}"
                     if (pullRequest.base == 'source') {
                         def comment = pullRequest.comment("ПР в ветку Source запрещен!")
+                        pullRequest.labels = ['WRONG BRANCH']
                         error('Unauthorized SOURCE branch modification')
                         return
                     }
