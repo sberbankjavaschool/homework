@@ -12,17 +12,15 @@ import static ru.sberbank.school.task02.util.QuoteBuilder.buildQuote;
 
 /**
  * Сервис для обработки внешних котировок
- *
  * Created by Gregory Melnikov at 27.04.2019
  */
 public class ExternalQuotesServiceImpl implements ExternalQuotesService {
 
-//    private static final int[] VOLUMES = {100, 500, 1000, 10_000, 100_000, 1_000_000, -1};
-//    private static final int[] SPREADS = {10, 8, 6, 5, 4, 6, 8};
-    private static final int[] VOLUMES = {100_000, 1000, 100, -1, 500, 1000, -1, 10_000, 100_000,38000, 1_000_000, -1, 1};
-    private static final int[] SPREADS = {15, 5, 10, 9, 8, 6, 80, 4, 5, 6, 8, 40, 1};
+    private static final int[] VOLUMES = {100_000, 1000, 100, -1, 500, 1000, -1, 10_000, 100_000, 38000, -1, 1};
+    private static final int[] SPREADS = {15, 5, 10, 9, 8, 6, 4, 5, 6, 8, 40, 1};
 
     /**
+     * 28.04.2019
      * Возвращает список котировок
      *
      * @param symbol валютная пара, кросс-курсовые пары не допускаются

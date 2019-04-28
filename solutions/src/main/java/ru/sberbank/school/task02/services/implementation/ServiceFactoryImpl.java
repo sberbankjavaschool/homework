@@ -1,6 +1,9 @@
 package ru.sberbank.school.task02.services.implementation;
 
-import ru.sberbank.school.task02.*;
+import ru.sberbank.school.task02.ExtendedFxConversionService;
+import ru.sberbank.school.task02.ExternalQuotesService;
+import ru.sberbank.school.task02.FxConversionService;
+import ru.sberbank.school.task02.ServiceFactory;
 
 public class ServiceFactoryImpl implements ServiceFactory {
     /**
@@ -11,7 +14,7 @@ public class ServiceFactoryImpl implements ServiceFactory {
      */
     @Override
     public FxConversionService getFxConversionService(ExternalQuotesService externalQuotesService) {
-        return null;
+        return new FxConversionServiceImpl(externalQuotesService);
     }
 
     @Override

@@ -9,7 +9,6 @@ import java.util.Map;
 
 /**
  * Внутренний сервис подготавливает данные приходящие из внешнего сервиса
- *
  * Created by Gregory Melnikov at 28.04.2019
  */
 public interface InternalQuotesService {

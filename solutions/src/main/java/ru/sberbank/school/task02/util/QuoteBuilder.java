@@ -1,12 +1,9 @@
 package ru.sberbank.school.task02.util;
 
-import lombok.Setter;
-
 import java.math.BigDecimal;
 
 /**
  * Создание котировок
- *
  * Created by Gregory Melnikov at 27.04.2019
  */
 public class QuoteBuilder {
@@ -44,7 +41,7 @@ public class QuoteBuilder {
         return DENOMINATOR;
     }
 
-    public static void setDenominator(long DENOMINATOR) {
-        QuoteBuilder.DENOMINATOR = DENOMINATOR;
+    public static void setDenominator(long denominator) {
+        QuoteBuilder.DENOMINATOR = denominator;
     }
 }
