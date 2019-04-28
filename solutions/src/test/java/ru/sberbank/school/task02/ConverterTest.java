@@ -1,9 +1,8 @@
 package ru.sberbank.school.task02;
 
-import org.junit.Test;
-
 import java.math.BigDecimal;
 
+import org.junit.jupiter.api.Test;
 import ru.sberbank.school.task02.util.ClientOperation;
 import ru.sberbank.school.task02.util.ExternalQuotesServiceDemo;
 import ru.sberbank.school.task02.util.Symbol;
