@@ -29,7 +29,8 @@ public class Calculator implements FxConversionService {
             if (quote.isInfinity() && (current == null)) {
                 current = quote;
             } else if (amount.compareTo(quote.getVolumeSize()) < 0) {
-                if ((current == null) || current.isInfinity() || (current.getVolumeSize().compareTo(quote.getVolumeSize()) > 0)) {
+                if ((current == null) || current.isInfinity()
+                        || (current.getVolumeSize().compareTo(quote.getVolumeSize()) > 0)) {
                     current = quote;
                 }
             }
