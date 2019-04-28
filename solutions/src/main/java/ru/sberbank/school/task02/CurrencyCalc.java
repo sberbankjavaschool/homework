@@ -19,8 +19,9 @@ public class CurrencyCalc implements FxConversionService {
 
     @Override
     public BigDecimal convert(ClientOperation operation, Symbol symbol, BigDecimal amount) {
-        if (amount == null || operation == null || symbol == null || amount.equals(BigDecimal.ZERO))
+        if (amount == null || operation == null || symbol == null || amount.equals(BigDecimal.ZERO)) {
             throw new IllegalArgumentException();
+        }
 
         List<Quote> quotes = externalQuotesService.getQuotes(symbol);
         sortQuotes(quotes);
@@ -38,10 +39,12 @@ public class CurrencyCalc implements FxConversionService {
 
     private void sortQuotes(List<Quote> quotes) {
         Collections.sort(quotes, (o1, o2) -> {
-            if (o1.isInfinity())
+            if (o1.isInfinity()) {
                 return 1;
-            if (o2.isInfinity())
+            }
+            if (o2.isInfinity()) {
                 return -1;
+            }
             return o1.getVolumeSize().compareTo(o2.getVolumeSize());
         });
     }
