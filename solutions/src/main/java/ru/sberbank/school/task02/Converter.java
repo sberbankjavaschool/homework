@@ -3,7 +3,6 @@ package ru.sberbank.school.task02;
 import java.math.BigDecimal;
 import java.util.List;
 
-import lombok.NonNull;
 import ru.sberbank.school.task02.util.ClientOperation;
 import ru.sberbank.school.task02.util.Quote;
 import ru.sberbank.school.task02.util.Symbol;
@@ -17,7 +16,11 @@ public class Converter implements FxConversionService {
     }
 
     @Override
-    public BigDecimal convert(@NonNull ClientOperation operation, @NonNull Symbol symbol, @NonNull BigDecimal amount) {
+    public BigDecimal convert(ClientOperation operation, Symbol symbol, BigDecimal amount) {
+        if (operation == null || symbol == null || amount == null) {
+            return null;
+        }
+
         List<Quote> quotes = service.getQuotes(symbol);
         if (amount.compareTo(BigDecimal.ZERO) <= 0 || quotes.size() <= 0) {
             return null;
