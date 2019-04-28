@@ -18,7 +18,7 @@ public class CurrencyCalc implements FxConversionService {
 
     @Override
     public BigDecimal convert( ClientOperation operation, Symbol symbol, BigDecimal amount) {
-        if (amount == null || operation == null || symbol == null || amount.equals(BigDecimal.ZERO)) {    //да, это чудовищно и я помню про lombok, но почему то у меня не получилось проставить аннотоции
+        if (amount == null || operation == null || symbol == null || amount.equals(BigDecimal.ZERO)) {
             throw new IllegalArgumentException();
         }
 
