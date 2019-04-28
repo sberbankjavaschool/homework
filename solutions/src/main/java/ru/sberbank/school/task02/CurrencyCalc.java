@@ -12,36 +12,36 @@ public class CurrencyCalc implements FxConversionService {
 
     private ExternalQuotesService externalQuotesService;
 
-    public CurrencyCalc( ExternalQuotesService externalQuotesService) {
+    public CurrencyCalc(ExternalQuotesService externalQuotesService) {
         this.externalQuotesService = externalQuotesService;
     }
 
 
     @Override
-    public BigDecimal convert( ClientOperation operation, Symbol symbol, BigDecimal amount) {
-        if(amount == null || operation == null || symbol == null || amount.equals(BigDecimal.ZERO))
-            return BigDecimal.ZERO;
+    public BigDecimal convert(ClientOperation operation, Symbol symbol, BigDecimal amount) {
+        if (amount == null || operation == null || symbol == null || amount.equals(BigDecimal.ZERO))
+            throw new IllegalArgumentException();
 
         List<Quote> quotes = externalQuotesService.getQuotes(symbol);
         sortQuotes(quotes);
         Quote currentQuote = quotes.get(0);
 
-        for(Quote quote : quotes){
-            if(amount.compareTo(quote.getVolumeSize()) <= 0){
+        for (Quote quote : quotes) {
+            if (amount.compareTo(quote.getVolumeSize()) <= 0) {
                 currentQuote = quote;
                 break;
             }
         }
 
-        return operation == ClientOperation.BUY ? currentQuote.getOffer() : currentQuote.getBid() ;
+        return operation == ClientOperation.BUY ? currentQuote.getOffer() : currentQuote.getBid();
     }
 
-    private void sortQuotes( List<Quote> quotes){
+    private void sortQuotes(List<Quote> quotes) {
         Collections.sort(quotes, (o1, o2) -> {
-            if(o1.getVolumeSize().compareTo(BigDecimal.ZERO) < 0)
+            if (o1.isInfinity())
                 return 1;
-            if(o2.getVolumeSize().compareTo(BigDecimal.ZERO) < 0)
-                return 0;
+            if (o2.isInfinity())
+                return -1;
             return o1.getVolumeSize().compareTo(o2.getVolumeSize());
         });
     }
