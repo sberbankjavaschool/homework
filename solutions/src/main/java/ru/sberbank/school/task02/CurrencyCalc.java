@@ -29,7 +29,7 @@ public class CurrencyCalc implements FxConversionService {
         amount = amount.setScale(0, RoundingMode.HALF_UP);
 
         for (Quote quote : quotes) {
-            if (amount.compareTo(quote.getVolumeSize()) <= 0 || quote.isInfinity()) {
+            if (amount.compareTo(quote.getVolumeSize()) < 0 || quote.isInfinity()) {
                 currentQuote = quote;
                 break;
             }
