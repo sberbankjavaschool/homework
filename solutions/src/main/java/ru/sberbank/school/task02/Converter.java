@@ -1,7 +1,6 @@
 package ru.sberbank.school.task02;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
 import ru.sberbank.school.task02.util.ClientOperation;
@@ -30,7 +29,7 @@ public class Converter implements FxConversionService {
             if (o2.isInfinity()) {
                 return -1;
             }
-            return o2.getVolumeSize().compareTo(o1.getVolumeSize());
+            return o1.getVolumeSize().compareTo(o2.getVolumeSize());
         });
 
         Quote matchedQuote = getMatchedQuote(quotes, amount);
@@ -41,20 +40,18 @@ public class Converter implements FxConversionService {
     }
 
     private Quote getMatchedQuote(List<Quote> quotes, BigDecimal amount) {
-        int matchedIndex = -1;
+        Quote res = null;
         for (Quote q : quotes) {
-            if (amount.compareTo(q.getVolumeSize()) > 0) {
-                matchedIndex = quotes.indexOf(q);
+            if (amount.compareTo(q.getVolumeSize()) < 0) {
+                res = q;
+                break;
             }
         }
 
-        if (matchedIndex == -1 && getInfQuote(quotes) != null) {
+        if (res == null && getInfQuote(quotes) != null) {
             return getInfQuote(quotes);
         }
-        if (matchedIndex < 0) {
-            return null;
-        }
-        return quotes.get(matchedIndex);
+        return res;
     }
 
     private Quote getInfQuote(List<Quote> quotes) {
