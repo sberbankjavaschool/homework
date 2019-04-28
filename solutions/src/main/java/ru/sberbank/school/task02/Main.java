@@ -1,6 +1,5 @@
 package ru.sberbank.school.task02;
 
-import ru.sberbank.school.task02.util.Beneficiary;
 import ru.sberbank.school.task02.util.ClientOperation;
 import ru.sberbank.school.task02.util.Symbol;
 
@@ -11,10 +10,9 @@ public class Main {
     public static void main(String[] args) {
         ServiceFactory serviceFactory = new ServiceFactoryImpl();
         ExternalQuotesService quotesService = new MyExternalQuotesService();
-        ExtendedFxConversionService calculator = serviceFactory.getExtendedFxConversionService(quotesService);
+        FxConversionService calculator = serviceFactory.getFxConversionService(quotesService);
 
-        System.out.println(calculator.convertReversed(ClientOperation.BUY, Symbol.USD_RUB,
-                new BigDecimal(1_000_000), Beneficiary.BANK));
+        System.out.println(calculator.convert(ClientOperation.BUY, Symbol.USD_RUB, new BigDecimal(1002.5320152644028)));
     }
 
 }
