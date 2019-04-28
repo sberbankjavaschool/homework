@@ -47,7 +47,7 @@ public class Converter implements FxConversionService {
                 break;
             }
         }
-		
+
         if (res == null) {
             res = getInfQuote(quotes);
         }
