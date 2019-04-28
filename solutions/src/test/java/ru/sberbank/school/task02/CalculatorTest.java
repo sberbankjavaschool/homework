@@ -38,7 +38,7 @@ class CalculatorTest {
     void convertReturns3rdBidIfEquals3rdQuoteVolumeSize() {
         FxConversionService calculator = factory.getFxConversionService(quotesService);
         BigDecimal offer = calculator.convert(ClientOperation.BUY, Symbol.USD_RUB, BigDecimal.valueOf(30));
-        Assertions.assertEquals(BigDecimal.valueOf(3000), offer);
+        Assertions.assertEquals(BigDecimal.valueOf(4000), offer);
     }
 
     @Test
@@ -66,7 +66,7 @@ class CalculatorTest {
     void convertDemoProviderMaxValue() {
         FxConversionService calculator = factory.getFxConversionService(demoQuotesService);
         BigDecimal offer = calculator.convert(ClientOperation.BUY, Symbol.USD_RUB, BigDecimal.valueOf(1_000_000));
-        Assertions.assertEquals(BigDecimal.valueOf(83), offer);
+        Assertions.assertEquals(BigDecimal.valueOf(84), offer);
     }
 
     @Test

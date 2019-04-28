@@ -35,12 +35,14 @@ public class Calculator implements FxConversionService {
 
         Quote current = quotes.get(0);
         for (Quote quote: quotes) {
-            if (quote.isInfinity() || amount.compareTo(quote.getVolumeSize()) <= 0) {
+            if (quote.isInfinity() || amount.compareTo(quote.getVolumeSize()) < 0) {
                 current = quote;
             } else {
                 break;
             }
         }
-        return operation == ClientOperation.BUY ? current.getOffer() : current.getBid();
+
+//        return operation == ClientOperation.BUY ? current.getOffer() : current.getBid();
+        return current.getOffer();
     }
 }
