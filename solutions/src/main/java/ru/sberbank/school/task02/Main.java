@@ -12,7 +12,7 @@ public class Main {
         ExternalQuotesService quotesService = new MyExternalQuotesService();
         FxConversionService calculator = serviceFactory.getFxConversionService(quotesService);
 
-        System.out.println(calculator.convert(null, Symbol.USD_RUB, new BigDecimal(1002.5320152644028)));
+        System.out.println(calculator.convert(ClientOperation.BUY, Symbol.USD_RUB, new BigDecimal(2000000)));
     }
 
 }
