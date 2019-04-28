@@ -42,7 +42,6 @@ public class Calculator implements FxConversionService {
             }
         }
 
-//        return operation == ClientOperation.BUY ? current.getOffer() : current.getBid();
-        return current.getOffer();
+        return operation == ClientOperation.BUY ? current.getOffer() : current.getBid();
     }
 }

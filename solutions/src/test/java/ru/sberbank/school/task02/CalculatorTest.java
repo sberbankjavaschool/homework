@@ -35,9 +35,16 @@ class CalculatorTest {
     }
 
     @Test
-    void convertReturns3rdBidIfEquals3rdQuoteVolumeSize() {
+    void convertReturns4rdBidIfEquals3rdQuoteVolumeSize() {
         FxConversionService calculator = factory.getFxConversionService(quotesService);
         BigDecimal offer = calculator.convert(ClientOperation.BUY, Symbol.USD_RUB, BigDecimal.valueOf(30));
+        Assertions.assertEquals(BigDecimal.valueOf(4000), offer);
+    }
+
+    @Test
+    void convertReturnsIfQuoteVolumeSizeDouble() {
+        FxConversionService calculator = factory.getFxConversionService(quotesService);
+        BigDecimal offer = calculator.convert(ClientOperation.BUY, Symbol.USD_RUB, BigDecimal.valueOf(31.0234234));
         Assertions.assertEquals(BigDecimal.valueOf(4000), offer);
     }
 
@@ -60,6 +67,13 @@ class CalculatorTest {
         FxConversionService calculator = factory.getFxConversionService(demoQuotesService);
         BigDecimal offer = calculator.convert(ClientOperation.BUY, Symbol.USD_RUB, BigDecimal.valueOf(1_000_001));
         Assertions.assertEquals(BigDecimal.valueOf(84), offer);
+    }
+
+    @Test
+    void convertDemoProviderMoreThan1000Double() {
+        FxConversionService calculator = factory.getFxConversionService(demoQuotesService);
+        BigDecimal offer = calculator.convert(ClientOperation.BUY, Symbol.USD_RUB, BigDecimal.valueOf(1005.0410071948494));
+        Assertions.assertEquals(BigDecimal.valueOf(82), offer);
     }
 
     @Test
