@@ -1,4 +1,4 @@
-package ru.sberbank.school.task02.services.exeption;
+package ru.sberbank.school.task02.exeption;
 
 /**
  * Ошибка при возвращении пустого листа котировок
