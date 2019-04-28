@@ -72,7 +72,8 @@ class CalculatorTest {
     @Test
     void convertDemoProviderMoreThan1000Double() {
         FxConversionService calculator = factory.getFxConversionService(demoQuotesService);
-        BigDecimal offer = calculator.convert(ClientOperation.BUY, Symbol.USD_RUB, BigDecimal.valueOf(1005.0410071948494));
+        BigDecimal offer = calculator.convert(ClientOperation.BUY, Symbol.USD_RUB,
+                BigDecimal.valueOf(1005.0410071948494));
         Assertions.assertEquals(BigDecimal.valueOf(82), offer);
     }
 
