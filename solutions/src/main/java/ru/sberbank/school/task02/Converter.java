@@ -47,8 +47,9 @@ public class Converter implements FxConversionService {
                 break;
             }
         }
-        if (res == null && getInfQuote(quotes) != null) {
-            return getInfQuote(quotes);
+		
+        if (res == null) {
+            res = getInfQuote(quotes);
         }
         return res;
     }
