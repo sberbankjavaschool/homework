@@ -27,7 +27,7 @@ public class Converter implements FxConversionService {
                 return 1;
             }
             if (o2.isInfinity()) {
-                return 0;
+                return -1;
             }
             return o1.getVolumeSize().compareTo(o2.getVolumeSize());
         });
