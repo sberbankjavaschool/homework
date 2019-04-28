@@ -1,6 +1,6 @@
 package ru.sberbank.school.task02;
 
-import ru.sberbank.school.task02.util.ClientOperation;
+import ru.sberbank.school.task02.services.implementation.FxConversionServiceImpl;
 
 import java.math.BigDecimal;
 
@@ -13,13 +13,16 @@ import static ru.sberbank.school.task02.util.Symbol.*;
 public class Main {
     public static void main(String[] args) {
 
-        double THUS = 1000;
+        double THUS = 38_000;
 
         BigDecimal amount = BigDecimal.valueOf(THUS);
 
-        FxConversionServiceImpl conversionService = new FxConversionServiceImpl();
+        FxConversionService conversionService = new FxConversionServiceImpl();
+//        FxConversionService conversionService = new Converter();
 
-        BigDecimal result = conversionService.convert(BUY, USD_RUB, amount);
+
+//        BigDecimal result = conversionService.convert(BUY, USD_RUB, amount);
+        BigDecimal result = conversionService.convert(SELL, USD_RUB, amount);
 
         System.out.println(result.toString());
     }

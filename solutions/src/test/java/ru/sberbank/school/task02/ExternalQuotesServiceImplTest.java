@@ -4,6 +4,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import ru.sberbank.school.task02.exception.WrongSymbolException;
+import ru.sberbank.school.task02.services.implementation.ExternalQuotesServiceImpl;
 import ru.sberbank.school.task02.util.Quote;
 import ru.sberbank.school.task02.util.Symbol;
 
@@ -21,6 +22,11 @@ public class ExternalQuotesServiceImplTest {
     public void getQuotesIsNotEmpty() {
         List<Quote> quotes = new ArrayList<>();
         quotes = externalQuotesService.getQuotes(Symbol.USD_RUB);
+
+        for (Quote quote : quotes) {
+            System.out.println(quote.toString());
+            System.out.println("AND VOLUME:" + quote.getVolume().toString());
+        }
         assertNotEquals(0, quotes.size());
     }
 

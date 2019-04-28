@@ -1,5 +1,7 @@
 package ru.sberbank.school.task02.util;
 
+import lombok.Setter;
+
 import java.math.BigDecimal;
 
 /**
@@ -9,16 +11,40 @@ import java.math.BigDecimal;
  */
 public class QuoteBuilder {
 
-    private static final long BID_CONSTANT = 80L;
-    private static final long OFFER_CONSTANT = 80L;
-    private static final long DENOMINATOR = 2L;
+    private static long BID_VALUE = 80L;
+    private static long OFFER_VALUE = 80L;
+    private static long DENOMINATOR = 2L;
 
-    public Quote buildQuote(Symbol symbol, int volume, int spread) {
+    public static Quote buildQuote(Symbol symbol, int volume, int spread) {
         return Quote.builder()
                 .symbol(symbol)
                 .volume(Volume.from(volume))
-                .bid(BigDecimal.valueOf(BID_CONSTANT - spread / DENOMINATOR))
-                .offer(BigDecimal.valueOf(OFFER_CONSTANT + spread / DENOMINATOR))
+                .bid(BigDecimal.valueOf(BID_VALUE - spread / DENOMINATOR))
+                .offer(BigDecimal.valueOf(OFFER_VALUE + spread / DENOMINATOR))
                 .build();
+    }
+
+    public static long getBidValue() {
+        return BID_VALUE;
+    }
+
+    public static void setBidValue(long bidValue) {
+        BID_VALUE = bidValue;
+    }
+
+    public static long getOfferValue() {
+        return OFFER_VALUE;
+    }
+
+    public static void setOfferValue(long offerValue) {
+        OFFER_VALUE = offerValue;
+    }
+
+    public static long getDenominator() {
+        return DENOMINATOR;
+    }
+
+    public static void setDenominator(long DENOMINATOR) {
+        QuoteBuilder.DENOMINATOR = DENOMINATOR;
     }
 }

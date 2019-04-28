@@ -1,12 +1,14 @@
-package ru.sberbank.school.task02;
+package ru.sberbank.school.task02.services.implementation;
 
+import ru.sberbank.school.task02.ExternalQuotesService;
 import ru.sberbank.school.task02.exception.WrongSymbolException;
 import ru.sberbank.school.task02.util.Quote;
-import ru.sberbank.school.task02.util.QuoteBuilder;
 import ru.sberbank.school.task02.util.Symbol;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static ru.sberbank.school.task02.util.QuoteBuilder.buildQuote;
 
 /**
  * Сервис для обработки внешних котировок
@@ -15,15 +17,15 @@ import java.util.List;
  */
 public class ExternalQuotesServiceImpl implements ExternalQuotesService {
 
-    private static final int[] VOLUMES = {100, 500, 1000, 10_000, 100_000, 1_000_000, -1};
-    private static final int[] SPREADS = {10, 8, 6, 5, 4, 6, 8};
-
-    QuoteBuilder quoteBuilder = new QuoteBuilder();
+//    private static final int[] VOLUMES = {100, 500, 1000, 10_000, 100_000, 1_000_000, -1};
+//    private static final int[] SPREADS = {10, 8, 6, 5, 4, 6, 8};
+    private static final int[] VOLUMES = {100_000, 1000, 100, -1, 500, 1000, -1, 10_000, 100_000,38000, 1_000_000, -1, 1};
+    private static final int[] SPREADS = {15, 5, 10, 9, 8, 6, 80, 4, 5, 6, 8, 40, 1};
 
     /**
      * Возвращает список котировок
      *
-     * @param symbol - валютная пара, кросс-курсовые пары не допускаются
+     * @param symbol валютная пара, кросс-курсовые пары не допускаются
      * @return список котировок для входящей пары
      */
     @Override
@@ -35,7 +37,7 @@ public class ExternalQuotesServiceImpl implements ExternalQuotesService {
         List<Quote> quotes = new ArrayList<>();
 
         for (int i = 0; i < VOLUMES.length; i++) {
-            Quote quote = quoteBuilder.buildQuote(symbol, VOLUMES[i], SPREADS[i]);
+            Quote quote = buildQuote(symbol, VOLUMES[i], SPREADS[i]);
             quotes.add(quote);
         }
         return quotes;
