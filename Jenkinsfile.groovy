@@ -114,7 +114,9 @@ pipeline {
 
                         sh "./gradlew --info :watson:test -PprTitle='${title}'"
                     } catch (ex) {
-                        pullRequest.comment("Шерлоку стало плохо:\n${ex}")
+                        if (!ex.getMessage().contains('exit code 1')) {
+                            pullRequest.comment("Шерлоку стало плохо:\n${ex}")
+                        }
                         sherlockFailed = true
                     }
                 }
@@ -150,8 +152,8 @@ pipeline {
                     echo "Leaving comment OK"
                 }
                 script {
-                   sh './gradlew clearSherlock'
-                   sherlockFailed ? 1 : 0
+                    sh './gradlew clearSherlock'
+                    sherlockFailed ? 1 : 0
                 }
             }
         }
