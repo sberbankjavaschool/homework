@@ -51,10 +51,10 @@ public class Converter implements FxConversionService {
         if (mathcedIndex == -1 && getInfQuote(quotes) != null) {
             return getInfQuote(quotes);
         }
-        if (mathcedIndex <= 0) {
+        if (mathcedIndex < 0) {
             return null;
         }
-        return quotes.get(mathcedIndex - 1);
+        return quotes.get(mathcedIndex);
     }
 
     private Quote getInfQuote(List<Quote> quotes) {
