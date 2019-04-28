@@ -30,7 +30,7 @@ public class Converter implements FxConversionService {
             if (o2.isInfinity()) {
                 return -1;
             }
-            return o1.getVolumeSize().compareTo(o2.getVolumeSize());
+            return o2.getVolumeSize().compareTo(o1.getVolumeSize());
         });
 
         Quote matchedQuote = getMatchedQuote(quotes, amount);
@@ -41,21 +41,20 @@ public class Converter implements FxConversionService {
     }
 
     private Quote getMatchedQuote(List<Quote> quotes, BigDecimal amount) {
-        int mathcedIndex = -1;
+        int matchedIndex = -1;
         for (Quote q : quotes) {
-            if (amount.compareTo(q.getVolumeSize()) < 0) {
-                mathcedIndex = quotes.indexOf(q);
-                break;
+            if (amount.compareTo(q.getVolumeSize()) > 0) {
+                matchedIndex = quotes.indexOf(q);
             }
         }
 
-        if (mathcedIndex == -1 && getInfQuote(quotes) != null) {
+        if (matchedIndex == -1 && getInfQuote(quotes) != null) {
             return getInfQuote(quotes);
         }
-        if (mathcedIndex < 0) {
+        if (matchedIndex < 0) {
             return null;
         }
-        return quotes.get(mathcedIndex);
+        return quotes.get(matchedIndex);
     }
 
     private Quote getInfQuote(List<Quote> quotes) {
