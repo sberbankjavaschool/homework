@@ -21,6 +21,10 @@ javadoc {
 
 dependencies {
     implementation project(":tasks")
+
+    implementation 'commons-cli:commons-cli:1.4'
+    implementation 'org.codehaus.groovy:groovy-all:+'
+    
     testCompile "org.junit.jupiter:junit-jupiter-api:5.3.0"
     testRuntime "org.junit.jupiter:junit-jupiter-engine:5.3.0"
     testRuntime "org.junit.vintage:junit-vintage-engine:5.3.0"
