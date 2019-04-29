@@ -11,6 +11,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 public class CurrencyCalculator implements FxConversionService {
     private ExternalQuotesService externalQuotesService;
@@ -24,7 +25,6 @@ public class CurrencyCalculator implements FxConversionService {
         quotes = externalQuotesService.getQuotes(symbol);
         this.amountOfRequest = amount;
         this.symbolOfRequest = symbol.getSymbol();
-        
         return operation(operation);
     }
     
@@ -40,11 +40,16 @@ public class CurrencyCalculator implements FxConversionService {
         for (Quote quote : quotes) {
             amountQuote = quote.getVolume().getVolume();
             symbolQuote = quote.getSymbol().getSymbol();
-            
             if ((symbolQuote.equals(symbolOfRequest) && (amountQuote.compareTo(amountOfRequest) >= 0)))  {
                 return quote;
             }
         }
         return null;
+    }
+
+    private List<Quote> filterQutesList(List<Quote> quotesList) {
+        List<Quote> filterBySymbolList = quotesList.stream()
+                .filter(p -> p.getSymbol().equals(symbolOfRequest)).collect(Collectors.toList());
+        return filterBySymbolList;
     }
 }
