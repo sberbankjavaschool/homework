@@ -19,7 +19,7 @@ public class ConverterTest {
                 .forEach(
                         quote -> System.out.println(quote.getVolume() + " " + quote.getBid() + " " + quote.getOffer()));
         Converter conv = new Converter(service);
-        BigDecimal convert = conv.convert(ClientOperation.BUY, Symbol.USD_RUB, BigDecimal.valueOf(100));
+        BigDecimal convert = conv.convert(ClientOperation.BUY, Symbol.USD_RUB, BigDecimal.valueOf(500));
         System.out.println(convert);
         convert = conv.convert(ClientOperation.SELL, Symbol.USD_RUB, BigDecimal.valueOf(5333));
         System.out.println(convert);

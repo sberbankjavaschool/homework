@@ -3,6 +3,7 @@ package ru.sberbank.school.task02;
 import java.math.BigDecimal;
 import java.util.List;
 
+import lombok.NonNull;
 import ru.sberbank.school.task02.util.ClientOperation;
 import ru.sberbank.school.task02.util.Quote;
 import ru.sberbank.school.task02.util.Symbol;
@@ -16,27 +17,18 @@ public class Converter implements FxConversionService {
     }
 
     @Override
-    public BigDecimal convert(ClientOperation operation, Symbol symbol, BigDecimal amount) {
-        if (operation == null || symbol == null || amount == null) {
+    public BigDecimal convert(@NonNull ClientOperation operation, @NonNull Symbol symbol, @NonNull BigDecimal amount) {
+        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
             return null;
         }
-
         List<Quote> quotes = service.getQuotes(symbol);
-        if (amount.compareTo(BigDecimal.ZERO) <= 0 || quotes.size() <= 0) {
-            return null;
-        }
-
-        quotes.sort((o1, o2) -> {
-            if (o1.isInfinity()) {
-                return 1;
-            }
-            if (o2.isInfinity()) {
-                return -1;
-            }
-            return o1.getVolumeSize().compareTo(o2.getVolumeSize());
-        });
 
         Quote matchedQuote = getMatchedQuote(quotes, amount);
+
+        return getPrice(operation, matchedQuote);
+    }
+
+    private BigDecimal getPrice(ClientOperation operation, Quote matchedQuote) {
         if (matchedQuote == null) {
             return null;
         }
@@ -44,26 +36,31 @@ public class Converter implements FxConversionService {
     }
 
     private Quote getMatchedQuote(List<Quote> quotes, BigDecimal amount) {
+        if (quotes.size() <= 0) {
+            return null;
+        }
+
         Quote res = null;
-        for (Quote q : quotes) {
-            if (amount.compareTo(q.getVolumeSize()) < 0) {
-                res = q;
-                break;
-            }
-        }
+        Quote infQuote = null;
 
-        if (res == null) {
-            res = getInfQuote(quotes);
-        }
-        return res;
-    }
-
-    private Quote getInfQuote(List<Quote> quotes) {
         for (Quote q : quotes) {
             if (q.isInfinity()) {
-                return q;
+                infQuote = q;
+                continue;
+            }
+            if (((res == null) || quoteIsLowerThan(q, res)) && quoteIsMatch(q, amount)) {
+                res = q;
             }
         }
-        return null;
+
+        return res == null ? infQuote : res;
+    }
+
+    private boolean quoteIsMatch(Quote quote, BigDecimal amount) {
+        return (quote.getVolumeSize().compareTo(amount) > 0);
+    }
+
+    private boolean quoteIsLowerThan(Quote first, Quote second) {
+        return (first.getVolumeSize().compareTo(second.getVolumeSize()) < 0);
     }
 }
