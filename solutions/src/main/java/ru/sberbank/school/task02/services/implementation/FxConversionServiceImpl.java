@@ -1,6 +1,7 @@
 package ru.sberbank.school.task02.services.implementation;
 
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import ru.sberbank.school.task02.ExternalQuotesService;
 import ru.sberbank.school.task02.FxConversionService;
 import ru.sberbank.school.task02.services.InternalQuotesService;
@@ -18,9 +19,10 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FxConversionServiceImpl implements FxConversionService {
 
-    private final ExternalQuotesService externalQuotesService; //= new ExternalQuotesServiceImpl();
+//    private final ExternalQuotesService externalQuotesService; //= new ExternalQuotesServiceImpl();
+//    private final InternalQuotesService internalQuotesService; // = new InternalQuotesServiceImpl(externalQuotesService);
 
-    private final InternalQuotesService internalQuotesService = new InternalQuotesServiceImpl(externalQuotesService);
+    private final InternalQuotesService internalQuotesService;
 
     /**
      * Возвращает значение цены единицы базовой валюты для указанного объема.

@@ -4,6 +4,7 @@ import ru.sberbank.school.task02.ExtendedFxConversionService;
 import ru.sberbank.school.task02.ExternalQuotesService;
 import ru.sberbank.school.task02.FxConversionService;
 import ru.sberbank.school.task02.ServiceFactory;
+import ru.sberbank.school.task02.services.InternalQuotesService;
 
 public class ServiceFactoryImpl implements ServiceFactory {
     /**
@@ -14,7 +15,8 @@ public class ServiceFactoryImpl implements ServiceFactory {
      */
     @Override
     public FxConversionService getFxConversionService(ExternalQuotesService externalQuotesService) {
-        return new FxConversionServiceImpl(externalQuotesService);
+        InternalQuotesService internalQuotesService = new InternalQuotesServiceImpl(externalQuotesService);
+        return new FxConversionServiceImpl(internalQuotesService);
     }
 
     @Override
