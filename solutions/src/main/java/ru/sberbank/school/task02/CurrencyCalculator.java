@@ -41,7 +41,7 @@ public class CurrencyCalculator implements FxConversionService {
         BigDecimal diff = null;
 
         for (Quote quote : quoteList) {
-            if (amount.compareTo(quote.getVolumeSize()) <= 0 && !quote.isInfinity()) {
+            if (amount.compareTo(quote.getVolumeSize()) < 0 && !quote.isInfinity()) {
                 BigDecimal localDiff = quote.getVolumeSize().subtract(amount);
 
                 if (diff == null) {
