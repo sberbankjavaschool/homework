@@ -39,6 +39,9 @@ public class InternalQuotesServiceImpl implements InternalQuotesService {
 //            if (result == 0) {
 //                result = previos.getBid().compareTo(current.getBid());
 //            }
+            if (result == 0) {
+                result = current.getBid().compareTo(previos.getBid());
+            }
             return result;
         });
         return quotes;

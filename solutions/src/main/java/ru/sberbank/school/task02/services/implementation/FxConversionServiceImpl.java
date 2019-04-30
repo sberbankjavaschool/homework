@@ -42,7 +42,7 @@ public class FxConversionServiceImpl implements FxConversionService {
             if (targetQuote.isInfinity() && amount.compareTo(quote.getVolumeSize()) > 0) {
                 break;
             }
-            if (amount.compareTo(quote.getVolumeSize()) <= 0) {
+            if (amount.compareTo(quote.getVolumeSize()) < 0) {
                 targetQuote = quote;
                 break;
             }
