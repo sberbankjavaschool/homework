@@ -15,6 +15,7 @@ import java.util.List;
  */
 @RequiredArgsConstructor
 public class InternalQuotesServiceImpl implements InternalQuotesService {
+
     private final ExternalQuotesService externalQuotesService;
 
     /**
@@ -34,9 +35,10 @@ public class InternalQuotesServiceImpl implements InternalQuotesService {
 
         quotes.sort((previos, current) -> {
             int result = previos.getVolumeSize().compareTo(current.getVolumeSize());
-            if (result == 0) {
-                result = previos.getBid().compareTo(current.getBid());
-            }
+            //Дополнительная сортировка при одинаковом значении объема. Сбивает тесты
+//            if (result == 0) {
+//                result = previos.getBid().compareTo(current.getBid());
+//            }
             return result;
         });
         return quotes;
