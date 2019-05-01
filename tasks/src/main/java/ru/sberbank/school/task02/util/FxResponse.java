@@ -13,15 +13,15 @@ import lombok.Getter;
 @AllArgsConstructor
 public class FxResponse implements Serializable {
     /**
-     * Строковое представление инструмента, например, USD/RUB
+     * Строковое представление инструмента, например, USD/RUB.
      */
     private final String symbol;
     /**
-     * Отформатированное число с 2мя знаками в дробной части
+     * Отформатированное число с 2мя знаками в дробной части.
      */
     private final String price;
     /**
-     * Отформатированное число с 2мя знаками в дробной части
+     * Отформатированное число с 2мя знаками в дробной части.
      */
     private final String amount;
     private final boolean notFound;
