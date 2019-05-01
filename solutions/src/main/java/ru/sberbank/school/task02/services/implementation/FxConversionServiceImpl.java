@@ -11,7 +11,9 @@ import java.math.BigDecimal;
 import java.util.List;
 
 /**
- * Валютный калькулятор
+ * Валютный калькулятор: возвращает значение цены еденицы базовой валюты для заданного количества котируемой валюты.
+ * Для параметров BUY, USD/RUB, 1000, ситуация читается так:
+ * Клиент хочет купить 1000 долларов за рубли, сказать сколько будет стоить 1 доллар.
  * Created by Gregory Melnikov at 27.04.2019
  */
 @RequiredArgsConstructor
@@ -49,4 +51,28 @@ public class FxConversionServiceImpl implements FxConversionService {
         }
         return ClientOperation.BUY.equals(operation) ? targetQuote.getOffer() : targetQuote.getBid();
     }
+
+    /**
+     * Вспомогательный метод для сравнения котировок.
+     * Присваевает ссылку на подходящий объект Quote переменной targetQuote.
+     *
+     * @param quote сравниваемая котировка
+     * @param targetQuote целевая котировка
+     * @param targetValue целевая сумма
+     * @return возвращает true, если целевая котировка найдена
+     */
+/*    protected boolean quoteComparator(Quote quote, Quote targetQuote, BigDecimal targetValue) {
+        if (quote.isInfinity() && targetValue.compareTo(targetQuote.getVolumeSize()) > 0) {
+            targetQuote = quote;
+            return true;
+        }
+        if (targetQuote.isInfinity() && targetValue.compareTo(quote.getVolumeSize()) > 0) {
+            return true;
+        }
+        if (targetValue.compareTo(quote.getVolumeSize()) < 0) {
+            targetQuote = quote;
+            return true;
+        }
+        return false;
+    }*/
 }
