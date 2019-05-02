@@ -22,14 +22,23 @@ public class FxConversionServiceImpl implements FxConversionService {
         List<Quote> quoteList = externalQuotesService.getQuotes(symbol);
         Quote targetQuote = quoteList.get(0);
         for (Quote currentQuote : quoteList) {
+            if (currentQuote.isInfinity()) {
+                targetQuote = currentQuote;
+                break;
+            }
+        }
+        for (Quote currentQuote : quoteList) {
             if (currentQuote.getVolumeSize().compareTo(amount) == 0) {
                 targetQuote = currentQuote;
                 break;
             } else if (currentQuote.getVolumeSize().compareTo(amount) > 0) {
-                targetQuote = currentQuote;
+                if (targetQuote.isInfinity()) {
+                    targetQuote = currentQuote;
+                } else if (targetQuote.getVolumeSize().compareTo(currentQuote.getVolumeSize()) > 0) {
+                    targetQuote = currentQuote;
+                }
             }
         }
-
         return ClientOperation.BUY == operation ? targetQuote.getOffer() : targetQuote.getBid();
     }
 }
