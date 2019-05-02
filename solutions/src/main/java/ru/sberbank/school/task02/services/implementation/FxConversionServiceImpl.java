@@ -51,28 +51,4 @@ public class FxConversionServiceImpl implements FxConversionService {
         }
         return ClientOperation.BUY.equals(operation) ? targetQuote.getOffer() : targetQuote.getBid();
     }
-
-    /**
-     * Вспомогательный метод для сравнения котировок.
-     * Присваевает ссылку на подходящий объект Quote переменной targetQuote.
-     *
-     * @param quote сравниваемая котировка
-     * @param targetQuote целевая котировка
-     * @param targetValue целевая сумма
-     * @return возвращает true, если целевая котировка найдена
-     */
-/*    protected boolean quoteComparator(Quote quote, Quote targetQuote, BigDecimal targetValue) {
-        if (quote.isInfinity() && targetValue.compareTo(targetQuote.getVolumeSize()) > 0) {
-            targetQuote = quote;
-            return true;
-        }
-        if (targetQuote.isInfinity() && targetValue.compareTo(quote.getVolumeSize()) > 0) {
-            return true;
-        }
-        if (targetValue.compareTo(quote.getVolumeSize()) < 0) {
-            targetQuote = quote;
-            return true;
-        }
-        return false;
-    }*/
 }
