@@ -20,20 +20,23 @@ public class Calculator implements FxConversionService {
     @Override
     public BigDecimal convert(ClientOperation operation, Symbol symbol, BigDecimal amount) {
 
-        if (amount.compareTo(new BigDecimal(0)) < 0 || amount.compareTo(new BigDecimal(0)) == 0) {
-            throw new ConverterConfigurationException("Amount less than or equal to 0.");
+        if (operation == null || symbol == null || amount == null) {
+            throw new ConverterConfigurationException("Parameters should be null!");
         }
 
-        // получаем массив котировок
-        List<Quote> quotes = getQuotes(symbol);
+        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new ConverterConfigurationException("Amount less than or equal to 0!");
+        }
 
-        // цена единицы базовой валюты
+        // получаем отсортированный массив котировок
+        List<Quote> quotes = getSortedQuotes(symbol);
+
+        // цена единицы базовой валюты для заданного объема amount
         BigDecimal price = null;
 
         for (Quote q : quotes) {
             // если volume == -1 или amount <= volume, то мы нашли нашу котировку
-            if (q.isInfinity() || amount.compareTo(q.getVolumeSize()) < 0 ||
-                    amount.compareTo(q.getVolumeSize()) == 0) {
+            if (q.isInfinity() || amount.compareTo(q.getVolumeSize()) <= 0) {
                 price = operation.compareTo(ClientOperation.BUY) == 0 ? q.getOffer() : q.getBid();
                 break;
             }
@@ -42,11 +45,12 @@ public class Calculator implements FxConversionService {
         return price;
     }
 
-    private List<Quote> getQuotes(Symbol symbol) {
+    private List<Quote> getSortedQuotes(Symbol symbol) {
+        // получаем массив котировок
         List<Quote> quotes = externalQuotesService.getQuotes(symbol);
 
         if (quotes == null || quotes.isEmpty()) {
-            throw new ConverterConfigurationException("No quotes.");
+            throw new ConverterConfigurationException("No quotes!");
         }
 
         // сортируем массив котировок по возрастанию с учетом -1=infinity
@@ -57,6 +61,7 @@ public class Calculator implements FxConversionService {
                 return q1.getVolumeSize().compareTo(q2.getVolumeSize());
             }
         };
+        quotes.sort(comparator);
         return quotes;
     }
 
