@@ -46,26 +46,4 @@ public class InternalQuotesServiceImpl implements InternalQuotesService {
         });
         return quotes;
     }
-/*
-    @Override
-    public List<Quote> getQuotes(Symbol symbol, Beneficiary beneficiary) {
-        List<Quote> quotes = externalQuotesService.getQuotes(symbol);
-
-        if (quotes.isEmpty()) {
-            throw new EmptyQuoteList("External quotes service must return at least one quote!");
-        }
-
-        quotes.sort((previous, next) -> {
-            int result = previous.getVolumeSize().compareTo(next.getVolumeSize());
-
-            if (result == 0 && BANK.equals(beneficiary)) {
-                result = next.getBid().compareTo(previous.getBid());
-            } else
-            if (result == 0 && CLIENT.equals(beneficiary)) {
-                result = next.getBid().compareTo(previous.getBid());
-            }
-            return result;
-        });
-        return quotes;
-    }*/
 }

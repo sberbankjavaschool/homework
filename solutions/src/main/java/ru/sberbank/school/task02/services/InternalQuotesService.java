@@ -16,6 +16,5 @@ public interface InternalQuotesService {
 
     List<Quote> getQuotes(Symbol symbol);
 
-//    List<Quote> getQuotes(Symbol symbol, Beneficiary beneficiary);
 }
 

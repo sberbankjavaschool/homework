@@ -50,7 +50,7 @@ public class ExtendedFxConversionServiceImpl extends FxConversionServiceImpl imp
 
         List<Quote> quotes = internalQuotesService.getQuotes(symbol);
 
-        Quote targetQuote = convertService(quotes, operation, amount, beneficiary);
+        Quote targetQuote = findQuote(quotes, operation, amount, beneficiary);
 
         BigDecimal quoteRate = BUY.equals(operation) ? targetQuote.getOffer() : targetQuote.getBid();
 
@@ -80,7 +80,7 @@ public class ExtendedFxConversionServiceImpl extends FxConversionServiceImpl imp
 
         List<Quote> quotes = internalQuotesService.getQuotes(symbol);
 
-        Quote targetQuote = convertService(quotes, operation, amount, beneficiary);
+        Quote targetQuote = findQuote(quotes, operation, amount, beneficiary);
 
         BigDecimal quoteRate = BUY.equals(operation) ? targetQuote.getOffer() : targetQuote.getBid();
 
@@ -99,11 +99,10 @@ public class ExtendedFxConversionServiceImpl extends FxConversionServiceImpl imp
         }
     }
 
-    private Quote convertService(List<Quote> quotes,
-                                 ClientOperation operation,
-                                 BigDecimal amount,
-                                 Beneficiary beneficiary) {
-
+    private Quote findQuote(List<Quote> quotes,
+                            ClientOperation operation,
+                            BigDecimal amount,
+                            Beneficiary beneficiary) {
         BigDecimal quoteRate;
         BigDecimal targetValue;
 
@@ -125,9 +124,10 @@ public class ExtendedFxConversionServiceImpl extends FxConversionServiceImpl imp
             quoteRate = BUY.equals(operation) ? quote.getOffer() : quote.getBid();
             targetValue = amount.divide(quoteRate, quoteRate.scale());
 
-            boolean quoteIsInfinityAndTargetValueMoreThanMaxValue = (quote.isInfinity() && targetValue.compareTo(targetQuote.getVolumeSize()) > 0);
             boolean targetValueLessThanQuoteValue = (targetValue.compareTo(quote.getVolumeSize()) < 0);
             boolean targetValueMoreThanPreviousQuoteValue = (targetValue.compareTo(previousQuote.getVolumeSize()) >= 0);
+            boolean quoteIsInfinityAndTargetValueMoreThanMaxValue = (quote.isInfinity()
+                    && targetValue.compareTo(targetQuote.getVolumeSize()) > 0);
 
             if (quoteIsInfinityAndTargetValueMoreThanMaxValue
                     || (targetValueLessThanQuoteValue && (targetValueMoreThanPreviousQuoteValue || volumeOverlay))) {
@@ -138,4 +138,3 @@ public class ExtendedFxConversionServiceImpl extends FxConversionServiceImpl imp
         return targetQuote;
     }
 }
-
