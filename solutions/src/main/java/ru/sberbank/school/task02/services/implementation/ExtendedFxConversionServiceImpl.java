@@ -52,7 +52,7 @@ public class ExtendedFxConversionServiceImpl extends FxConversionServiceImpl imp
 
         Quote targetQuote = findQuote(quotes, operation, amount, beneficiary);
 
-        BigDecimal quoteRate = BUY.equals(operation) ? targetQuote.getOffer() : targetQuote.getBid();
+        BigDecimal quoteRate = operation == BUY ? targetQuote.getOffer() : targetQuote.getBid();
 
         BigDecimal quotedValue = amount.divide(quoteRate, quoteRate.scale());
 
@@ -82,7 +82,7 @@ public class ExtendedFxConversionServiceImpl extends FxConversionServiceImpl imp
 
         Quote targetQuote = findQuote(quotes, operation, amount, beneficiary);
 
-        BigDecimal quoteRate = BUY.equals(operation) ? targetQuote.getOffer() : targetQuote.getBid();
+        BigDecimal quoteRate = operation == BUY ? targetQuote.getOffer() : targetQuote.getBid();
 
         BigDecimal quotedValue = amount.divide(quoteRate, quoteRate.scale());
 
@@ -116,12 +116,12 @@ public class ExtendedFxConversionServiceImpl extends FxConversionServiceImpl imp
                 boolean previousOfferAbove = previousQuote.getOffer().compareTo(quote.getOffer()) > 0;
                 boolean previousBidAbove = previousQuote.getBid().compareTo(quote.getBid()) > 0;
 
-                if ((previousOfferAbove && BANK.equals(beneficiary) && BUY.equals(operation))
-                        || (previousBidAbove && CLIENT.equals(beneficiary) && SELL.equals(operation))) {
+                if ((previousOfferAbove && beneficiary == BANK && operation == BUY)
+                        || (previousBidAbove && beneficiary == CLIENT && operation == SELL)) {
                     quote = previousQuote;
                 }
             }
-            quoteRate = BUY.equals(operation) ? quote.getOffer() : quote.getBid();
+            quoteRate = operation == BUY ? quote.getOffer() : quote.getBid();
             targetValue = amount.divide(quoteRate, quoteRate.scale());
 
             boolean targetValueLessThanQuoteValue = (targetValue.compareTo(quote.getVolumeSize()) < 0);

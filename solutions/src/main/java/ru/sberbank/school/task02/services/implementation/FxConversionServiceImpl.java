@@ -10,6 +10,8 @@ import ru.sberbank.school.task02.util.Symbol;
 import java.math.BigDecimal;
 import java.util.List;
 
+import static ru.sberbank.school.task02.util.ClientOperation.BUY;
+
 /**
  * Валютный калькулятор: возвращает значение цены еденицы базовой валюты для заданного количества котируемой валюты.
  * Для параметров BUY, USD/RUB, 1000, ситуация читается так:
@@ -49,6 +51,6 @@ public class FxConversionServiceImpl implements FxConversionService {
                 break;
             }
         }
-        return ClientOperation.BUY.equals(operation) ? targetQuote.getOffer() : targetQuote.getBid();
+        return operation == BUY ? targetQuote.getOffer() : targetQuote.getBid();
     }
 }
