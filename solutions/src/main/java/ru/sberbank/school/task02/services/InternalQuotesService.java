@@ -1,5 +1,6 @@
 package ru.sberbank.school.task02.services;
 
+import ru.sberbank.school.task02.util.Beneficiary;
 import ru.sberbank.school.task02.util.Quote;
 import ru.sberbank.school.task02.util.Symbol;
 import ru.sberbank.school.task02.util.Volume;
@@ -14,5 +15,7 @@ import java.util.Map;
 public interface InternalQuotesService {
 
     List<Quote> getQuotes(Symbol symbol);
+
+//    List<Quote> getQuotes(Symbol symbol, Beneficiary beneficiary);
 }
 
