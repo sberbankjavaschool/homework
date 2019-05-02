@@ -35,6 +35,7 @@ pipeline {
                                 " попробуй сделать Pull из ветки source с Rebase.\n${err}")
                         println "Da a barrel roll!"
                         pullRequest.addLabel('REBASE NEEDED')
+                        error('Rebase Failed')
                     }
                 }
             }
@@ -67,7 +68,6 @@ pipeline {
         stage('Static code analysis') {
             when { expression { env.CHANGE_ID } }
             steps {
-                //sh './gradlew check -x test'
                 step([
                         $class: 'ViolationsToGitHubRecorder',
                         config: [
