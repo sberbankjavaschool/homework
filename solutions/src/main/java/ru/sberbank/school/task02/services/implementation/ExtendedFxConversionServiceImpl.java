@@ -41,7 +41,7 @@ public class ExtendedFxConversionServiceImpl extends FxConversionServiceImpl imp
      * @param beneficiary В чью пользу осуществляется округление
      * @return Цена для указанного объема
      */
-    @Override
+/*    @Override
     public Optional<BigDecimal> convertReversed(ClientOperation operation,
                                                 Symbol symbol,
                                                 BigDecimal amount,
@@ -105,6 +105,26 @@ public class ExtendedFxConversionServiceImpl extends FxConversionServiceImpl imp
         //return Optional.ofNullable(quoteRate);
 //        return result;
 //        return Optional.empty();
+    }*/
+    @Override
+    public Optional<BigDecimal> convertReversed(ClientOperation operation,
+                                                Symbol symbol,
+                                                BigDecimal amount,
+                                                Beneficiary beneficiary) {
+
+        List<Quote> quotes = internalQuotesService.getQuotes(symbol);
+
+        Quote targetQuote = convertService(quotes, operation, amount, beneficiary);
+
+        BigDecimal quoteRate = BUY.equals(operation) ? targetQuote.getOffer() : targetQuote.getBid();
+
+        BigDecimal quotedValue = amount.divide(quoteRate, quoteRate.scale());
+
+        BigDecimal checkBaseValue = quotedValue.multiply(quoteRate);
+
+        System.out.println(checkBaseValue.toString());
+
+        return checkBaseValue.compareTo(amount) == 0 ? Optional.ofNullable(quoteRate) : Optional.empty();
     }
 
     /**
@@ -123,31 +143,16 @@ public class ExtendedFxConversionServiceImpl extends FxConversionServiceImpl imp
                                                 BigDecimal amount,
                                                 double delta,
                                                 Beneficiary beneficiary) {
+
         List<Quote> quotes = internalQuotesService.getQuotes(symbol);
 
-        BigDecimal divisor;
-        BigDecimal targetValue = new BigDecimal(0);
+        Quote targetQuote = convertService(quotes, operation, amount, beneficiary);
 
-        Quote targetQuote = quotes.get(quotes.size() - 1);
-
-        for (Quote quote : quotes) {
-            divisor = BUY.equals(operation) ? quote.getOffer() : quote.getBid();
-            targetValue = amount.divide(divisor, divisor.scale());
-
-            if (quote.isInfinity() && targetValue.compareTo(targetQuote.getVolumeSize()) > 0) {
-                targetQuote = quote;
-                break;
-            }
-            if (targetQuote.isInfinity() && targetValue.compareTo(quote.getVolumeSize()) > 0) {
-                break;
-            }
-            if (targetValue.compareTo(quote.getVolumeSize()) < 0) {
-                targetQuote = quote;
-                break;
-            }
-        }
         BigDecimal quoteRate = BUY.equals(operation) ? targetQuote.getOffer() : targetQuote.getBid();
-        BigDecimal checkValue = quoteRate.multiply(targetValue);
+
+        BigDecimal quotedValue = amount.divide(quoteRate, quoteRate.scale());
+
+        BigDecimal checkBaseValue = quoteRate.multiply(quotedValue);
 
         BigDecimal bDelta = BigDecimal.valueOf(delta);
         BigDecimal lowBorder = amount.subtract(bDelta);
@@ -155,16 +160,54 @@ public class ExtendedFxConversionServiceImpl extends FxConversionServiceImpl imp
 
         System.out.println("lowBorder:" + lowBorder);
         System.out.println("hightBorder:" + hightBorder);
-        System.out.println("quoteRate:" + checkValue);
-        System.out.println(checkValue.compareTo(lowBorder));
+        System.out.println("quoteRate:" + checkBaseValue);
+        System.out.println(checkBaseValue.compareTo(lowBorder));
 
-        if (checkValue.compareTo(lowBorder) >= 0 && checkValue.compareTo(hightBorder) <= 0) {
+        if (checkBaseValue.compareTo(lowBorder) >= 0 && checkBaseValue.compareTo(hightBorder) <= 0) {
             return Optional.ofNullable(quoteRate);
         } else {
             return Optional.empty();
         }
 //        return quoteRate.compareTo(lowBorder) >= 0 && quoteRate.compareTo(hightBorder) <= 0 ?
 //                Optional.ofNullable(quoteRate) : Optional.empty();
+    }
+
+    private Quote convertService(List<Quote> quotes, ClientOperation operation, BigDecimal amount, Beneficiary beneficiary) {
+        BigDecimal quoteRate = amount;
+        BigDecimal targetValue = amount;
+
+        Quote targetQuote = quotes.get(quotes.size() - 1);
+        Quote previousQuote = targetQuote;
+        System.out.println("targetQuote:" + targetQuote.getVolumeSize());
+
+        for (Quote quote : quotes) {
+            boolean volumeOverlay = previousQuote.getVolumeSize().compareTo(quote.getVolumeSize()) == 0;
+
+            if (volumeOverlay) {
+                boolean previousOfferAbove = previousQuote.getOffer().compareTo(quote.getOffer()) > 0;
+                boolean previousBidAbove = previousQuote.getBid().compareTo(quote.getBid()) > 0;
+
+                if ((previousOfferAbove && BANK.equals(beneficiary) && BUY.equals(operation))
+                        || (previousBidAbove && CLIENT.equals(beneficiary) && SELL.equals(operation))) {
+                    quote = previousQuote;
+                }
+            }
+
+            quoteRate = BUY.equals(operation) ? quote.getOffer() : quote.getBid();
+            targetValue = amount.divide(quoteRate, quoteRate.scale());
+
+            System.out.println("quoteRate:" + quoteRate.toString());
+            System.out.println("targetValue:" + targetValue.toString());
+            System.out.println("baseVolumeSize:" + quote.getVolumeSize());
+
+            if ((quote.isInfinity() && targetValue.compareTo(targetQuote.getVolumeSize()) > 0)
+                    || (targetValue.compareTo(quote.getVolumeSize()) < 0)) {
+                targetQuote = quote;
+            }
+        }
+        System.out.println("targetQuote:" + targetQuote.toString());
+
+        return targetQuote;
     }
 }
 
