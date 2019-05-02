@@ -1,13 +1,13 @@
 package ru.sberbank.school.task02;
 
+import java.math.BigDecimal;
+import java.util.Comparator;
+import java.util.List;
+
 import ru.sberbank.school.task02.exception.ConverterConfigurationException;
 import ru.sberbank.school.task02.util.ClientOperation;
 import ru.sberbank.school.task02.util.Quote;
 import ru.sberbank.school.task02.util.Symbol;
-
-import java.math.BigDecimal;
-import java.util.Comparator;
-import java.util.List;
 
 public class Calculator implements FxConversionService {
 
@@ -17,6 +17,7 @@ public class Calculator implements FxConversionService {
         this.externalQuotesService = externalQuotesService;
     }
 
+    @Override
     public BigDecimal convert(ClientOperation operation, Symbol symbol, BigDecimal amount) {
 
         if (amount.compareTo(new BigDecimal(0)) < 0 || amount.compareTo(new BigDecimal(0)) == 0) {
@@ -31,7 +32,8 @@ public class Calculator implements FxConversionService {
 
         for (Quote q : quotes) {
             // если volume == -1 или amount <= volume, то мы нашли нашу котировку
-            if (q.isInfinity() || amount.compareTo(q.getVolumeSize()) < 0 || amount.compareTo(q.getVolumeSize()) == 0) {
+            if (q.isInfinity() || amount.compareTo(q.getVolumeSize()) < 0 ||
+                    amount.compareTo(q.getVolumeSize()) == 0) {
                 price = operation.compareTo(ClientOperation.BUY) == 0 ? q.getOffer() : q.getBid();
                 break;
             }
@@ -47,15 +49,11 @@ public class Calculator implements FxConversionService {
             throw new ConverterConfigurationException("No quotes.");
         }
 
-        // quotes.sort(Comparator.comparing(quote -> quote.getVolumeSize()));
-        // Comparator<Quote> comparator = Comparator.comparing(quote -> quote.getVolumeSize());
-        // quotes.sort(comparator.reversed());
-
         // сортируем массив котировок по возрастанию с учетом -1=infinity
         Comparator<Quote> comparator = new Comparator<Quote>() {
             public int compare(Quote q1, Quote q2) {
-                if (q1.isInfinity()) return 1;
-                if (q2.isInfinity()) return -1;
+                if (q1.isInfinity()) { return 1; }
+                if (q2.isInfinity()) { return -1; }
                 return q1.getVolumeSize().compareTo(q2.getVolumeSize());
             }
         };
