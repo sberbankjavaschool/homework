@@ -36,7 +36,7 @@ public class Calculator implements FxConversionService {
 
         for (Quote q : quotes) {
             // если volume == -1 или amount <= volume, то мы нашли нашу котировку
-            if (q.isInfinity() || amount.compareTo(q.getVolumeSize()) <= 0) {
+            if (q.isInfinity() || amount.compareTo(q.getVolumeSize()) < 0) {
                 price = operation.compareTo(ClientOperation.BUY) == 0 ? q.getOffer() : q.getBid();
                 break;
             }
@@ -56,8 +56,14 @@ public class Calculator implements FxConversionService {
         // сортируем массив котировок по возрастанию с учетом -1=infinity
         Comparator<Quote> comparator = new Comparator<Quote>() {
             public int compare(Quote q1, Quote q2) {
-                if (q1.isInfinity()) { return 1; }
-                if (q2.isInfinity()) { return -1; }
+                if (q1.isInfinity()) {
+                    return 1;
+                }
+
+                if (q2.isInfinity()) {
+                    return -1;
+                }
+
                 return q1.getVolumeSize().compareTo(q2.getVolumeSize());
             }
         };
