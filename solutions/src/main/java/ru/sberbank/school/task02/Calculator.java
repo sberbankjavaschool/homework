@@ -1,7 +1,6 @@
 package ru.sberbank.school.task02;
 
 import java.math.BigDecimal;
-import java.util.Comparator;
 import java.util.List;
 
 import ru.sberbank.school.task02.exception.ConverterConfigurationException;
@@ -9,6 +8,10 @@ import ru.sberbank.school.task02.util.ClientOperation;
 import ru.sberbank.school.task02.util.Quote;
 import ru.sberbank.school.task02.util.Symbol;
 
+/**
+ * Реализация валютного калькулятора. Калькулятор определяет значение цены еденицы базовой валюты
+ *  для заданного количества котируемой валюты.
+ */
 public class Calculator implements FxConversionService {
 
     protected ExternalQuotesService externalQuotesService;
@@ -17,58 +20,65 @@ public class Calculator implements FxConversionService {
         this.externalQuotesService = externalQuotesService;
     }
 
+    /**
+     * Возвращает стоимость единицы базовой валюты для зданного объема
+     * @param operation Вид операции (BUY, SELL)
+     * @param symbol    Инструмент (USD/RUB: USD - базовая валюта, RUB - котиремая валюта)
+     * @param amount    Объем
+     * @return Цена для указанного объема
+     */
     @Override
     public BigDecimal convert(ClientOperation operation, Symbol symbol, BigDecimal amount) {
 
-        if (operation == null || symbol == null || amount == null) {
-            throw new ConverterConfigurationException("Parameters should be null!");
+        if (operation == null) {
+            throw new ConverterConfigurationException("Parameter operation is null!");
         }
-
+        if (symbol == null) {
+            throw new ConverterConfigurationException("Parameter symbol is null!");
+        }
+        if (amount == null) {
+            throw new ConverterConfigurationException("Parameter amount is null!");
+        }
         if (amount.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new ConverterConfigurationException("Amount less than or equal to 0!");
+            throw new IllegalArgumentException("Amount less than or equal to 0!");
         }
 
-        // получаем отсортированный массив котировок
-        List<Quote> quotes = getSortedQuotes(symbol);
+        List<Quote> quotes = externalQuotesService.getQuotes(symbol);
+        if (quotes == null || quotes.isEmpty()) {
+            throw new EmptyQuoteException("No quotes!");
+        }
 
-        // цена единицы базовой валюты для заданного объема amount
-        BigDecimal price = null;
+        BigDecimal volume = BigDecimal.valueOf(0);
+        Quote currentQuote = null;
 
         for (Quote q : quotes) {
-            // если volume == -1 или amount <= volume, то мы нашли нашу котировку
-            if (q.isInfinity() || amount.compareTo(q.getVolumeSize()) < 0) {
-                price = operation.compareTo(ClientOperation.BUY) == 0 ? q.getOffer() : q.getBid();
-                break;
+            if (volumeCompare(amount, q.getVolumeSize()) < 0) {
+                if (volumeCompare(volume, q.getVolumeSize()) > 0 || volume.compareTo(BigDecimal.ZERO) == 0) {
+                    volume = q.getVolumeSize();
+                    currentQuote = q;
+                }
             }
         }
+        return operation == ClientOperation.BUY ? currentQuote.getOffer() : currentQuote.getBid();
 
-        return price;
     }
 
-    private List<Quote> getSortedQuotes(Symbol symbol) {
-        // получаем массив котировок
-        List<Quote> quotes = externalQuotesService.getQuotes(symbol);
-
-        if (quotes == null || quotes.isEmpty()) {
-            throw new ConverterConfigurationException("No quotes!");
+    /**
+     * Метод для сравнения двух значений с учетом, что -1=Infinity
+     * @param d1 первое число
+     * @param d2 второе число
+     * @return -1, 0, 1 согласно методу compareTo
+     */
+    private int volumeCompare(BigDecimal d1, BigDecimal d2) {
+        if (d1.compareTo(BigDecimal.ZERO) < 0) {
+            return 1;
         }
 
-        // сортируем массив котировок по возрастанию с учетом -1=infinity
-        Comparator<Quote> comparator = new Comparator<Quote>() {
-            public int compare(Quote q1, Quote q2) {
-                if (q1.isInfinity()) {
-                    return 1;
-                }
+        if (d2.compareTo(BigDecimal.ZERO) < 0) {
+            return -1;
+        }
 
-                if (q2.isInfinity()) {
-                    return -1;
-                }
-
-                return q1.getVolumeSize().compareTo(q2.getVolumeSize());
-            }
-        };
-        quotes.sort(comparator);
-        return quotes;
+        return d1.compareTo(d2);
     }
 
 }
