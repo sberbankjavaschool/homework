@@ -21,7 +21,7 @@ public class Calculator implements FxConversionService {
     }
 
     /**
-     * Возвращает стоимость единицы базовой валюты для зданного объема
+     * Возвращает стоимость единицы базовой валюты для зданного объема.
      * @param operation Вид операции (BUY, SELL)
      * @param symbol    Инструмент (USD/RUB: USD - базовая валюта, RUB - котиремая валюта)
      * @param amount    Объем
@@ -64,7 +64,7 @@ public class Calculator implements FxConversionService {
     }
 
     /**
-     * Метод для сравнения двух значений с учетом, что -1=Infinity
+     * Метод для сравнения двух значений с учетом, что -1=Infinity.
      * @param d1 первое число
      * @param d2 второе число
      * @return -1, 0, 1 согласно методу compareTo
@@ -80,5 +80,4 @@ public class Calculator implements FxConversionService {
 
         return d1.compareTo(d2);
     }
-
 }
