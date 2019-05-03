@@ -8,41 +8,38 @@ import java.util.List;
 
 public class Converter implements FxConversionService {
 
-    private ExternalQuotesService externalQuotes;
+    private ExternalQuotesService quotesDatabase;
 
     public Converter(ExternalQuotesService externalQuotesService) {
-        externalQuotes = externalQuotesService;
+        quotesDatabase = externalQuotesService;
     }
 
     @Override
     public BigDecimal convert(ClientOperation operation, Symbol symbol, BigDecimal amount) {
-        List<Quote> quotes = externalQuotes.getQuotes(symbol);
+        List<Quote> quotes = quotesDatabase.getQuotes(symbol);
 
         if (quotes == null || quotes.isEmpty()) {
-            throw new FxConversionException("No volumes");
+            throw new FxConversionException("Price database not available");
         }
 
         if (amount.signum() <= 0) {
             throw new FxConversionException("Amount less than or equal to 0");
         }
 
-        BigDecimal price;
+        Quote quote = searchQuote(amount, quotes);
 
+        return getPrice(operation, quote);
+    }
+
+    private BigDecimal getPrice (ClientOperation operation, Quote quote) {
         switch (operation) {
-            case BUY: {
-                price = searchQuote(amount, quotes).getOffer();
-                break;
-            }
-            case SELL: {
-                price = searchQuote(amount, quotes).getBid();
-                break;
-            }
-            default: {
+            case BUY:
+                return quote.getOffer();
+            case SELL:
+                return quote.getBid();
+            default:
                 throw new FxConversionException("Incorrect operation");
-            }
         }
-
-        return price;
     }
 
     private Quote searchQuote(BigDecimal amount, List<Quote> quotes) {
