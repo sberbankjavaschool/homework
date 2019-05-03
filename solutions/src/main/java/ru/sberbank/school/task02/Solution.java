@@ -21,6 +21,8 @@ public class Solution {
             System.out.println(price);
         } catch (FxConversionException ex) {
             System.out.println(ex.getMessage());
+        } catch (NullPointerException ex) {
+            System.out.println(ex.getMessage());
         }
     }
 

@@ -31,13 +31,13 @@ public class Calculator implements FxConversionService {
     public BigDecimal convert(ClientOperation operation, Symbol symbol, BigDecimal amount) {
 
         if (operation == null) {
-            throw new ConverterConfigurationException("Parameter operation is null!");
+            throw new NullPointerException("Parameter operation is null!");
         }
         if (symbol == null) {
-            throw new ConverterConfigurationException("Parameter symbol is null!");
+            throw new NullPointerException("Parameter symbol is null!");
         }
         if (amount == null) {
-            throw new ConverterConfigurationException("Parameter amount is null!");
+            throw new NullPointerException("Parameter amount is null!");
         }
         if (amount.compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("Amount less than or equal to 0!");
