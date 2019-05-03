@@ -2,8 +2,7 @@ package ru.sberbank.school.task02;
 
 import java.math.BigDecimal;
 
-import ru.sberbank.school.task02.exception.ConverterConfigurationException;
-import ru.sberbank.school.task02.exception.WrongSymbolException;
+import ru.sberbank.school.task02.exception.FxConversionException;
 import ru.sberbank.school.task02.util.ClientOperation;
 import ru.sberbank.school.task02.util.ExternalQuotesServiceDemo;
 import ru.sberbank.school.task02.util.Symbol;
@@ -18,11 +17,9 @@ public class Solution {
 
         try {
             BigDecimal price = calculator.convert(ClientOperation.BUY,
-                    Symbol.USD_RUB, new BigDecimal(100));
+                    Symbol.USD_RUB, BigDecimal.valueOf(1000));
             System.out.println(price);
-        } catch (WrongSymbolException ex) {
-            System.out.println(ex.getMessage());
-        } catch (ConverterConfigurationException ex) {
+        } catch (FxConversionException ex) {
             System.out.println(ex.getMessage());
         }
     }
