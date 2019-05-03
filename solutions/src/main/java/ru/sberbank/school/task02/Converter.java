@@ -1,7 +1,6 @@
 package ru.sberbank.school.task02;
 
 import java.math.BigDecimal;
-import java.util.Comparator;
 import java.util.List;
 
 import ru.sberbank.school.task02.exception.WrongSymbolException;
@@ -31,7 +30,13 @@ public class Converter implements FxConversionService {
 
 
         List<Quote> quotes = externalQuotesService.getQuotes(symbol);
-        quotes.sort(Comparator.comparing(Quote::getVolumeSize));
+        quotes.sort((q1,q2)->{
+            if(q1.isInfinity())
+                return 1;
+            if(q2.isInfinity())
+                return -1;
+            return q1.getVolumeSize().compareTo(q2.getVolumeSize());
+        });
 
         Quote result = quotes.get(0);
 
