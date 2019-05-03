@@ -29,7 +29,7 @@ public interface ExtendedFxConversionService extends FxConversionService {
      * @param operation   вид операции
      * @param symbol      Инструмент
      * @param amount      Объем
-     * @param delta       допустимое отклонение при отсутствии точного попадания
+     * @param delta       допустимое отклонение при отсутствии точного попадания в котируемой валюте
      * @param beneficiary В чью пользу осуществляется округление
      * @return Цена для указанного объема
      */
