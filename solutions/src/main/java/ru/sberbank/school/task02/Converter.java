@@ -22,9 +22,7 @@ public class Converter implements FxConversionService {
             throw new FxConversionException("No volumes");
         }
 
-        Volume volume = Volume.from(amount);
-
-        if (volume.isInfinity()) {
+        if (amount.signum() <= 0) {
             throw new FxConversionException("Amount less than or equal to 0");
         }
 
@@ -32,11 +30,11 @@ public class Converter implements FxConversionService {
 
         switch (operation) {
             case BUY: {
-                price = searchQuote(volume, quotes).getOffer();
+                price = searchQuote(amount, quotes).getOffer();
                 break;
             }
             case SELL: {
-                price = searchQuote(volume, quotes).getBid();
+                price = searchQuote(amount, quotes).getBid();
                 break;
             }
             default: {
@@ -47,7 +45,7 @@ public class Converter implements FxConversionService {
         return price;
     }
 
-    private Quote searchQuote(Volume volume, List<Quote> quotes) {
+    private Quote searchQuote(BigDecimal amount, List<Quote> quotes) {
         Quote searchQuote = null;
         Quote quoteInfinity = null;
 
@@ -56,13 +54,11 @@ public class Converter implements FxConversionService {
                 quoteInfinity = quote;
                 continue;
             }
-            if (volume.getVolume().compareTo(quote.getVolumeSize()) <= 0) {
+            if (amount.compareTo(quote.getVolumeSize()) <= 0) {
                 if (searchQuote == null) {
                     searchQuote = quote;
-                } else {
-                    if (searchQuote.getVolumeSize().compareTo(quote.getVolumeSize()) > 0) {
-                        searchQuote = quote;
-                    }
+                } else if (searchQuote.getVolumeSize().compareTo(quote.getVolumeSize()) > 0) {
+                    searchQuote = quote;
                 }
             }
         }
