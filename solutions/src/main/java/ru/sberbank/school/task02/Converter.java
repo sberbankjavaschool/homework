@@ -54,7 +54,7 @@ public class Converter implements FxConversionService {
                 quoteInfinity = quote;
                 continue;
             }
-            if (amount.compareTo(quote.getVolumeSize()) <= 0) {
+            if (amount.compareTo(quote.getVolumeSize()) < 0) {
                 if (searchQuote == null) {
                     searchQuote = quote;
                 } else if (searchQuote.getVolumeSize().compareTo(quote.getVolumeSize()) > 0) {
