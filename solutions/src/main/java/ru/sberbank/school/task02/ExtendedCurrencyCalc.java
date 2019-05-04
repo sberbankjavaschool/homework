@@ -28,15 +28,20 @@ public class ExtendedCurrencyCalc extends CurrencyCalc implements ExtendedFxConv
         List<Quote> quotes = getExternalQuotesService().getQuotes(symbol);
         List<Quote> suitableQuotes = getSuitableQuotes(quotes, amount);
 
-        if (suitableQuotes.size() == 0) {
+        if (suitableQuotes == null) {
             return Optional.empty();
         }
 
-        for (Quote quote : quotes) {
-
+        Quote quote = suitableQuotes.get(0);
+        for (Quote q : suitableQuotes) {
+            if (beneficiary == Beneficiary.BANK && q.getOffer().compareTo(quote.getOffer()) > 0) {
+                quote = q;
+            } else if (beneficiary == Beneficiary.CLIENT && q.getOffer().compareTo(quote.getOffer()) < 0) {
+                quote = q;
+            }
         }
 
-        return Optional.empty();
+        return Optional.of(operation == ClientOperation.BUY ? quote.getOffer() : quote.getBid());
     }
 
     @Override
@@ -45,14 +50,13 @@ public class ExtendedCurrencyCalc extends CurrencyCalc implements ExtendedFxConv
         return Optional.empty();
     }
 
-    private List<Quote> getSuitableQuotes (List<Quote> quotes, BigDecimal amount) {
+    private List<Quote> getSuitableQuotes(List<Quote> quotes, BigDecimal amount) {
         List<Quote> suitableQuotes = new ArrayList<>();
         Quote find = null;
 
         for (Quote q : quotes) {
-            if ((q.getVolumeSize().compareTo(amount) > 0 || BigDecimal.ZERO.compareTo(q.getVolumeSize()) > 0)
-                    && (find == null || find.getVolumeSize().compareTo(q.getVolumeSize()) > 0
-            || BigDecimal.ZERO.compareTo(find.getVolumeSize()) > 0)) {
+            if ((q.getVolumeSize().compareTo(amount) > 0 || q.isInfinity())
+                    && (find == null || find.getVolumeSize().compareTo(q.getVolumeSize()) > 0 || find.isInfinity())) {
                 find = q;
             }
         }

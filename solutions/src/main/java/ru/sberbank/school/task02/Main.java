@@ -14,7 +14,7 @@ public class Main {
         ExtendedFxConversionService calculator = serviceFactory.getExtendedFxConversionService(quotesService);
 
         System.out.println(calculator.convertReversed(ClientOperation.BUY, Symbol.USD_RUB,
-                new BigDecimal(990), Beneficiary.BANK));
+                new BigDecimal(1_000_000), Beneficiary.BANK));
     }
 
 }
