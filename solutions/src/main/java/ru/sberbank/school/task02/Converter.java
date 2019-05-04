@@ -42,8 +42,12 @@ public class Converter implements FxConversionService {
         Quote result = null;
         for (Quote q : quotes) {
             BigDecimal quoteValueSize = q.getVolumeSize();
-            if (amount.compareTo(quoteValueSize)<0) {
-                if (result == null || result.getVolumeSize().compareTo(quoteValueSize)>0) {
+            if (amount.compareTo(quoteValueSize) < 0) {
+                if (q.isInfinity()) {
+                    result = q;
+                    continue;
+                }
+                if (result == null || result.getVolumeSize().compareTo(quoteValueSize) > 0) {
                     result = q;
                 }
             }
