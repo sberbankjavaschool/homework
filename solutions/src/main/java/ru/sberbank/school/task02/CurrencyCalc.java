@@ -12,10 +12,13 @@ public class CurrencyCalc implements FxConversionService {
 
     private ExternalQuotesService externalQuotesService;
 
+    protected ExternalQuotesService getExternalQuotesService() {
+        return externalQuotesService;
+    }
+
     public CurrencyCalc(ExternalQuotesService externalQuotesService) {
         this.externalQuotesService = externalQuotesService;
     }
-
 
     @Override
     public BigDecimal convert(@NonNull ClientOperation operation,
