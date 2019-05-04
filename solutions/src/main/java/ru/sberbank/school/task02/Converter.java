@@ -32,28 +32,21 @@ public class Converter implements FxConversionService {
             throw new FxConversionException("Список валют пуст!");
         }
 
-        Quote result = getRightQuote(quotes,amount);
+        Quote result = quotes.stream()
+                .filter(q -> amount.compareTo(q.getVolumeSize()) < 0 || q.isInfinity()).min((q1,q2) -> {
+                    if (q1.isInfinity()) {
+                        return 1;
+                    }
+
+                    if (q2.isInfinity()) {
+                        return -1;
+                    }
+
+                    return q1.getVolumeSize().compareTo(q2.getVolumeSize());
+                }).orElse(quotes.get(0));
 
         boolean isSell = operation == ClientOperation.SELL;
         return isSell ? result.getBid() : result.getOffer();
-    }
-
-    private Quote getRightQuote(List<Quote> quotes,BigDecimal amount) {
-        Quote result = null;
-        for (Quote q : quotes) {
-            BigDecimal quoteValueSize = q.getVolumeSize();
-            if (amount.compareTo(quoteValueSize) < 0) {
-                if (q.isInfinity()) {
-                    result = q;
-                    continue;
-                }
-                if (result == null || result.getVolumeSize().compareTo(quoteValueSize) > 0) {
-                    result = q;
-                }
-            }
-        }
-
-        return result != null ? result : quotes.get(0);
     }
 
 
