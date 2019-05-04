@@ -52,7 +52,7 @@ pipeline {
                     } catch (err) {
                         pullRequest.comment("Ошибка при попытке сделать auto-rebase " +
                                 "в твою ветку в общем репозитории. " +
-                                "Видимо ты мержыл, вместо ребейза.")
+                                "Видимо ты мержил, вместо ребейза.")
                         error('Rebase To Target Failed')
                     }
                 }
