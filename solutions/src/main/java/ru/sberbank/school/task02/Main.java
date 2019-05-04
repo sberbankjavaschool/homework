@@ -19,14 +19,15 @@ public class Main {
             System.out.println("offer: " + q.getOffer() + "  Volume: " + q.getVolumeSize());
         }
         System.out.println("========================================================");
+
         FxConversionService fxConversionService = serviceFactory.getFxConversionService(externalQuotesService);
-        System.out.println(fxConversionService.convert(ClientOperation.BUY, Symbol.USD_RUB, BigDecimal.valueOf(600)) +
-                " amount 600");
-        System.out.println(fxConversionService.convert(ClientOperation.BUY, Symbol.USD_RUB, BigDecimal.valueOf(5_000)) +
-                " amount 5000");
-        System.out.println(fxConversionService.convert(ClientOperation.BUY, Symbol.USD_RUB, BigDecimal.valueOf(300_000)) +
-                " amount 300 000");
-        System.out.println(fxConversionService.convert(ClientOperation.BUY, Symbol.USD_RUB, BigDecimal.valueOf(100)) +
-                " amount 100");
+        System.out.println(fxConversionService.convert(
+                ClientOperation.BUY, Symbol.USD_RUB, BigDecimal.valueOf(600)) + " amount 600");
+        System.out.println(fxConversionService.convert(
+                ClientOperation.BUY, Symbol.USD_RUB, BigDecimal.valueOf(5_000)) + " amount 5000");
+        System.out.println(fxConversionService.convert(
+                ClientOperation.BUY, Symbol.USD_RUB, BigDecimal.valueOf(300_000)) + " amount 300 000");
+        System.out.println(fxConversionService.convert(
+                ClientOperation.BUY, Symbol.USD_RUB, BigDecimal.valueOf(100)) + " amount 100");
     }
 }
