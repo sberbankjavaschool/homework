@@ -10,6 +10,6 @@ public class Main {
     public static void main(String[] args) {
         ServiceFactory sf = new ServiceFactoryImpl();
         Converter converter = (Converter) sf.getFxConversionService(new ExternalQuotesServiceDemo());
-        System.out.println(converter.convert(ClientOperation.BUY,Symbol.USD_RUB,new BigDecimal(100)));
+        System.out.println(converter.convert(ClientOperation.SELL,Symbol.USD_RUB,new BigDecimal(9.0E8)));
     }
 }
