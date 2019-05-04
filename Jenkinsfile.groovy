@@ -18,7 +18,8 @@ pipeline {
                 script {
                     print "${pullRequest.headRef} ${pullRequest.base}"
                     if (pullRequest.base == 'source') {
-                        def comment = pullRequest.comment("ПР в ветку Source запрещен!")
+                        def comment = pullRequest.comment("ПР в ветку Source запрещен! " +
+                                "Жми EDIT, меняй ветку на свою")
                         pullRequest.addLabel('WRONG BRANCH')
                         println "To source branch! Forbidden!"
                         error('Unauthorized SOURCE branch modification')
@@ -32,8 +33,9 @@ pipeline {
                         removeLabel('REBASE NEEDED')
                     } catch (err) {
                         pullRequest.comment("Ошибка при сверке веток," +
-                                " попробуй сделать Pull из ветки source с Rebase.\n${err}")
-                        println "Da a barrel roll!"
+                                " попробуй сделать Pull из ветки source с Rebase " +
+                                "в свою ветку в своём форке.\n${err}")
+                        println "Do a barrel roll!"
                         pullRequest.addLabel('REBASE NEEDED')
                         error('Rebase Failed')
                     }
@@ -48,7 +50,10 @@ pipeline {
                         sh "./gradlew --stacktrace forceRebase " +
                                 "-PtargetBranch='${pullRequest.base}'"
                     } catch (err) {
-                        pullRequest.comment("Ошибка при попытке сделать auto-rebase\n${err}")
+                        pullRequest.comment("Ошибка при попытке сделать auto-rebase " +
+                                "в твою ветку в общем репозитории. " +
+                                "Видимо ты мержыл, вместо ребейза.")
+                        error('Rebase To Target Failed')
                     }
                 }
             }
