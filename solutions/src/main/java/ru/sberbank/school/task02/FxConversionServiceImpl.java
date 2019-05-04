@@ -39,8 +39,8 @@ public class FxConversionServiceImpl implements FxConversionService {
         }
 
         if (operation != ClientOperation.BUY && operation != ClientOperation.SELL) {
-            throw new ConverterConfigurationException("Wrong operation input:" +
-                    operation + "(expected \"BUY\" or \"SELL\")");
+            throw new ConverterConfigurationException("Wrong operation input:"
+                    + operation + "(expected \"BUY\" or \"SELL\")");
         }
 
         List<Quote> quotes = quotesService.getQuotes(symbol);
