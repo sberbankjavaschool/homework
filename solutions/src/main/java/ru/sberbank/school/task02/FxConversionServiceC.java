@@ -33,8 +33,8 @@ public class FxConversionServiceC implements FxConversionService {
         for (Quote q : quotes) {
             if (q.isInfinity() && exRate == null) {
                 exRate = q;
-            } else if ((amount.compareTo(q.getVolumeSize()) < 0) &&
-                    ((exRate == null) || (exRate.isInfinity()) || (amount.compareTo(exRate.getVolumeSize())>0))) {
+            } else if ((amount.compareTo(q.getVolumeSize()) < 0)
+                    && ((exRate == null) || (exRate.isInfinity()) || (amount.compareTo(exRate.getVolumeSize()) > 0))) {
                 exRate = q;
             }
         }
