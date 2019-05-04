@@ -29,5 +29,7 @@ public class Main {
                 ClientOperation.BUY, Symbol.USD_RUB, BigDecimal.valueOf(300_000)) + " amount 300 000");
         System.out.println(fxConversionService.convert(
                 ClientOperation.BUY, Symbol.USD_RUB, BigDecimal.valueOf(100)) + " amount 100");
+        System.out.println(fxConversionService.convert(
+                ClientOperation.SELL, Symbol.USD_RUB, BigDecimal.valueOf(100)) + " amount 100");
     }
 }
