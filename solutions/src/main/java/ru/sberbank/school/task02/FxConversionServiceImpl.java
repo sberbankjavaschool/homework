@@ -50,7 +50,7 @@ public class FxConversionServiceImpl implements FxConversionService {
         }
 
         Quote correctQuote =  quotes.stream()
-                .filter(quote -> quote.getVolumeSize().compareTo(amount) >= 0)
+                .filter(quote -> quote.getVolumeSize().compareTo(amount) > 0)
                 .min(Comparator.comparing(Quote::getVolumeSize))
                 .orElse(quotes.get(0));
         return operation == ClientOperation.BUY ? correctQuote.getOffer() : correctQuote.getBid();
