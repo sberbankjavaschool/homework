@@ -3,6 +3,7 @@ package ru.sberbank.school.task02.util;
 import java.math.BigDecimal;
 
 import lombok.Getter;
+import lombok.NonNull;
 
 @Getter
 public class Volume {
@@ -15,13 +16,17 @@ public class Volume {
         this.volume = BigDecimal.valueOf(vol);
     }
 
-    private Volume(BigDecimal volume) {
+    private Volume(@NonNull BigDecimal volume) {
         isInfinity = false;
         this.volume = volume;
     }
 
     public static Volume from(long vol) {
-        if (vol < 0) {
+        return from(BigDecimal.valueOf(vol));
+    }
+
+    public static Volume from(@NonNull BigDecimal vol) {
+        if (vol.compareTo(BigDecimal.ZERO) <= 0) {
             return INFINITY;
         }
         return new Volume(vol);
