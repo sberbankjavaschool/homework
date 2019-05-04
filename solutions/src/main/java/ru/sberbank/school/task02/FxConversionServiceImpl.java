@@ -26,10 +26,7 @@ public class FxConversionServiceImpl implements FxConversionService {
             }
         }
         for (Quote currentQuote : quoteList) {
-            if (currentQuote.getVolumeSize().compareTo(amount) == 0) {
-                targetQuote = currentQuote;
-                break;
-            } else if (currentQuote.getVolumeSize().compareTo(amount) > 0) {
+            if (currentQuote.getVolumeSize().compareTo(amount) > 0) {
                 if (targetQuote.isInfinity()) {
                     targetQuote = currentQuote;
                 } else if (targetQuote.getVolumeSize().compareTo(currentQuote.getVolumeSize()) > 0) {
