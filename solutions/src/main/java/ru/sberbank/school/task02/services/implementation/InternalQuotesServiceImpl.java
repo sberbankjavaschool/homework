@@ -29,10 +29,6 @@ public class InternalQuotesServiceImpl implements InternalQuotesService {
     public List<Quote> getQuotes(Symbol symbol) {
         List<Quote> quotes = externalQuotesService.getQuotes(symbol);
 
-        if (quotes.isEmpty()) {
-            throw new EmptyQuoteList("External quotes service must return at least one quote!");
-        }
-
         quotes.sort((previous, next) -> {
             int result = previous.getVolumeSize().compareTo(next.getVolumeSize());
             if (result == 0) {

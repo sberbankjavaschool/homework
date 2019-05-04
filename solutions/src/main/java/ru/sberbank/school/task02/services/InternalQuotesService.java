@@ -1,9 +1,9 @@
 package ru.sberbank.school.task02.services;
 
-import ru.sberbank.school.task02.util.Quote;
-import ru.sberbank.school.task02.util.Symbol;
+        import ru.sberbank.school.task02.util.Quote;
+        import ru.sberbank.school.task02.util.Symbol;
 
-import java.util.List;
+        import java.util.List;
 
 /**
  * Внутренний сервис подготавливает данные приходящие из внешнего сервиса
