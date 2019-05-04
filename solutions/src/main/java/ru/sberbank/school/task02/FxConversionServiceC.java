@@ -25,17 +25,28 @@ public class FxConversionServiceC implements FxConversionService {
 
     @Override
     public BigDecimal convert(ClientOperation operation, Symbol symbol, BigDecimal amount) {
+        if (operation == null || symbol == null || amount == null) {
+            throw new NullPointerException("One of arguments is null");
+        }
+
+        if (amount.equals(BigDecimal.ZERO)) {
+            throw new IllegalArgumentException("Amount is equal to ZERO");
+        }
+
         List<Quote> quotes = exQuotes.getQuotes(symbol);
         Quote exRate = null;
         if (quotes.isEmpty()) {
-            return null;
+            throw new NullPointerException("List of quotes is empty");
         }
+
         for (Quote q : quotes) {
-            if (q.isInfinity() && exRate == null) {
+
+            if (exRate == null && q.isInfinity()) {
                 exRate = q;
-            } else if ((amount.compareTo(q.getVolumeSize()) < 0)
-                    && ((exRate == null) || (exRate.isInfinity()) || (amount.compareTo(exRate.getVolumeSize()) > 0))) {
-                exRate = q;
+            } else if (amount.compareTo(q.getVolumeSize()) < 0) {
+                if ((exRate == null) || (exRate.isInfinity()) || (q.getVolumeSize().compareTo(exRate.getVolumeSize()) < 0)) {
+                    exRate = q;
+                }
             }
         }
         BigDecimal rate = (operation == ClientOperation.BUY ? exRate.getOffer() : exRate.getBid());
