@@ -1,8 +1,6 @@
-package ru.sberbank.school.solution02;
+package ru.sberbank.school.task02;
 
 
-import ru.sberbank.school.task02.ExternalQuotesService;
-import ru.sberbank.school.task02.FxConversionService;
 import ru.sberbank.school.task02.util.ClientOperation;
 import ru.sberbank.school.task02.util.Quote;
 import ru.sberbank.school.task02.util.Symbol;
