@@ -13,14 +13,15 @@ import static java.util.Arrays.asList;
 public class MyExternalQuotesService implements ExternalQuotesService {
     @Override
     public List<Quote> getQuotes(Symbol symbol) {
-        if (symbol.isCross()) {
-            throw new WrongSymbolException("Cross symbols are not supported!");
-        }
+//        if (symbol.isCross()) {
+//            throw new WrongSymbolException("Cross symbols are not supported!");
+//        }
         return asList(
                 buildQuote(symbol, 100_000, 4),
                 buildQuote(symbol, 100, 10),
                 buildQuote(symbol, -1, 8),
-                buildQuote(symbol, 1000, 6),
+                buildQuote(symbol, 1000, 3),
+                buildQuote(symbol, 1000, 7),
                 buildQuote(symbol, 1_000_000, 6),
                 buildQuote(symbol, 500, 8),
                 buildQuote(symbol, 10_000, 5)
