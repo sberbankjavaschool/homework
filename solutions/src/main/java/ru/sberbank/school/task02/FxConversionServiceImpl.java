@@ -12,13 +12,19 @@ import java.util.List;
 
 public class FxConversionServiceImpl implements FxConversionService{
 
+    List<Quote> quotes = new ArrayList<>();
+
+    FxConversionServiceImpl(List<Quote> q){
+        this.quotes = q;
+    }
+    
     @Override
     public BigDecimal convert(ClientOperation operation, Symbol symbol, BigDecimal amount) {
 
         //Создание объекта со списком котировок
-        ExternalQuotesServiceDemo externalQuotesServiceDemo = new ExternalQuotesServiceDemo();
-        List<Quote> quotes = new ArrayList<>();
-        quotes = externalQuotesServiceDemo.getQuotes(symbol);
+        //ExternalQuotesServiceDemo externalQuotesServiceDemo = new ExternalQuotesServiceDemo();
+        //List<Quote> quotes = new ArrayList<>();
+        //quotes = externalQuotesServiceDemo.getQuotes(symbol);
 
         //Поиск первого элемента, значение которого больше amount
         int k = 0;
