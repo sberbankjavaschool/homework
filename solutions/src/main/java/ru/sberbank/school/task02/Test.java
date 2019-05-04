@@ -11,7 +11,7 @@ public class Test {
         ExternalQuotesService quotesService = new ExternalQuotesServiceC();
 
         FxConversionService exCalc = factory.getFxConversionService(quotesService);
-        BigDecimal offer = exCalc.convert(ClientOperation.BUY, Symbol.USD_RUB, BigDecimal.valueOf(100));
+        BigDecimal offer = exCalc.convert(ClientOperation.SELL, Symbol.USD_RUB, BigDecimal.valueOf(14.739312529331846));
         System.out.println(offer);
 
     }

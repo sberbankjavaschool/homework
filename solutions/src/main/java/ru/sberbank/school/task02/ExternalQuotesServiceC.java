@@ -32,6 +32,7 @@ public class ExternalQuotesServiceC implements ExternalQuotesService {
     }
 
     private Quote buildQuote(Symbol symbol, int volume, int spread) {
-        return new Quote(symbol, Volume.from(volume), (BigDecimal.valueOf(80 - spread / 2)), (BigDecimal.valueOf(80 + spread / 2)));
+        return new Quote(symbol, Volume.from(volume), (BigDecimal.valueOf(80 - spread / 2)),
+                (BigDecimal.valueOf(80 + spread / 2)));
     }
 }
