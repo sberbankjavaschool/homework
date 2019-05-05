@@ -34,7 +34,8 @@ public class FxConversionServiceImpl implements FxConversionService {
         }
 
         if (amount.compareTo(BigDecimal.valueOf(0)) <= 0) {
-            throw new ConverterConfigurationException("Wrong operation input: amount is negative or zero");
+            throw new ConverterConfigurationException(
+                    "Wrong operation input: amount is negative or zero");
         }
 
         List<Quote> quotes = quotesService.getQuotes(symbol);

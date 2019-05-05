@@ -15,13 +15,17 @@ public class Main {
     public static void main(String[] args) {
         ServiceFactory serviceFactory = new ServiceFactoryImpl();
         ExternalQuotesService externalQuotesService = new ExternalQuotesServiceDemo();
+
         for (Quote q : externalQuotesService.getQuotes(Symbol.USD_RUB)) {
             System.out.println("offer: " + q.getOffer() +  " bid " + q.getBid()
                     + "  Volume: " + q.getVolumeSize());
         }
+
         System.out.println("========================================================");
 
-        FxConversionService fxConversionService = serviceFactory.getFxConversionService(externalQuotesService);
+        FxConversionService fxConversionService =
+                serviceFactory.getFxConversionService(externalQuotesService);
+
         System.out.println(fxConversionService.convert(
                 ClientOperation.BUY, Symbol.USD_RUB, BigDecimal.valueOf(600))
                 + " expected 83 buy amount 600");
