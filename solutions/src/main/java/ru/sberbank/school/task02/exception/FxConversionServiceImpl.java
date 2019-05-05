@@ -38,7 +38,7 @@ public class FxConversionServiceImpl implements FxConversionService {
             if (bestQuotes == null) {
                 bestQuotes = quote;
             }
-            if (amount.compareTo(quote.getVolumeSize()) < 0) {
+            if (amount.compareTo(quote.getVolumeSize()) < 1) {
                 if (bestQuotes.getVolumeSize().compareTo(quote.getVolumeSize()) < 0 && bestQuotes.isInfinity()) {
                     bestQuotes = quote;
                 }
