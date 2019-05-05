@@ -20,27 +20,7 @@ public class ExtendedCurrencyCalc extends CurrencyCalc implements ExtendedFxConv
     @Override
     public Optional<BigDecimal> convertReversed(@NonNull ClientOperation operation, @NonNull Symbol symbol,
                                                 @NonNull BigDecimal amount, @NonNull Beneficiary beneficiary) {
-        if (amount.equals(BigDecimal.ZERO)) {
-            throw new IllegalArgumentException();
-        }
-
-        List<Quote> quotes = getExternalQuotesService().getQuotes(symbol);
-        List<Quote> suitableQuotes = getSuitableQuotes(quotes, amount, 0);
-
-        if (suitableQuotes == null) {
-            return Optional.empty();
-        }
-
-        Quote quote = suitableQuotes.get(0);
-        for (Quote q : suitableQuotes) {
-            if (beneficiary == Beneficiary.BANK && q.getOffer().compareTo(quote.getOffer()) > 0) {
-                quote = q;
-            } else if (beneficiary == Beneficiary.CLIENT && q.getOffer().compareTo(quote.getOffer()) < 0) {
-                quote = q;
-            }
-        }
-
-        return Optional.of(operation == ClientOperation.BUY ? quote.getOffer() : quote.getBid());
+        return convertReversed(operation, symbol, amount, 0, beneficiary);
     }
 
     private List<Quote> getSuitableQuotes(@NonNull List<Quote> quotes, BigDecimal amount, double delta) {
@@ -80,7 +60,27 @@ public class ExtendedCurrencyCalc extends CurrencyCalc implements ExtendedFxConv
     @Override
     public Optional<BigDecimal> convertReversed(ClientOperation operation, Symbol symbol,
                                                 BigDecimal amount, double delta, Beneficiary beneficiary) {
-        return Optional.empty();
+        if (amount.equals(BigDecimal.ZERO)) {
+            throw new IllegalArgumentException();
+        }
+
+        List<Quote> quotes = getExternalQuotesService().getQuotes(symbol);
+        List<Quote> suitableQuotes = getSuitableQuotes(quotes, amount, delta);
+
+        if (suitableQuotes == null) {
+            return Optional.empty();
+        }
+
+        Quote quote = suitableQuotes.get(0);
+        for (Quote q : suitableQuotes) {
+            if (beneficiary == Beneficiary.BANK && q.getOffer().compareTo(quote.getOffer()) > 0) {
+                quote = q;
+            } else if (beneficiary == Beneficiary.CLIENT && q.getOffer().compareTo(quote.getOffer()) < 0) {
+                quote = q;
+            }
+        }
+
+        return Optional.of(operation == ClientOperation.BUY ? quote.getOffer() : quote.getBid());
     }
 
 }
