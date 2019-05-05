@@ -12,7 +12,7 @@ import ru.sberbank.school.task02.util.Volume;
 
 import static java.util.Arrays.asList;
 
-public class ExternalQuotesServiceC implements ExternalQuotesService {
+public class ExternalQuotesServiceImpl implements ExternalQuotesService {
 
     public List<Quote> getQuotes(Symbol symbol) {
         if (symbol.isCross()) {
