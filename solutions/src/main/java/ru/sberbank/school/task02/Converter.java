@@ -20,7 +20,7 @@ public class Converter implements FxConversionService {
     @Override
     public BigDecimal convert(@NonNull ClientOperation operation, @NonNull Symbol symbol, @NonNull BigDecimal amount) {
 
-        if (amount.signum()<= 0) {
+        if (amount.signum() <= 0) {
             throw new IllegalArgumentException("Введите корректное значение объема!");
         }
 
