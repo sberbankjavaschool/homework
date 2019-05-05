@@ -30,10 +30,19 @@ public class Converter implements FxConversionService {
             throw new FxConversionException("Список валют пуст!");
         }
 
-        Quote result = quotes.stream()
-                .filter(q -> amount.compareTo(q.getVolumeSize()) < 0 || q.isInfinity())
-                .min(this::quoteComparison)
-                .orElse(quotes.get(0));
+        Quote result = null;
+
+        for (Quote quote : quotes) {
+            if (amount.compareTo(quote.getVolumeSize()) < 0 || quote.isInfinity()) {
+                if (result == null || quoteComparison(quote,result) < 0) {
+                    result = quote;
+                }
+            }
+        }
+
+        if (result == null) {
+            throw new FxConversionException("Подходящей котировки нет!");
+        }
 
         boolean isSell = operation == ClientOperation.SELL;
         return isSell ? result.getBid() : result.getOffer();
