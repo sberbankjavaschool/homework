@@ -30,7 +30,7 @@ public class FxConverter implements FxConversionService {
       throw new IllegalArgumentException("Amount less than 0");
     }
 
-    Quote curQuote = null;
+    Quote curQuote = Quotes.getQuotes(symbol).get(0);
     BigDecimal curVolume = amount;
 
     for (Quote quote : Quotes.getQuotes(symbol)) {
