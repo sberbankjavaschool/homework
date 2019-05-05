@@ -2,6 +2,7 @@ package ru.sberbank.school.task02;
 
 import ru.sberbank.school.task02.util.ClientOperation;
 import ru.sberbank.school.task02.util.ExternalQuotesServiceDemo;
+
 import ru.sberbank.school.task02.util.Symbol;
 
 import static ru.sberbank.school.task02.util.Symbol.USD_RUB;
@@ -23,7 +24,7 @@ public class Main {
         //Получение котировки
         ClientOperation testClientOperation = ClientOperation.SELL;
         Symbol testSymbol = USD_RUB;
-        BigDecimal testValue = BigDecimal.valueOf(100);
+        BigDecimal testValue = BigDecimal.valueOf(16);
 
         BigDecimal testPrice = fxConversionService.convert(testClientOperation, testSymbol, testValue);
         System.out.println(testPrice);
