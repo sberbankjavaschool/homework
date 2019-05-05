@@ -44,12 +44,26 @@ public class FxConversionServiceImpl implements FxConversionService {
             throw new ConverterConfigurationException("List of Quotes for exchange operations is empty");
         }
 
-        Quote correctQuote;
+        Quote correctQuote = quotes.stream()
+                .filter(quote -> amount.compareTo(quote.getVolumeSize()) < 0
+                && amount.compareTo(BigDecimal.valueOf(0)) > 0)
+                .min(Comparator.comparing(Quote::getVolumeSize))
+                .orElse(quotes.get(quotes.size() - 1));
 
-        /*
-        1) realization find min part
+/*       this for recurrent method try
+//        for (Quote quote : quotes) {
+//            correctQuote = findQuote(quote, correctQuote, amount);
+       }
+*/
+
+        return operation == ClientOperation.BUY ? correctQuote.getOffer() : correctQuote.getBid();
+    }
+
+
+    /*  One method tries with stream():
+        1) realization find min part after filter
         .min(Comparator.comparing(Quote::getVolumeSize))
-        2) realization find min part
+        2) realization find min part after filter
         .min((q1, q2)-> {
                     if (q1.getVolume().isInfinity()) {
                         return -1;
@@ -57,11 +71,21 @@ public class FxConversionServiceImpl implements FxConversionService {
                         return 1;
                     }else return q1.getVolumeSize().compareTo(q2.getVolumeSize());
                 })
-         */
-        correctQuote =  quotes.stream()
-                .filter(quote -> quote.getVolumeSize().compareTo(amount) >= 0)
-                .min(Comparator.comparing(Quote::getVolumeSize))
-                .orElse(quotes.get(0));
-        return operation == ClientOperation.BUY ? correctQuote.getOffer() : correctQuote.getBid();
+
+          Recurrent method try:
+
+          private Quote findQuote(Quote quote, Quote correctQuote, BigDecimal amount) {
+        if (correctQuote == null && quote.isInfinity()) {
+                correctQuote = quote;
+        }else {
+            quote.isInfinity();
+            if (quote.getVolumeSize().compareTo(amount) > 0){
+                if (correctQuote == null || correctQuote.isInfinity()
+                || quote.getVolumeSize().compareTo(correctQuote.getVolumeSize()) < 0)
+                correctQuote = quote;
+            }
+        }
+        return correctQuote;
     }
+         */
 }
