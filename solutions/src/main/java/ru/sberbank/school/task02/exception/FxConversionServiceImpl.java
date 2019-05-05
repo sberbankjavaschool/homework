@@ -13,8 +13,6 @@ import java.util.List;
 public class FxConversionServiceImpl implements FxConversionService {
     private ExternalQuotesService externalQuotesService;
 
-    private ClientOperation operation;
-
     public FxConversionServiceImpl(ExternalQuotesService externalQuotesService) {
         this.externalQuotesService = externalQuotesService;
     }
@@ -22,9 +20,8 @@ public class FxConversionServiceImpl implements FxConversionService {
     @Override
     public BigDecimal convert(@NonNull ClientOperation operation, @NonNull Symbol symbol,
                               @NonNull BigDecimal amount) {
-        this.operation = operation;
 
-        if (!checkCorrectConvert(amount)) {
+        if (!(amount.compareTo(BigDecimal.ZERO) > 0)) {
             throw new ConverterConfigurationException("Amount меньше или равно нулю");
         }
 
@@ -50,9 +47,5 @@ public class FxConversionServiceImpl implements FxConversionService {
         }
 
         return operation == ClientOperation.BUY ? bestQuotes.getOffer() : bestQuotes.getBid();
-    }
-
-    private boolean checkCorrectConvert(BigDecimal amount) {
-        return amount.compareTo(BigDecimal.ZERO) > 0;
     }
 }
