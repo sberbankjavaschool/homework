@@ -1,5 +1,6 @@
 package ru.sberbank.school.task02;
 
+import org.eclipse.jgit.annotations.NonNull;
 import ru.sberbank.school.task02.util.ClientOperation;
 import ru.sberbank.school.task02.util.Quote;
 import ru.sberbank.school.task02.util.Symbol;
@@ -7,19 +8,22 @@ import ru.sberbank.school.task02.util.Symbol;
 import java.math.BigDecimal;
 import java.util.List;
 
-@Getter
 public class CurrencyCalc implements FxConversionService {
 
     private ExternalQuotesService externalQuotesService;
+
+    protected ExternalQuotesService getExternalQuotesService() {
+        return externalQuotesService;
+    }
 
     public CurrencyCalc(ExternalQuotesService externalQuotesService) {
         this.externalQuotesService = externalQuotesService;
     }
 
-
     @Override
-    public BigDecimal convert( ClientOperation operation, Symbol symbol, BigDecimal amount) {
-        if (amount == null || operation == null || symbol == null || amount.equals(BigDecimal.ZERO)) {
+    public BigDecimal convert(@NonNull ClientOperation operation,
+                              @NonNull Symbol symbol, @NonNull BigDecimal amount) {
+        if (amount.equals(BigDecimal.ZERO)) {
             throw new IllegalArgumentException();
         }
 
