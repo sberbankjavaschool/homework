@@ -20,9 +20,9 @@ public class Main {
         FxConversionService fxConversionService = serviceFactory.getFxConversionService(externalQuotesService);
 
         //Получение котировки
-        ClientOperation testClientOperation = ClientOperation.BUY;
+        ClientOperation testClientOperation = ClientOperation.SELL;
         Symbol testSymbol = USD_RUB;
-        BigDecimal testValue = BigDecimal.valueOf(100);
+        BigDecimal testValue = BigDecimal.valueOf(500);
 
         BigDecimal testPrice = fxConversionService.convert(testClientOperation, testSymbol, testValue);
         System.out.println(testPrice);
