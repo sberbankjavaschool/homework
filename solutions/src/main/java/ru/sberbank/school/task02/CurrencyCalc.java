@@ -1,10 +1,9 @@
 package ru.sberbank.school.task02;
 
-
+import ru.sberbank.school.task02.exception.FxConversionException;
 import ru.sberbank.school.task02.util.ClientOperation;
 import ru.sberbank.school.task02.util.Quote;
 import ru.sberbank.school.task02.util.Symbol;
-import ru.sberbank.school.task02.exception.*;
 
 import java.math.BigDecimal;
 import java.util.List;
