@@ -23,6 +23,7 @@ public class FxConversionServiceImpl implements FxConversionService {
     public BigDecimal convert(@NonNull ClientOperation operation, @NonNull Symbol symbol,
                               @NonNull BigDecimal amount) {
         this.operation = operation;
+
         if (!checkCorrectConvert(amount)) {
             throw new ConverterConfigurationException("Amount меньше или равно нулю");
         }
@@ -34,13 +35,13 @@ public class FxConversionServiceImpl implements FxConversionService {
 
         Quote bestQuotes = null;
         for (Quote quote : quotes) {
-            if (bestQuotes == null) {
-                bestQuotes = quote;
-            }
-            if (amount.compareTo(quote.getVolumeSize()) < 0) {
-                if(bestQuotes.getVolumeSize().compareTo(quote.getVolumeSize()) < 0) {
+            if (amount.compareTo(quote.getVolumeSize()) < 0 && !quote.isInfinity()) {
+                if (bestQuotes.getVolumeSize().compareTo(quote.getVolumeSize()) > 0 || bestQuotes == null
+                    || bestQuotes.isInfinity()) {
                     bestQuotes = quote;
                 }
+            } else if (quote.isInfinity() && bestQuotes == null) {
+                bestQuotes = quote;
             }
         }
 
