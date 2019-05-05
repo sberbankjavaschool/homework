@@ -43,7 +43,7 @@ pipeline {
                     } catch (err) {
                         pullRequest.comment("Ошибка при сверке веток," +
                                 " попробуй сделать Pull из ветки source с Rebase " +
-                                "в свою ветку в своём форке.\n${err}")
+                                "в свою ветку в своём форке.")
                         println "Do a barrel roll!"
                         pullRequest.addLabel('REBASE NEEDED')
                         error('Rebase Failed')
@@ -129,7 +129,7 @@ pipeline {
                         sh "./gradlew --info :watson:test -PprTitle='${title}'"
                     } catch (ex) {
                         if (!ex.getMessage().contains('exit code 1')) {
-                            pullRequest.comment("Шерлоку стало плохо:\n${ex}")
+                            pullRequest.comment("Шерлоку стало плохо.")
                         }
                         sherlockFailed = true
                     }
