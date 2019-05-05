@@ -18,7 +18,6 @@ public class ExternalQuotesServiceDemo2 implements ExternalQuotesService {
         }
 
 
-
         return asList(
                 buildQuote(symbol, 100, 10),
                 buildQuote(symbol, 500, 8),

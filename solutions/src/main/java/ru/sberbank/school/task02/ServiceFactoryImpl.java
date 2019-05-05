@@ -11,8 +11,7 @@ public class ServiceFactoryImpl implements ServiceFactory {
 
         if (externalQuotesService == null) {
             throw new FxConversionException("Неправильная ссылка на объект котировок ExternalQuotesService");
-        }
-        else {
+        } else {
             //Инстанс объекта FxConversionService в который передается ExternalQuotesService
             FxConversionService fxConversionService = new FxConversionServiceImpl(externalQuotesService);
             return fxConversionService;
