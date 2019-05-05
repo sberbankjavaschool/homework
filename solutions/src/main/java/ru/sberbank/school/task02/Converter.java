@@ -3,6 +3,7 @@ package ru.sberbank.school.task02;
 import java.math.BigDecimal;
 import java.util.List;
 
+import lombok.NonNull;
 import ru.sberbank.school.task02.exception.FxConversionException;
 import ru.sberbank.school.task02.util.ClientOperation;
 import ru.sberbank.school.task02.util.Quote;
@@ -17,12 +18,9 @@ public class Converter implements FxConversionService {
 
 
     @Override
-    public BigDecimal convert(ClientOperation operation, Symbol symbol, BigDecimal amount) {
-        if (operation == null || symbol == null || amount == null) {
-            throw new NullPointerException();
-        }
+    public BigDecimal convert(@NonNull ClientOperation operation, @NonNull Symbol symbol, @NonNull BigDecimal amount) {
 
-        if (amount.equals(BigDecimal.ZERO)) {
+        if (amount.signum()<= 0) {
             throw new IllegalArgumentException("Введите корректное значение объема!");
         }
 
@@ -33,21 +31,24 @@ public class Converter implements FxConversionService {
         }
 
         Quote result = quotes.stream()
-                .filter(q -> amount.compareTo(q.getVolumeSize()) < 0 || q.isInfinity()).min((q1,q2) -> {
-                    if (q1.isInfinity()) {
-                        return 1;
-                    }
-
-                    if (q2.isInfinity()) {
-                        return -1;
-                    }
-
-                    return q1.getVolumeSize().compareTo(q2.getVolumeSize());
-                }).orElse(quotes.get(0));
+                .filter(q -> amount.compareTo(q.getVolumeSize()) < 0 || q.isInfinity())
+                .min(this::quoteComparison)
+                .orElse(quotes.get(0));
 
         boolean isSell = operation == ClientOperation.SELL;
         return isSell ? result.getBid() : result.getOffer();
     }
 
+    private int quoteComparison(Quote lq, Quote rq) {
+        if (lq.isInfinity()) {
+            return 1;
+        }
 
+        if (rq.isInfinity()) {
+            return -1;
+        }
+        return lq.getVolumeSize().compareTo(rq.getVolumeSize());
+    }
 }
+
+
