@@ -1,6 +1,5 @@
 package ru.sberbank.school.task02;
 
-import com.sun.org.apache.xpath.internal.operations.Quo;
 import org.eclipse.jgit.annotations.NonNull;
 import ru.sberbank.school.task02.util.Beneficiary;
 import ru.sberbank.school.task02.util.ClientOperation;
@@ -26,7 +25,7 @@ public class ExtendedCurrencyCalc extends CurrencyCalc implements ExtendedFxConv
         }
 
         List<Quote> quotes = getExternalQuotesService().getQuotes(symbol);
-        List<Quote> suitableQuotes = getSuitableQuotes(quotes, amount);
+        List<Quote> suitableQuotes = getSuitableQuotes(quotes, amount, 0);
 
         if (suitableQuotes == null) {
             return Optional.empty();
@@ -44,13 +43,11 @@ public class ExtendedCurrencyCalc extends CurrencyCalc implements ExtendedFxConv
         return Optional.of(operation == ClientOperation.BUY ? quote.getOffer() : quote.getBid());
     }
 
-    @Override
-    public Optional<BigDecimal> convertReversed(ClientOperation operation, Symbol symbol,
-                                                BigDecimal amount, double delta, Beneficiary beneficiary) {
-        return Optional.empty();
-    }
+    private List<Quote> getSuitableQuotes(@NonNull List<Quote> quotes, BigDecimal amount, double delta) {
+        if (quotes.size() == 0) {
+            return null;
+        }
 
-    private List<Quote> getSuitableQuotes(List<Quote> quotes, BigDecimal amount) {
         List<Quote> suitableQuotes = new ArrayList<>();
         Quote find = null;
 
@@ -62,7 +59,13 @@ public class ExtendedCurrencyCalc extends CurrencyCalc implements ExtendedFxConv
         }
 
         if (find == null) {
-            return null;
+            for (Quote q : quotes) {
+                if (q.getVolumeSize().add(BigDecimal.valueOf(delta)).compareTo(amount) > 0) {
+                    suitableQuotes.add(q);
+                }
+            }
+
+            return suitableQuotes.size() == 0 ? null : suitableQuotes;
         }
 
         for (Quote q : quotes) {
@@ -73,4 +76,11 @@ public class ExtendedCurrencyCalc extends CurrencyCalc implements ExtendedFxConv
 
         return suitableQuotes;
     }
+
+    @Override
+    public Optional<BigDecimal> convertReversed(ClientOperation operation, Symbol symbol,
+                                                BigDecimal amount, double delta, Beneficiary beneficiary) {
+        return Optional.empty();
+    }
+
 }
