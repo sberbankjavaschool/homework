@@ -23,6 +23,7 @@ public class FxConversionServiceImpl implements FxConversionService {
     public BigDecimal convert(@NonNull ClientOperation operation, @NonNull Symbol symbol,
                               @NonNull BigDecimal amount) {
         this.operation = operation;
+
         if (!checkCorrectConvert(amount)) {
             throw new ConverterConfigurationException("Amount меньше или равно нулю");
         }
