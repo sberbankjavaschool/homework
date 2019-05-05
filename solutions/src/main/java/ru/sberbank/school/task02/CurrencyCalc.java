@@ -8,7 +8,7 @@ import ru.sberbank.school.task02.util.Symbol;
 import java.math.BigDecimal;
 import java.util.List;
 
-@Getter
+
 public class CurrencyCalc implements FxConversionService {
 
     private ExternalQuotesService externalQuotesService;
@@ -17,6 +17,9 @@ public class CurrencyCalc implements FxConversionService {
         this.externalQuotesService = externalQuotesService;
     }
 
+    public ExternalQuotesService getExternalQuotesService() {
+        return externalQuotesService;
+    }
 
     @Override
     public BigDecimal convert( ClientOperation operation, Symbol symbol, BigDecimal amount) {
