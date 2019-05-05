@@ -22,6 +22,10 @@ public class FxConverter implements FxConversionService {
       throw new NullPointerException("Operation is null");
     }
 
+    if (symbol == null) {
+      throw new NullPointerException("Symbol is null");
+    }
+
     if (amount.compareTo(BigDecimal.ZERO) <= 0) {
       throw new IllegalArgumentException("Amount less than 0");
     }
