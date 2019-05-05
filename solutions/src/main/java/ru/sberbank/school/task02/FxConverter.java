@@ -31,7 +31,7 @@ public class FxConverter implements FxConversionService {
     }
 
 
-    Quote curQuote = Quotes.getQuotes(symbol).get(0);
+    Quote curQuote = null;
     BigDecimal curVolume = amount;
 
     for (Quote quote : Quotes.getQuotes(symbol)) {
@@ -43,10 +43,7 @@ public class FxConverter implements FxConversionService {
         }
       }
     }
+      System.out.println(curVolume);
     return (operation == ClientOperation.BUY) ? curQuote.getOffer() : curQuote.getBid();
-  }
-
-  private boolean isBuy(ClientOperation operation) {
-    return ClientOperation.BUY == operation;
   }
 }
