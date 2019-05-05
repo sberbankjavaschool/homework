@@ -39,7 +39,7 @@ public class Main {
                 + " expected 76 sell amount 100");
         System.out.println(fxConversionService.convert(
                 ClientOperation.BUY, Symbol.USD_RUB, BigDecimal.valueOf(9.000000044189101E8))
-                + " expected 85 (but don't know why not 84) buy amount 9.000000044189101E8");
+                + " expected 85 buy amount 9.000000044189101E8");
         System.out.println(fxConversionService.convert(
                 ClientOperation.SELL, Symbol.USD_RUB, BigDecimal.valueOf(9.000000044189101E8))
                 + " expected 75 sell amount 9.000000044189101E8");
