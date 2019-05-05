@@ -30,7 +30,6 @@ public class FxConverter implements FxConversionService {
       throw new IllegalArgumentException("Amount less than 0");
     }
 
-
     Quote curQuote = null;
     BigDecimal curVolume = amount;
 
@@ -40,10 +39,17 @@ public class FxConverter implements FxConversionService {
         if ((curVolume.compareTo(amount) <= 0) || (volume.compareTo(curVolume) < 0)) {
           curVolume = volume;
           curQuote = quote;
+        }else if (volume.compareTo(curVolume) == 0) {
+          BigDecimal offer = quote.getOffer();
+          BigDecimal bid = quote.getBid();
+          if (operation == ClientOperation.BUY && offer.compareTo(curQuote.getOffer()) > 0) {
+            curQuote = quote;
+          } else if (operation == ClientOperation.SELL && bid.compareTo(curQuote.getBid()) < 0) {
+            curQuote = quote;
+          }
         }
       }
     }
-      System.out.println(curVolume);
     return (operation == ClientOperation.BUY) ? curQuote.getOffer() : curQuote.getBid();
   }
 }
