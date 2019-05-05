@@ -10,38 +10,40 @@ import ru.sberbank.school.task02.util.Volume;
 
 public class FxConverter implements FxConversionService {
 
-  private ExternalQuotesService Quotes;
+    private ExternalQuotesService Quotes;
 
-  FxConverter(ExternalQuotesService q) {
-    Quotes = q;
-  }
-
-  @Override
-  public BigDecimal convert(ClientOperation operation, Symbol symbol, BigDecimal amount) {
-    if (operation == null) {
-      throw new NullPointerException("Operation is null");
+    FxConverter(ExternalQuotesService q) {
+        Quotes = q;
     }
 
-    if (symbol == null) {
-      throw new NullPointerException("Symbol is null");
+    @Override
+    public BigDecimal convert(ClientOperation operation, Symbol symbol, BigDecimal amount) {
+        if (operation == null) {
+            throw new NullPointerException("Operation is null");
+        }
+
+        if (symbol == null) {
+            throw new NullPointerException("Symbol is null");
+        }
+
+        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Amount less than 0");
+        }
+
+        Quote curQuote = null;
+        BigDecimal curVolume = amount;
+
+        for (Quote quote : Quotes.getQuotes(symbol)) {
+            BigDecimal volume = quote.getVolumeSize();
+            if (amount.compareTo(volume) < 0 || quote.isInfinity()) {
+                if (curVolume.compareTo(amount) <= 0 || curQuote.isInfinity() ||
+                        (volume.compareTo(curVolume) < 0 && !quote.isInfinity())) {
+                    curQuote = quote;
+                    curVolume = volume;
+                }
+            }
+        }
+        return (operation == ClientOperation.BUY) ? curQuote.getOffer() : curQuote.getBid();
     }
 
-    if (amount.compareTo(BigDecimal.ZERO) <= 0) {
-      throw new IllegalArgumentException("Amount less than 0");
-    }
-
-    Quote curQuote = null;
-    BigDecimal curVolume = new BigDecimal(amount.doubleValue());
-
-    for (Quote quote : Quotes.getQuotes(symbol)) {
-      BigDecimal volume = quote.getVolumeSize();
-      if(amount.compareTo(volume)<0){
-          if(curVolume.compareTo(amount)<=0 || volume.compareTo(curVolume) < 0){
-              curQuote = quote;
-              curVolume = volume;
-          }
-      }
-    }
-    return (operation == ClientOperation.BUY) ? curQuote.getOffer() : curQuote.getBid();
-  }
 }
