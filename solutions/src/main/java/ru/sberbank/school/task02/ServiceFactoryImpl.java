@@ -9,8 +9,9 @@ public class ServiceFactoryImpl implements ServiceFactory {
     @Override
     public FxConversionService getFxConversionService(ExternalQuotesService externalQuotesService) throws FxConversionException {
 
-        if(externalQuotesService == null)
+        if(externalQuotesService == null) {
             throw new FxConversionException("Неправильная ссылка на объект котировок ExternalQuotesService");
+        }
         else {
             //Инстанс объекта FxConversionService в который передается ExternalQuotesService
             FxConversionService fxConversionService = new FxConversionServiceImpl(externalQuotesService);
