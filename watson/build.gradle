@@ -28,11 +28,10 @@ test {
 
 tasks.withType(Test) {
     if (project.hasProperty("prTitle")) {
-        System.setProperty("PR_TITLE", prTitle)
+        systemProperties['PR_TITLE'] = prTitle
     } else {
-        System.setProperty("PR_TITLE", "0")
+        systemProperties['PR_TITLE'] = 'undefined'
     }
-    println System.getProperty("PR_TITLE")
 }
 
 dependencies {
