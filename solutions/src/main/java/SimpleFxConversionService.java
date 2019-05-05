@@ -38,14 +38,16 @@ public class SimpleFxConversionService implements FxConversionService {
                 continue;
             }
 
-            if (quoteCandidate.isInfinity()) {
-                quote = quoteCandidate;
-            }
-
-            if (isQuoteVolumeBigger(quoteCandidate, amount)) {
-                if (quote == null) {
+            if (quote == null) {
+                if (quoteCandidate.isInfinity()) {
                     quote = quoteCandidate;
-                } else {
+                }
+                else {
+                    quote = isQuoteVolumeBigger(quoteCandidate, amount) ? quoteCandidate : null;
+                }
+            }
+            else {
+                if (isQuoteVolumeBigger(quoteCandidate, amount)) {
                     quote = isQuoteVolumeBigger(quoteCandidate, quote.getVolumeSize()) ? quoteCandidate : quote;
                 }
             }
