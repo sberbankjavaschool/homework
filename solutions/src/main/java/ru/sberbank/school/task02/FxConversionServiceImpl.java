@@ -45,9 +45,15 @@ public class FxConversionServiceImpl implements FxConversionService {
         }
 
         Quote correctQuote = quotes.stream()
-                .filter(quote -> amount.compareTo(quote.getVolumeSize()) < 0
-                && amount.compareTo(BigDecimal.valueOf(0)) > 0)
-                .min(Comparator.comparing(Quote::getVolumeSize))
+                .filter(quote -> (amount.compareTo(quote.getVolumeSize()) < 0
+                && amount.compareTo(BigDecimal.valueOf(0)) > 0) || quote.isInfinity())
+                .min((q1, q2) -> {
+                    if (q1.isInfinity()) {
+                        return 1;    //reverse it works, but don't know why
+                    }else if (q2.isInfinity()) {
+                        return -1;   //reverse  it works, but don't know why
+                    }else return q1.getVolumeSize().compareTo(q2.getVolumeSize());
+                })
                 .orElse(quotes.get(quotes.size() - 1));
 
 /*       this for recurrent method try
