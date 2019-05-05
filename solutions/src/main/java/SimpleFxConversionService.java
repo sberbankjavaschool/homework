@@ -27,13 +27,13 @@ public class SimpleFxConversionService implements FxConversionService {
             throw new IllegalArgumentException("instrument is not defined");
         }
 
-        if (amount == null || (amount.compareTo(BigDecimal.ZERO) <= 0) ) {
+        if (amount == null || (amount.compareTo(BigDecimal.ZERO) <= 0)) {
             throw new IllegalArgumentException("amount is not defined or not positive");
         }
 
         List<Quote> quotes = externalQuotesService.getQuotes(symbol);
         Quote quote = null;
-        for (Quote quoteCandidate: quotes) {
+        for (Quote quoteCandidate : quotes) {
             if (quoteCandidate == null) {
                 continue;
             }
@@ -45,8 +45,7 @@ public class SimpleFxConversionService implements FxConversionService {
             if (isQuoteVolumeBigger(quoteCandidate, amount)) {
                 if (quote == null) {
                     quote = quoteCandidate;
-                }
-                else {
+                } else {
                     quote = isQuoteVolumeBigger(quoteCandidate, quote.getVolumeSize()) ? quoteCandidate : quote;
                 }
             }
