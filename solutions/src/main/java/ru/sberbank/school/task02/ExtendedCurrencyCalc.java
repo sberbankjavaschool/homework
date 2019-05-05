@@ -25,6 +25,9 @@ public class ExtendedCurrencyCalc extends CurrencyCalc implements ExtendedFxConv
     @Override
     public Optional<BigDecimal> convertReversed(ClientOperation operation, Symbol symbol,
                                                 BigDecimal amount, double delta, Beneficiary beneficiary) {
+        if (operation == null || symbol == null || amount == null || beneficiary == null) {
+            throw new NullPointerException();
+        }
         if (amount.equals(BigDecimal.ZERO)) {
             throw new IllegalArgumentException();
         }
@@ -49,7 +52,7 @@ public class ExtendedCurrencyCalc extends CurrencyCalc implements ExtendedFxConv
     }
 
     private List<Quote> getSuitableQuotes(List<Quote> quotes, BigDecimal amount, double delta) {
-        if (quotes.size() == 0) {
+        if (quotes == null || quotes.size() == 0) {
             return null;
         }
 
