@@ -25,10 +25,12 @@ public class FxConversionServiceC implements FxConversionService {
 
     @Override
     public BigDecimal convert(ClientOperation operation, Symbol symbol, BigDecimal amount) {
-        if (operation == null || symbol == null || amount == null) {
-            throw new NullPointerException("One of arguments is null");
+        if (operation == null) {
+            throw new NullPointerException("Operation is null");
         }
-
+        if (symbol == null) {
+            throw new NullPointerException("Symbol is null");
+        }
         if (amount.equals(BigDecimal.ZERO)) {
             throw new IllegalArgumentException("Amount is equal to ZERO");
         }
@@ -44,13 +46,13 @@ public class FxConversionServiceC implements FxConversionService {
             if (exRate == null && q.isInfinity()) {
                 exRate = q;
             } else if (amount.compareTo(q.getVolumeSize()) < 0) {
-                if ((exRate == null) || (exRate.isInfinity()) || (q.getVolumeSize().compareTo(exRate.getVolumeSize()) < 0)) {
+                if (exRate == null || exRate.isInfinity() || q.getVolumeSize().compareTo(exRate.getVolumeSize()) < 0) {
                     exRate = q;
                 }
             }
         }
-        BigDecimal rate = (operation == ClientOperation.BUY ? exRate.getOffer() : exRate.getBid());
-        return rate;
+        return (operation == ClientOperation.BUY ? exRate.getOffer() : exRate.getBid());
+
     }
 
 }
