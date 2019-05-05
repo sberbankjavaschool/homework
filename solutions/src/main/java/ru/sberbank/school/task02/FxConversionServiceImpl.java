@@ -39,8 +39,8 @@ public class FxConversionServiceImpl implements FxConversionService {
 
         List<Quote> quotes = quotesService.getQuotes(symbol);
 
-        if (quotes.isEmpty()) {
-            throw new ConverterConfigurationException("List of Quotes for exchange operations is empty");
+        if (quotes == null || quotes.isEmpty()) {
+            throw new NullPointerException("list of quotes is emty or null");
         }
 
         Quote correctQuote = quotes.stream()
