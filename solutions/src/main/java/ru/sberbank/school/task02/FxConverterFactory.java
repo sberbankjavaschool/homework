@@ -13,8 +13,7 @@ public class FxConverterFactory implements ServiceFactory {
   }
 
   public static void main(String[] args) {
-    ServiceFactory factory = new FxConverterFactory();
     FxConversionService converter = new FxConverter(new ExternalQuotesServiceDemo());
-    System.out.println(converter.convert(ClientOperation.BUY, Symbol.USD_RUB, new BigDecimal(99)));
+    System.out.println(converter.convert(ClientOperation.BUY, Symbol.USD_RUB, new BigDecimal(1000000)));
   }
 }
