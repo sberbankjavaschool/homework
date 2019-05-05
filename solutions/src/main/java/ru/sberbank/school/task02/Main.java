@@ -22,18 +22,18 @@ public class Main {
 
         FxConversionService fxConversionService = serviceFactory.getFxConversionService(externalQuotesService);
         System.out.println(fxConversionService.convert(
-                ClientOperation.BUY, Symbol.USD_RUB, BigDecimal.valueOf(600)) + " buy amount 600");
+                ClientOperation.BUY, Symbol.USD_RUB, BigDecimal.valueOf(600)) + " expected 83 buy amount 600");
         System.out.println(fxConversionService.convert(
-                ClientOperation.BUY, Symbol.USD_RUB, BigDecimal.valueOf(5_000)) + " buy amount 5000");
+                ClientOperation.BUY, Symbol.USD_RUB, BigDecimal.valueOf(5_000)) + " expected 82 buy amount 5000");
         System.out.println(fxConversionService.convert(
-                ClientOperation.BUY, Symbol.USD_RUB, BigDecimal.valueOf(300_000)) + " buy amount 300 000");
+                ClientOperation.BUY, Symbol.USD_RUB, BigDecimal.valueOf(300_000)) + " expected 83 buy amount 300 000");
         System.out.println(fxConversionService.convert(
-                ClientOperation.BUY, Symbol.USD_RUB, BigDecimal.valueOf(100)) + " buy amount 100");
+                ClientOperation.BUY, Symbol.USD_RUB, BigDecimal.valueOf(100)) + " expected 85 buy amount 100");
         System.out.println(fxConversionService.convert(
-                ClientOperation.SELL, Symbol.USD_RUB, BigDecimal.valueOf(100)) + " sell amount 100");
+                ClientOperation.SELL, Symbol.USD_RUB, BigDecimal.valueOf(100)) + " expected 75 sell amount 100");
         System.out.println(fxConversionService.convert(
-                ClientOperation.BUY, Symbol.USD_RUB, BigDecimal.valueOf(9.000000044189101E8)) + " buy amount 9.000000044189101E8");
+                ClientOperation.BUY, Symbol.USD_RUB, BigDecimal.valueOf(9.000000044189101E8)) + " expected 85 buy amount 9.000000044189101E8");
         System.out.println(fxConversionService.convert(
-                ClientOperation.SELL, Symbol.USD_RUB, BigDecimal.valueOf(9.000000044189101E8)) + " sell amount 9.000000044189101E8");
+                ClientOperation.SELL, Symbol.USD_RUB, BigDecimal.valueOf(9.000000044189101E8)) + " expected 75 sell amount 9.000000044189101E8");
     }
 }

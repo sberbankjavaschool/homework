@@ -38,19 +38,28 @@ public class FxConversionServiceImpl implements FxConversionService {
             throw new ConverterConfigurationException("Wrong operation input: amount is negative or zero");
         }
 
-        if (operation != ClientOperation.BUY && operation != ClientOperation.SELL) {
-            throw new ConverterConfigurationException("Wrong operation input:"
-                    + operation + "(expected \"BUY\" or \"SELL\")");
-        }
-
         List<Quote> quotes = quotesService.getQuotes(symbol);
 
         if (quotes.isEmpty()) {
             throw new ConverterConfigurationException("List of Quotes for exchange operations is empty");
         }
 
-        Quote correctQuote =  quotes.stream()
-                .filter(quote -> quote.getVolumeSize().compareTo(amount) > 0)
+        Quote correctQuote;
+
+        /*
+        1) realization find min part
+        .min(Comparator.comparing(Quote::getVolumeSize))
+        2) realization find min part
+        .min((q1, q2)-> {
+                    if (q1.getVolume().isInfinity()) {
+                        return -1;
+                    }else if (q2.getVolume().isInfinity()) {
+                        return 1;
+                    }else return q1.getVolumeSize().compareTo(q2.getVolumeSize());
+                })
+         */
+        correctQuote =  quotes.stream()
+                .filter(quote -> quote.getVolumeSize().compareTo(amount) >= 0)
                 .min(Comparator.comparing(Quote::getVolumeSize))
                 .orElse(quotes.get(0));
         return operation == ClientOperation.BUY ? correctQuote.getOffer() : correctQuote.getBid();
