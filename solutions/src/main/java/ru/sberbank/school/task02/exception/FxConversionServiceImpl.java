@@ -35,13 +35,12 @@ public class FxConversionServiceImpl implements FxConversionService {
 
         Quote bestQuotes = null;
         for (Quote quote : quotes) {
-            if (bestQuotes == null) {
-                bestQuotes = quote;
-            }
-            if (amount.compareTo(quote.getVolumeSize()) < 1) {
-                if (bestQuotes.getVolumeSize().compareTo(quote.getVolumeSize()) < 0 && bestQuotes.isInfinity()) {
+            if (amount.compareTo(quote.getVolumeSize()) < 0 && !quote.isInfinity()) {
+                if (bestQuotes.getVolumeSize().compareTo(quote.getVolumeSize()) > 0) {
                     bestQuotes = quote;
                 }
+            } else if (quote.isInfinity() && bestQuotes == null) {
+                bestQuotes = quote;
             }
         }
 
