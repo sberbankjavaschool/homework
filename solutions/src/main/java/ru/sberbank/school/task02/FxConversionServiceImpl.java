@@ -30,27 +30,57 @@ public class FxConversionServiceImpl implements FxConversionService {
         List<Quote> quotes = new ArrayList<>();
         quotes = externalQuotesService.getQuotes(symbol);
 
+
         if (quotes.size() == 0) {
             throw new FxConversionException("Список котировок ExternalQuotesService не должен быть пустой");
         }
 
+        /**
+         * Цикл проходит по массиву и ищет два индекса:
+         * - индекс минимального объема volume (minIndex)
+         * - индекс минимального минимального объема volume, который больше amount (minVolumeIndex)
+         * Если amount больше самого большого объема volume и для него нет котировки
+         * возвращается цена минимального объема валюты
+         *
+         * @param amountAsDouble    объем валюты, которую запрашивает клиент (тип Double)
+         * @param tempValue         временная переменная, минимальное значение volume,
+         *                          которое больше amount на текущем шаге цикла
+         * @param minVolume         минимальный объем, который предлагает банк
+         * @param minVolumeIndex    индекс, которому соотвествует минимальный объем в списке quotes,
+         *                          который больше amount
+         * @param minIndex          индекс, которому соотвествует минимальный объем в списке quotes
+         * @param index             итоговый индекс котировки, которая возвращается методом
+         * @return                  котировка для заданного объема amount
+         */
+
         double amountAsDouble = amount.doubleValue();
         double tempValue = Double.MAX_VALUE;
+        double minVolume = quotes.get(0).getVolumeSize().doubleValue();
+
+        int minVolumeIndex = 0;
+        int minIndex = 0;
         int index = 0;
 
-        for (Quote q : quotes) {
+        for (int i = 0; i < quotes.size(); i++) {
 
-            double value = q.getVolumeSize().doubleValue();
+            double value = quotes.get(i).getVolumeSize().doubleValue();
+
+            if (value > 0 && value < minVolume) {
+                minVolume = value;
+                minIndex = i;
+            }
 
             if (value > 0) {
                 if (value >= amountAsDouble) {
                     if (value < tempValue) {
                         tempValue = value;
-                        index++;
+                        minVolumeIndex = i;
                     }
                 }
             }
         }
+
+        index = quotes.get(minVolumeIndex).getVolumeSize().compareTo(amount) > 0 ? minVolumeIndex : minIndex;
 
         if (operation == ClientOperation.BUY) {
             return quotes.get(index).getOffer();
@@ -59,5 +89,6 @@ public class FxConversionServiceImpl implements FxConversionService {
         } else {
             throw new FxConversionException("Недопустимая операция ClientOperation");
         }
+
     }
 }
