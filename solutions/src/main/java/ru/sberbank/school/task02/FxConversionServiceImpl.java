@@ -48,7 +48,7 @@ public class FxConversionServiceImpl implements FxConversionService {
                 .filter(quote -> amount.compareTo(quote.getVolumeSize()) < 0
                 && amount.compareTo(BigDecimal.valueOf(0)) > 0)
                 .min(Comparator.comparing(Quote::getVolumeSize))
-                .orElse(quotes.get(0));
+                .orElse(quotes.get(quotes.size() - 1));
 
 /*       this for recurrent method try
 //        for (Quote quote : quotes) {
