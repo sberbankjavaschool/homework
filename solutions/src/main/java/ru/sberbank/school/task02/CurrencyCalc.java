@@ -47,10 +47,10 @@ public class CurrencyCalc implements FxConversionService {
         for (Quote tempQuote : quoteList) {
             if (pickedQuote == null && tempQuote.isInfinity()) {
                 pickedQuote = tempQuote;
-            } else if (tempQuote.getVolumeSize().compareTo(amount) >= 0) {
+            } else if (tempQuote.getVolumeSize().compareTo(amount) > 0) {
                 if (pickedQuote == null
                         || pickedQuote.isInfinity()
-                        || tempQuote.getVolumeSize().compareTo(pickedQuote.getVolumeSize()) <= 0) {
+                        || tempQuote.getVolumeSize().compareTo(pickedQuote.getVolumeSize()) < 0) {
                     pickedQuote = tempQuote;
                 }
             }
