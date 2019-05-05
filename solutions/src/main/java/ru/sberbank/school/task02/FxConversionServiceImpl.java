@@ -6,7 +6,6 @@ import ru.sberbank.school.task02.util.Quote;
 import ru.sberbank.school.task02.util.Symbol;
 
 import java.math.BigDecimal;
-import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -58,42 +57,6 @@ public class FxConversionServiceImpl implements FxConversionService {
                 })
                 .orElse(quotes.get(quotes.size() - 1));
 
-/*       this for recurrent method try
-//        for (Quote quote : quotes) {
-//            correctQuote = findQuote(quote, correctQuote, amount);
-       }
-*/
-
         return operation == ClientOperation.BUY ? correctQuote.getOffer() : correctQuote.getBid();
     }
-
-
-    /*  One method tries with stream():
-        1) realization find min part after filter
-        .min(Comparator.comparing(Quote::getVolumeSize))
-        2) realization find min part after filter
-        .min((q1, q2)-> {
-                    if (q1.getVolume().isInfinity()) {
-                        return -1;
-                    }else if (q2.getVolume().isInfinity()) {
-                        return 1;
-                    }else return q1.getVolumeSize().compareTo(q2.getVolumeSize());
-                })
-
-          Recurrent method try:
-
-          private Quote findQuote(Quote quote, Quote correctQuote, BigDecimal amount) {
-        if (correctQuote == null && quote.isInfinity()) {
-                correctQuote = quote;
-        }else {
-            quote.isInfinity();
-            if (quote.getVolumeSize().compareTo(amount) > 0){
-                if (correctQuote == null || correctQuote.isInfinity()
-                || quote.getVolumeSize().compareTo(correctQuote.getVolumeSize()) < 0)
-                correctQuote = quote;
-            }
-        }
-        return correctQuote;
-    }
-         */
 }
