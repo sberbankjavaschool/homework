@@ -8,7 +8,7 @@ import ru.sberbank.school.task02.util.ClientOperation;
 import ru.sberbank.school.task02.util.Quote;
 import ru.sberbank.school.task02.util.Symbol;
 
-public class FxConversionServiceC implements FxConversionService {
+public class FxConversionServiceImpl implements FxConversionService {
     /**
      * Возвращает значение цены единицы базовой валюты для указанного объема.
      *
@@ -19,7 +19,7 @@ public class FxConversionServiceC implements FxConversionService {
      */
     private ExternalQuotesService exQuotes;
 
-    public FxConversionServiceC(ExternalQuotesService externalQuotesService) {
+    public FxConversionServiceImpl(ExternalQuotesService externalQuotesService) {
         this.exQuotes = externalQuotesService;
     }
 
@@ -37,9 +37,6 @@ public class FxConversionServiceC implements FxConversionService {
 
         List<Quote> quotes = exQuotes.getQuotes(symbol);
         Quote exRate = null;
-        if (quotes.isEmpty()) {
-            throw new NullPointerException("List of quotes is empty");
-        }
 
         for (Quote q : quotes) {
 
