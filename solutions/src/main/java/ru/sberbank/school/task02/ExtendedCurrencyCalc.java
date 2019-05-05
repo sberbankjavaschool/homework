@@ -1,5 +1,6 @@
 package ru.sberbank.school.task02;
 
+import org.eclipse.jgit.annotations.NonNull;
 import ru.sberbank.school.task02.util.Beneficiary;
 import ru.sberbank.school.task02.util.ClientOperation;
 import ru.sberbank.school.task02.util.Quote;
@@ -17,7 +18,7 @@ public class ExtendedCurrencyCalc extends CurrencyCalc implements ExtendedFxConv
     }
 
     @Override
-    public Optional<BigDecimal> convertReversed(ClientOperation operation, Symbol symbol,
+    public Optional<BigDecimal> convertReversed(@NonNull ClientOperation operation, Symbol symbol,
                                                 BigDecimal amount, Beneficiary beneficiary) {
         return convertReversed(operation, symbol, amount, 0, beneficiary);
     }
