@@ -1,5 +1,6 @@
 package ru.sberbank.school.task02;
 
+import org.eclipse.jgit.annotations.NonNull;
 import ru.sberbank.school.task02.util.Beneficiary;
 import ru.sberbank.school.task02.util.ClientOperation;
 import ru.sberbank.school.task02.util.Quote;
@@ -23,11 +24,10 @@ public class ExtendedCurrencyCalc extends CurrencyCalc implements ExtendedFxConv
     }
 
     @Override
-    public Optional<BigDecimal> convertReversed(ClientOperation operation, Symbol symbol,
-                                                BigDecimal amount, double delta, Beneficiary beneficiary) {
-        if (operation == null || symbol == null || amount == null || beneficiary == null) {
-            throw new NullPointerException();
-        }
+    public Optional<BigDecimal> convertReversed(@NonNull ClientOperation operation, @NonNull Symbol symbol,
+                                                @NonNull BigDecimal amount, double delta,
+                                                @NonNull Beneficiary beneficiary) {
+
         if (amount.equals(BigDecimal.ZERO)) {
             throw new IllegalArgumentException();
         }
@@ -51,7 +51,7 @@ public class ExtendedCurrencyCalc extends CurrencyCalc implements ExtendedFxConv
         return Optional.of(operation == ClientOperation.BUY ? quote.getOffer() : quote.getBid());
     }
 
-    private List<Quote> getSuitableQuotes(List<Quote> quotes, BigDecimal amount, double delta) {
+    private List<Quote> getSuitableQuotes(@NonNull List<Quote> quotes, BigDecimal amount, double delta) {
         if (quotes == null || quotes.size() == 0) {
             return null;
         }
