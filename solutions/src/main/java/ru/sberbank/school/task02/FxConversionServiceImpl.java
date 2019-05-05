@@ -71,7 +71,7 @@ public class FxConversionServiceImpl implements FxConversionService {
             }
 
             if (value > 0) {
-                if (value >= amountAsDouble) {
+                if (value > amountAsDouble) {
                     if (value < tempValue) {
                         tempValue = value;
                         minVolumeIndex = i;
