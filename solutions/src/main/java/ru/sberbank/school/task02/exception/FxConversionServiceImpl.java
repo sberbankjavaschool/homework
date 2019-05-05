@@ -36,8 +36,8 @@ public class FxConversionServiceImpl implements FxConversionService {
         Quote bestQuotes = null;
         for (Quote quote : quotes) {
             if (amount.compareTo(quote.getVolumeSize()) < 0 && !quote.isInfinity()) {
-                if (bestQuotes.getVolumeSize().compareTo(quote.getVolumeSize()) > 0 || bestQuotes == null
-                    || bestQuotes.isInfinity()) {
+                if (bestQuotes == null || bestQuotes.getVolumeSize().compareTo(quote.getVolumeSize()) > 0 ||
+                     bestQuotes.isInfinity()) {
                     bestQuotes = quote;
                 }
             } else if (quote.isInfinity() && bestQuotes == null) {
