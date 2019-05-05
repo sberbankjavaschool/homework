@@ -23,7 +23,7 @@ public class FxConversionServiceImpl implements FxConversionService {
     public BigDecimal convert(@NonNull ClientOperation operation, @NonNull Symbol symbol,
                               @NonNull BigDecimal amount) {
         this.operation = operation;
-        if (checkCorrectConvert(amount)) {
+        if (!checkCorrectConvert(amount)) {
             throw new ConverterConfigurationException("Amount меньше или равно нулю");
         }
 
@@ -32,27 +32,26 @@ public class FxConversionServiceImpl implements FxConversionService {
             throw new ConverterConfigurationException("externalQuotesService пустой");
         }
 
-        Quote bestQuotes = quotes.get(0);
+        Quote bestQuotes = null;
         for (Quote quote : quotes) {
-            if (amount.compareTo(quote.getVolumeSize()) < 0 || quote.isInfinity()) {
-                if (operationPrice(bestQuotes).compareTo(operationPrice(quote)) > 0) {
+            if (bestQuotes == null) {
+                bestQuotes = quote;
+            }
+            if (amount.compareTo(quote.getVolumeSize()) < 0) {
+                if(bestQuotes.getVolumeSize().compareTo(quote.getVolumeSize()) < 0) {
                     bestQuotes = quote;
                 }
             }
         }
 
-        return operationPrice(bestQuotes);
+        if (bestQuotes == null) {
+            throw new ConverterConfigurationException("Не найден подходящий quotes");
+        }
+
+        return operation == ClientOperation.BUY ? bestQuotes.getOffer() : bestQuotes.getBid();
     }
 
     private boolean checkCorrectConvert(BigDecimal amount) {
-        boolean state = false;
-        if (amount.compareTo(BigDecimal.ZERO) > 0) {
-            state = true;
-        }
-        return  state;
-    }
-
-    private BigDecimal operationPrice(Quote quote) {
-        return this.operation == ClientOperation.BUY ? quote.getOffer() : quote.getBid();
+        return amount.compareTo(BigDecimal.ZERO) > 0;
     }
 }
