@@ -1,6 +1,6 @@
 package ru.sberbank.school.task02;
 
-public class ServiceFactoryC implements ServiceFactory {
+public class ServiceFactoryImpl implements ServiceFactory {
 
     /**
      * Возвращает инстанс FxConversionService реализованнную студентом.
@@ -9,7 +9,7 @@ public class ServiceFactoryC implements ServiceFactory {
      * @return объект - валютный калькулятор
      */
     public FxConversionService getFxConversionService(ExternalQuotesService externalQuotesService) {
-        return new FxConversionServiceC(externalQuotesService);
+        return new FxConversionServiceImpl(externalQuotesService);
     }
 
 }
