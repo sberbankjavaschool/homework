@@ -23,15 +23,15 @@ public class FxConversionServiceImpl implements FxConversionService {
     @Override
     public BigDecimal convert(ClientOperation operation, Symbol symbol, BigDecimal amount) {
         if (operation == null) {
-            throw new ConverterConfigurationException("Wrong operation input: operation is null");
+            throw new NullPointerException("operation is null");
         }
 
         if (symbol == null) {
-            throw new ConverterConfigurationException("Wrong operation input: symbol is null");
+            throw new NullPointerException("symbol is null");
         }
 
         if (amount == null) {
-            throw new ConverterConfigurationException("Wrong operation input: amount is null");
+            throw new NullPointerException("amount is null");
         }
 
         if (amount.compareTo(BigDecimal.valueOf(0)) <= 0) {
