@@ -52,7 +52,9 @@ public class FxConversionServiceImpl implements FxConversionService {
                         return 1;    //reverse it works, but don't know why
                     } else if (q2.isInfinity()) {
                         return -1;   //reverse  it works, but don't know why
-                    } else return q1.getVolumeSize().compareTo(q2.getVolumeSize());
+                    } else {
+                        return q1.getVolumeSize().compareTo(q2.getVolumeSize());
+                    }
                 })
                 .orElse(quotes.get(quotes.size() - 1));
 
