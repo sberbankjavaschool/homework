@@ -30,13 +30,14 @@ public class FxConverter implements FxConversionService {
       throw new IllegalArgumentException("Amount less than 0");
     }
 
-    BigDecimal curVolume = BigDecimal.ZERO;
+
     Quote curQuote = Quotes.getQuotes(symbol).get(0);
+    BigDecimal curVolume = amount;
 
     for (Quote quote : Quotes.getQuotes(symbol)) {
       BigDecimal volume = quote.getVolumeSize();
       if (amount.compareTo(volume) < 0) {
-        if ((curVolume.compareTo(BigDecimal.ZERO) <= 0) || (volume.compareTo(curVolume) < 0)) {
+        if ((curVolume.compareTo(amount) <= 0) || (volume.compareTo(curVolume) < 0)) {
           curVolume = volume;
           curQuote = quote;
         }
