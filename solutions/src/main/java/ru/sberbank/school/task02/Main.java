@@ -9,8 +9,10 @@ import java.math.BigDecimal;
 public class Main {
     public static void main(String[] args) {
 
+        CurrencyCalcFactory factory = new CurrencyCalcFactory();
+
         FxConversionService calculator =
-                new CurrencyCalcFactory().getFxConversionService(new ExternalQuotesServiceDemo());
+                factory.getFxConversionService(new ExternalQuotesServiceDemo());
 
         BigDecimal price = calculator.convert(ClientOperation.BUY,
                 Symbol.USD_RUB, BigDecimal.valueOf(1000));
