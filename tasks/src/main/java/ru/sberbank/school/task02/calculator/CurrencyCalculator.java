@@ -11,45 +11,72 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.stream.Collectors;
+import lombok.NonNull;
 
 public class CurrencyCalculator implements FxConversionService {
-    private ExternalQuotesService externalQuotesService;
+    private ExternalQuotesService externalQuotesService = new ExternalQuotesServiceDemo();
     private List<Quote> quotes = new ArrayList<>();
     private BigDecimal amountOfRequest;
-    private String symbolOfRequest;
+    private Symbol symbolOfRequest;
 
     @Override
-    public BigDecimal convert(ClientOperation operation, Symbol symbol, BigDecimal amount) {
-        externalQuotesService = new ExternalQuotesServiceDemo();
-        quotes = externalQuotesService.getQuotes(symbol);
+    public BigDecimal convert(@NonNull ClientOperation operation,
+                              @NonNull Symbol symbol,
+                              @NonNull BigDecimal amount) {
+
+//        externalQuotesService = new ExternalQuotesServiceDemo();
+        quotes = externalQuotesService.getQuotes(Symbol.USD_RUB);
         this.amountOfRequest = amount;
-        this.symbolOfRequest = symbol.getSymbol();
-        return operation(operation);
-    }
-    
-    private BigDecimal operation(ClientOperation operation) {
-        if (operation == ClientOperation.SELL) return findQuote().getOffer();
-        if (operation == ClientOperation.BUY) return findQuote().getBid();
-        throw new NoSuchElementException();
+        this.symbolOfRequest = symbol;
+
+        if (check())
+            return operation(operation);
+        return new BigDecimal(0);
     }
 
-    private Quote findQuote() {
+    private BigDecimal operation(ClientOperation operation) {
+        Optional<Quote> quote = findQuote();
+        if (!quote.isPresent()) return new BigDecimal(0);
+        if (operation == ClientOperation.SELL) return quote.get().getOffer();
+        if (operation == ClientOperation.BUY) return quote.get().getBid();
+        return new BigDecimal(0);
+    }
+
+    private Optional<Quote> findQuote() {
         BigDecimal amountQuote = null;
         String symbolQuote = "";
         for (Quote quote : quotes) {
-            amountQuote = quote.getVolume().getVolume();
+            amountQuote = quote.getVolumeSize();
             symbolQuote = quote.getSymbol().getSymbol();
             if ((symbolQuote.equals(symbolOfRequest) && (amountQuote.compareTo(amountOfRequest) >= 0)))  {
-                return quote;
+                return Optional.of(quote);
             }
         }
-        return null;
+        return Optional.empty();
     }
 
-    private List<Quote> filterQutesList(List<Quote> quotesList) {
-        List<Quote> filterBySymbolList = quotesList.stream()
-                .filter(p -> p.getSymbol().equals(symbolOfRequest)).collect(Collectors.toList());
+    public List<Quote> filterQutesList() {
+        quotes = externalQuotesService.getQuotes(symbolOfRequest);
+        List<Quote> filterBySymbolList = quotes.stream()
+                .filter(p -> p.getVolumeSize().compareTo(new BigDecimal(0)) > 0)
+                .filter(p -> p.getSymbol().getSymbol().equals("USD/RUB"))
+                .collect(Collectors.toList());
+
+        filterBySymbolList = filterBySymbolList.stream()
+                .sorted(new CompareQutes()).collect(Collectors.toList());
         return filterBySymbolList;
+    }
+
+    private boolean check() {
+        if (quotes.size() == 0) {
+            return false;
+        }
+        if (amountOfRequest.compareTo(new BigDecimal(0)) <= 0) {
+            return false;
+        }
+        if (symbolOfRequest == null)  return false;
+        return true;
     }
 }
