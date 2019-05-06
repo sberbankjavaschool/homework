@@ -72,7 +72,6 @@ public class ExtendedCurrencyCalc extends CurrencyCalc implements ExtendedFxConv
                     suitableQuotes.add(q);
                 }
             }
-<<<<<<< HEAD
         } else {
             for (Quote q : quotes) {
                 if (q.getVolumeSize().equals(find.getVolumeSize())) {
@@ -82,19 +81,6 @@ public class ExtendedCurrencyCalc extends CurrencyCalc implements ExtendedFxConv
         }
 
         return suitableQuotes.size() == 0 ? null : suitableQuotes;
-=======
-
-            return suitableQuotes.size() == 0 ? null : suitableQuotes;
-        }
-
-        for (Quote q : quotes) {
-            if (q.getVolumeSize().equals(find.getVolumeSize())) {
-                suitableQuotes.add(q);
-            }
-        }
-
-        return suitableQuotes;
->>>>>>> origin/Gorskih
     }
 
 }
