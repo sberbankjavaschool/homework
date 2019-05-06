@@ -1,5 +1,6 @@
 package ru.sberbank.school.task02;
 
+import lombok.Getter;
 import lombok.NonNull;
 import ru.sberbank.school.task02.util.ClientOperation;
 import ru.sberbank.school.task02.util.Quote;
@@ -8,13 +9,10 @@ import ru.sberbank.school.task02.util.Symbol;
 import java.math.BigDecimal;
 import java.util.List;
 
+@Getter
 public class CurrencyCalc implements FxConversionService {
 
     private ExternalQuotesService externalQuotesService;
-
-    protected ExternalQuotesService getExternalQuotesService() {
-        return externalQuotesService;
-    }
 
     public CurrencyCalc(ExternalQuotesService externalQuotesService) {
         this.externalQuotesService = externalQuotesService;
