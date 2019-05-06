@@ -18,7 +18,8 @@ pipeline {
                 script {
                     print "${pullRequest.headRef} ${pullRequest.base}"
                     if (pullRequest.base == 'source') {
-                        def comment = pullRequest.comment("ПР в ветку Source запрещен!")
+                        def comment = pullRequest.comment("ПР в ветку Source запрещен! " +
+                                "Жми EDIT, меняй ветку на свою")
                         pullRequest.addLabel('WRONG BRANCH')
                         println "To source branch! Forbidden!"
                         error('Unauthorized SOURCE branch modification')
@@ -26,14 +27,24 @@ pipeline {
                         removeLabel('WRONG BRANCH')
                     }
                     try {
+                        try {
+                        sh "./gradlew --stacktrace tryToPushToForkRepo " +
+                                "-PsourceBranch='${pullRequest.headRef}' " +
+                                "-PforkRepo='https://github.com/${CHANGE_AUTHOR}/homework.git'"
+                        } catch (err) {
+                            pullRequest.comment("Не смог автоматически запушить в твой форк."
+                                    + " Добавь jenkins-java-school-2019 в коллабораторы и скинь ссылку в общий чат.\n" +
+                                    "Если это уже было сделано, значит автоматический пуш невозможен. Делай руками.")
+                        }
                         sh "./gradlew --stacktrace checkIfSourceBranchPulled " +
                                 "-PsourceBranch='${pullRequest.headRef}' " +
                                 "-PforkRepo='https://github.com/${CHANGE_AUTHOR}/homework.git'"
                         removeLabel('REBASE NEEDED')
                     } catch (err) {
                         pullRequest.comment("Ошибка при сверке веток," +
-                                " попробуй сделать Pull из ветки source с Rebase.\n${err}")
-                        println "Da a barrel roll!"
+                                " попробуй сделать Pull из ветки source с Rebase " +
+                                "в свою ветку в своём форке.")
+                        println "Do a barrel roll!"
                         pullRequest.addLabel('REBASE NEEDED')
                         error('Rebase Failed')
                     }
@@ -48,7 +59,10 @@ pipeline {
                         sh "./gradlew --stacktrace forceRebase " +
                                 "-PtargetBranch='${pullRequest.base}'"
                     } catch (err) {
-                        pullRequest.comment("Ошибка при попытке сделать auto-rebase\n${err}")
+                        pullRequest.comment("Ошибка при попытке сделать auto-rebase " +
+                                "в твою ветку в общем репозитории. " +
+                                "Видимо ты мержил, вместо ребейза. Сам ты не справишься, зови препода.")
+                        error('Rebase To Target Failed')
                     }
                 }
             }
@@ -115,7 +129,7 @@ pipeline {
                         sh "./gradlew --info :watson:test -PprTitle='${title}'"
                     } catch (ex) {
                         if (!ex.getMessage().contains('exit code 1')) {
-                            pullRequest.comment("Шерлоку стало плохо:\n${ex}")
+                            pullRequest.comment("Шерлоку стало плохо.")
                         }
                         sherlockFailed = true
                     }

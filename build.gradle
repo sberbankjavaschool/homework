@@ -25,6 +25,7 @@ subprojects {
     version = project.properties['version']
 }
 
+def homeRepo = 'https://github.com/sberbankjavaschool/homework.git'
 def gitUser = hasProperty('gitUser') ? gitUser : null
 def gitPass = hasProperty('gitPass') ? gitPass : null
 
@@ -43,11 +44,10 @@ task forceRebase {
         def tempDir = File.createTempDir()
         println tempDir.path
         tempDir.deleteOnExit()
-        def homeUrl = 'https://github.com/sberbankjavaschool/homework.git'
 
         print "Cloning... "
         def grgit = Grgit.clone(dir: tempDir,
-                uri: homeUrl,
+                uri: homeRepo,
                 checkout: true,
                 refToCheckout: "refs/heads/${targetBranch}",
                 credentials: new Credentials(gitUser, gitPass))
@@ -72,7 +72,7 @@ task checkIfSourceBranchPulled {
             println 'MISSING PARAMS'
             return
         }
-        Grgit grgit = getGrgit(gitUser, gitPass, 'https://github.com/sberbankjavaschool/homework.git', "source")
+        Grgit grgit = getGrgit(gitUser, gitPass, homeRepo, "source")
         List<Commit> log = grgit.log()
         grgit = getGrgit(gitUser, gitPass, forkRepo, sourceBranch)
         List<Commit> commits = grgit.log()
@@ -83,11 +83,31 @@ task checkIfSourceBranchPulled {
             List<String> strs = missingCommits.stream()
                     .map { commit -> "$commit.author.email: $commit.shortMessage ($commit.id)" }
                     .toList()
-            throw new RuntimeException(String.join(",\n",strs))
+            throw new RuntimeException(String.join(",\n", strs))
         }
         println "OK"
     }
 }
+
+task tryToPushToForkRepo {
+    doFirst {
+        def source = project.hasProperty("sourceBranch")
+        def sourceUrlExists = project.hasProperty("forkRepo")
+        if (!source || !sourceUrlExists) {
+            println 'MISSING PARAMS'
+            return
+        }
+        Grgit grgit = getGrgit(gitUser, gitPass, forkRepo, sourceBranch)
+        grgit.remote.add(name: 'common', url: homeRepo, fetchRefSpecs: ['+refs/heads/source:source'])
+        grgit.fetch(remote: 'common')
+        grgit.pull(remote: 'origin', branch: sourceBranch, rebase: true)
+        grgit.pull(remote: 'common', branch: 'source', rebase: true)
+        grgit.push(remote: 'origin', force: false, refsOrSpecs: ["+refs/heads/${sourceBranch}:${sourceBranch}"])
+
+        println "OK"
+    }
+}
+
 
 private Grgit getGrgit(String gitUser, String gitPass, String url, String branch) {
     def tempDir = File.createTempDir()
