@@ -98,9 +98,9 @@ task tryToPushToForkRepo {
             return
         }
         Grgit grgit = getGrgit(gitUser, gitPass, forkRepo, sourceBranch)
+        grgit.fetch(remote: 'common')
         grgit.checkout(branch: sourceBranch)
         grgit.remote.add(name: 'common', url: homeRepo, fetchRefSpecs: ['+refs/heads/source:source'])
-        grgit.fetch(remote: 'common')
         grgit.pull(remote: 'origin', branch: sourceBranch, rebase: true)
         grgit.pull(remote: 'common', branch: 'source', rebase: true)
         grgit.push(remote: 'origin', force: false, refsOrSpecs: ["+refs/heads/${sourceBranch}:${sourceBranch}"])
