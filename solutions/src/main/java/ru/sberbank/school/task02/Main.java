@@ -7,6 +7,7 @@ import ru.sberbank.school.task02.util.ClientOperation;
 import ru.sberbank.school.task02.util.Symbol;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 public class Main {
 
@@ -16,8 +17,7 @@ public class Main {
         ExtendedFxConversionService calculator = serviceFactory.getExtendedFxConversionService(quotesService);
 
         System.out.println(calculator.convertReversed(ClientOperation.BUY, Symbol.USD_RUB,
-                new BigDecimal(1_000_000), Beneficiary.BANK));
-
+                new BigDecimal(83_000_000), 100, Beneficiary.BANK));
 
 
     }

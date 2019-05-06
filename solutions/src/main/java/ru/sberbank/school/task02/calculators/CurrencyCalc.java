@@ -41,7 +41,7 @@ public class CurrencyCalc implements FxConversionService {
         return operation == ClientOperation.BUY ? currentQuote.getOffer() : currentQuote.getBid();
     }
 
-    private void sortQuotes(List<Quote> quotes) {
+    protected void sortQuotes(List<Quote> quotes) {
         quotes.sort( (o1, o2) -> {
             if (o1.isInfinity()) {
                 return 1;

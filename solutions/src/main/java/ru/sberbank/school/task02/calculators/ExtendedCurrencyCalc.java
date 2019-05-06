@@ -9,6 +9,7 @@ import ru.sberbank.school.task02.util.Quote;
 import ru.sberbank.school.task02.util.Symbol;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -29,60 +30,46 @@ public class ExtendedCurrencyCalc extends CurrencyCalc implements ExtendedFxConv
     public Optional<BigDecimal> convertReversed(@NonNull ClientOperation operation, @NonNull Symbol symbol,
                                                 @NonNull BigDecimal amount, double delta,
                                                 @NonNull Beneficiary beneficiary) {
-
-        if (amount.equals(BigDecimal.ZERO)) {
-            throw new IllegalArgumentException();
-        }
-
         List<Quote> quotes = getExternalQuotesService().getQuotes(symbol);
-        List<Quote> suitableQuotes = getSuitableQuotes(quotes, amount, delta);
-
-        if (suitableQuotes == null) {
-            return Optional.empty();
-        }
-
-        Quote quote = suitableQuotes.get(0);
-        for (Quote q : suitableQuotes) {
-            if (beneficiary == Beneficiary.BANK && q.getOffer().compareTo(quote.getOffer()) > 0) {
-                quote = q;
-            } else if (beneficiary == Beneficiary.CLIENT && q.getOffer().compareTo(quote.getOffer()) < 0) {
-                quote = q;
-            }
-        }
-
-        return Optional.of(operation == ClientOperation.BUY ? quote.getOffer() : quote.getBid());
-    }
-
-    private List<Quote> getSuitableQuotes(@NonNull List<Quote> quotes, BigDecimal amount, double delta) {
-        if (quotes.size() == 0) {
-            return null;
-        }
-
+        sortQuotes(quotes);
         List<Quote> suitableQuotes = new ArrayList<>();
+        BigDecimal val;
+        BigDecimal result;
+        BigDecimal previousVolume = null;
         Quote find = null;
 
         for (Quote q : quotes) {
-            if ((q.getVolumeSize().compareTo(amount) > 0 || q.isInfinity())
-                    && (find == null || find.getVolumeSize().compareTo(q.getVolumeSize()) > 0 || find.isInfinity())) {
+            val = (operation == ClientOperation.BUY) ? q.getOffer() : q.getBid();
+            result = amount.divide(val, RoundingMode.HALF_UP);
+            if (previousVolume != null && result.compareTo(previousVolume) < 0) {
+                break;
+            } else if (q.isInfinity() || result.compareTo(q.getVolumeSize()) < 0) {
                 find = q;
+                break;
+            } else if (result.compareTo(q.getVolumeSize().add(BigDecimal.valueOf(delta))) < 0) {
+                suitableQuotes.add(q);
+            }
+            previousVolume = q.getVolumeSize();
+        }
+
+        if (find == null && suitableQuotes.size() == 0) {
+            return Optional.empty();
+        } else if (suitableQuotes.size() != 0) {
+            find = suitableQuotes.get(0);
+            boolean compareResult;
+
+            for (Quote q : suitableQuotes) {
+                compareResult = (operation == ClientOperation.BUY) ? q.getOffer().compareTo(find.getOffer()) > 0 :
+                        q.getBid().compareTo(find.getBid()) < 0;
+                if (beneficiary == Beneficiary.BANK && compareResult) {
+                    find = q;
+                } else if (beneficiary == Beneficiary.CLIENT && compareResult) {
+                    find = q;
+                }
             }
         }
 
-        if (find == null) {
-            for (Quote q : quotes) {
-                if (q.getVolumeSize().add(BigDecimal.valueOf(delta)).compareTo(amount) > 0) {
-                    suitableQuotes.add(q);
-                }
-            }
-        } else {
-            for (Quote q : quotes) {
-                if (q.getVolumeSize().equals(find.getVolumeSize())) {
-                    suitableQuotes.add(q);
-                }
-            }
-        }
-
-        return suitableQuotes.size() == 0 ? null : suitableQuotes;
+        return Optional.of(operation == ClientOperation.BUY ? find.getOffer() : find.getBid());
     }
 
 }
