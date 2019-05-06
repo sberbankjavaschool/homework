@@ -1,6 +1,8 @@
-package ru.sberbank.school.task02;
+package ru.sberbank.school.task02.calculators;
 
 import lombok.NonNull;
+import ru.sberbank.school.task02.ExtendedFxConversionService;
+import ru.sberbank.school.task02.ExternalQuotesService;
 import ru.sberbank.school.task02.util.Beneficiary;
 import ru.sberbank.school.task02.util.ClientOperation;
 import ru.sberbank.school.task02.util.Quote;
