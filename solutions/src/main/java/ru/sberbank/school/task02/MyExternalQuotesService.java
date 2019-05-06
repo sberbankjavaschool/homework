@@ -1,6 +1,5 @@
 package ru.sberbank.school.task02;
 
-import ru.sberbank.school.task02.exception.WrongSymbolException;
 import ru.sberbank.school.task02.util.Quote;
 import ru.sberbank.school.task02.util.Symbol;
 import ru.sberbank.school.task02.util.Volume;
@@ -13,9 +12,6 @@ import static java.util.Arrays.asList;
 public class MyExternalQuotesService implements ExternalQuotesService {
     @Override
     public List<Quote> getQuotes(Symbol symbol) {
-        if (symbol.isCross()) {
-            throw new WrongSymbolException("Cross symbols are not supported!");
-        }
         return asList(
                 buildQuote(symbol, 100_000, 4),
                 buildQuote(symbol, 100, 10),
