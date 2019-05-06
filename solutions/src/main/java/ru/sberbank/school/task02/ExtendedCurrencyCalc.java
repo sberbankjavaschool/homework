@@ -1,6 +1,6 @@
 package ru.sberbank.school.task02;
 
-import org.eclipse.jgit.annotations.NonNull;
+import lombok.NonNull;
 import ru.sberbank.school.task02.util.Beneficiary;
 import ru.sberbank.school.task02.util.ClientOperation;
 import ru.sberbank.school.task02.util.Quote;
@@ -52,7 +52,7 @@ public class ExtendedCurrencyCalc extends CurrencyCalc implements ExtendedFxConv
     }
 
     private List<Quote> getSuitableQuotes(@NonNull List<Quote> quotes, BigDecimal amount, double delta) {
-        if (quotes == null || quotes.size() == 0) {
+        if (quotes.size() == 0) {
             return null;
         }
 

@@ -1,6 +1,6 @@
 package ru.sberbank.school.task02;
 
-import org.eclipse.jgit.annotations.NonNull;
+import lombok.NonNull;
 import ru.sberbank.school.task02.util.ClientOperation;
 import ru.sberbank.school.task02.util.Quote;
 import ru.sberbank.school.task02.util.Symbol;
