@@ -52,7 +52,8 @@ public class CurrencyCalculator implements FxConversionService {
 
     private Optional<Quote> findQuote() {
         BigDecimal amountQuote;
-        for (Quote quote : quotes) {
+        List<Quote> sortedQuoteList = filterQutesList();
+        for (Quote quote : sortedQuoteList) {
             amountQuote = quote.getVolumeSize();
             if (amountQuote.compareTo(amountOfRequest) >= 0) {
                 return Optional.of(quote);
@@ -62,7 +63,6 @@ public class CurrencyCalculator implements FxConversionService {
     }
 
     public List<Quote> filterQutesList() {
-        quotes = externalQuotesService.getQuotes(symbolOfRequest);
         List<Quote> filterBySymbolList = quotes.stream()
                 .filter(p -> p.getVolumeSize().compareTo(new BigDecimal(0)) > 0)
                 .filter(p -> p.getSymbol().getSymbol().equals(symbolOfRequest.getSymbol()))
