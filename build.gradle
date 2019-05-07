@@ -1,12 +1,14 @@
 import org.ajoberstar.grgit.Credentials
 import org.ajoberstar.grgit.Grgit
+import org.ajoberstar.grgit.Remote
+
+import java.util.function.Predicate
 
 plugins {
     id 'groovy'
     id 'java'
     id 'checkstyle'
     id "org.ajoberstar.grgit" version "3.1.1"
-    
 }
 
 group 'ru.sberbank.school'
@@ -27,6 +29,42 @@ def gitPass = hasProperty('gitPass') ? gitPass : null
 
 def sherlockPath = File.createTempDir()
 sherlockPath.deleteOnExit()
+
+task forceRebase {
+    doFirst {
+        def target = project.hasProperty("targetBranch")
+        def source = project.hasProperty("sourceBranch")
+        def sourceUrlExists = project.hasProperty("sourceUrl")
+        if (!target || !source || !sourceUrlExists) {
+            println 'MISSING PARAMS'
+            return
+        }
+        def grgit = Grgit.open(dir: project.file('.'), credentials: new Credentials(gitUser, gitPass))
+        if (!grgit.remote.list().stream().anyMatch(getPredicate('home'))) {
+            grgit.remote.add(name: 'home', url: 'https://github.com/sberbankjavaschool/homework.git')
+        }
+        if (!grgit.remote.list().stream().anyMatch(getPredicate('external'))) {
+            grgit.remote.add(name: 'external', url: sourceUrl)
+        }
+        grgit.fetch(remote: 'home')
+        def pull = grgit.pull(remote: 'home', branch: 'source', rebase: true)
+        println pull
+        println "pulled from source"
+        grgit.push(remote: 'home', refsOrSpecs : ["refs/remotes/home/${targetBranch}:refs/remotes/home/${targetBranch}"])
+        println "pushed to target"
+        grgit.push(remote: 'external', refsOrSpecs : ["refs/remotes/external/${sourceBranch}:refs/remotes/external/${sourceBranch}"])
+        println "pushed to PR-source"
+    }
+}
+
+private Predicate<Remote> getPredicate(String param) {
+    new Predicate<Remote>() {
+        @Override
+        boolean test(Remote remote) {
+            return remote.name == param
+        }
+    }
+}
 
 task checkoutSherlock {
     doFirst {
@@ -62,5 +100,8 @@ task runSherlock() {
 dependencies {
     compile 'commons-io:commons-io:2.6'
     compile 'org.ajoberstar.grgit:grgit-core:3.1.1'
-    testCompile group: 'junit', name: 'junit', version: '4.4'
+
+    testCompile "org.junit.jupiter:junit-jupiter-api:5.3.0"
+    testRuntime "org.junit.jupiter:junit-jupiter-engine:5.3.0"
+    testRuntime "org.junit.vintage:junit-vintage-engine:5.3.0"
 }

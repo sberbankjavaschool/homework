@@ -22,6 +22,7 @@ dependencies {
     implementation project(":tasks")
     implementation project(":solutions")
     compileOnly 'org.projectlombok:lombok:1.18.6'
+    testCompileOnly  'org.projectlombok:lombok:1.18.6'
     annotationProcessor 'org.projectlombok:lombok:1.18.6'
     compile 'io.github.classgraph:classgraph:+'
     compile 'org.codehaus.groovy:groovy-all:2.3.11'
