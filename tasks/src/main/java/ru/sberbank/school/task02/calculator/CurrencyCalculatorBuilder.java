@@ -8,7 +8,7 @@ import ru.sberbank.school.task02.ServiceFactory;
 public class CurrencyCalculatorBuilder implements ServiceFactory {
     @Override
     public FxConversionService getFxConversionService(ExternalQuotesService externalQuotesService) {
-        return new CurrencyCalculator();
+        return new CurrencyCalculator(externalQuotesService);
     }
 
     @Override

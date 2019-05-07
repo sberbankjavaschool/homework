@@ -10,16 +10,19 @@ import ru.sberbank.school.task02.util.Symbol;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.NonNull;
 
 public class CurrencyCalculator implements FxConversionService {
-    private ExternalQuotesService externalQuotesService = new ExternalQuotesServiceDemo();
+    private ExternalQuotesService externalQuotesService;
     private List<Quote> quotes = new ArrayList<>();
     private BigDecimal amountOfRequest;
     private Symbol symbolOfRequest;
+
+    public CurrencyCalculator(ExternalQuotesService externalQuotesService) {
+        this.externalQuotesService = externalQuotesService;
+    }
 
     @Override
     public BigDecimal convert(@NonNull ClientOperation operation,
@@ -38,19 +41,20 @@ public class CurrencyCalculator implements FxConversionService {
 
     private BigDecimal operation(ClientOperation operation) {
         Optional<Quote> quote = findQuote();
-        if (!quote.isPresent()) return new BigDecimal(0);
+        if (!quote.isPresent()) {
+            System.out.println("No quote found");
+            return new BigDecimal(0);
+        }
         if (operation == ClientOperation.SELL) return quote.get().getOffer();
         if (operation == ClientOperation.BUY) return quote.get().getBid();
         return new BigDecimal(0);
     }
 
     private Optional<Quote> findQuote() {
-        BigDecimal amountQuote = null;
-        String symbolQuote = "";
+        BigDecimal amountQuote;
         for (Quote quote : quotes) {
             amountQuote = quote.getVolumeSize();
-            symbolQuote = quote.getSymbol().getSymbol();
-            if ((symbolQuote.equals(symbolOfRequest) && (amountQuote.compareTo(amountOfRequest) >= 0)))  {
+            if (amountQuote.compareTo(amountOfRequest) >= 0) {
                 return Optional.of(quote);
             }
         }
@@ -61,11 +65,9 @@ public class CurrencyCalculator implements FxConversionService {
         quotes = externalQuotesService.getQuotes(symbolOfRequest);
         List<Quote> filterBySymbolList = quotes.stream()
                 .filter(p -> p.getVolumeSize().compareTo(new BigDecimal(0)) > 0)
-                .filter(p -> p.getSymbol().getSymbol().equals("USD/RUB"))
+                .filter(p -> p.getSymbol().getSymbol().equals(symbolOfRequest.getSymbol()))
+                .sorted(new CompareQutes())
                 .collect(Collectors.toList());
-
-        filterBySymbolList = filterBySymbolList.stream()
-                .sorted(new CompareQutes()).collect(Collectors.toList());
         return filterBySymbolList;
     }
 
