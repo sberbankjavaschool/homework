@@ -17,11 +17,15 @@ public class Solution {
 
         try {
             BigDecimal price = calculator.convert(ClientOperation.BUY,
-                    Symbol.USD_RUB, BigDecimal.valueOf(1000));
+                    Symbol.USD_RUB, new BigDecimal(100));
             System.out.println(price);
-        } catch (FxConversionException ex) {
+
+        }
+        catch (FxConversionException ex) {
             System.out.println(ex.getMessage());
         } catch (NullPointerException ex) {
+            System.out.println(ex.getMessage());
+        } catch (IllegalArgumentException ex) {
             System.out.println(ex.getMessage());
         }
     }
