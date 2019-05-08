@@ -21,41 +21,41 @@ public class MainTest {
                 calculatorFactory.getExtendedFxConversionService(new ExternalQuotesServiceDemo());
         assertNotNull(extendedCalculator);
 
-        Optional<BigDecimal> priceRUB = extendedCalculator.convertReversed(ClientOperation.SELL, Symbol.USD_RUB,
+        Optional<BigDecimal> priceRub = extendedCalculator.convertReversed(ClientOperation.SELL, Symbol.USD_RUB,
                 new BigDecimal(7_000), Beneficiary.CLIENT);
-        assertEquals(BigDecimal.valueOf(1).divide(BigDecimal.valueOf(75), MathContext.DECIMAL32), priceRUB.get());
+        assertEquals(BigDecimal.valueOf(1).divide(BigDecimal.valueOf(75), MathContext.DECIMAL32), priceRub.get());
 
-        priceRUB = extendedCalculator.convertReversed(ClientOperation.SELL, Symbol.USD_RUB,
+        priceRub = extendedCalculator.convertReversed(ClientOperation.SELL, Symbol.USD_RUB,
                 new BigDecimal(7_500), Beneficiary.CLIENT);
-        assertTrue(!priceRUB.isPresent());
+        assertTrue(!priceRub.isPresent());
 
-        priceRUB = extendedCalculator.convertReversed(ClientOperation.SELL, Symbol.USD_RUB,
+        priceRub = extendedCalculator.convertReversed(ClientOperation.SELL, Symbol.USD_RUB,
                 new BigDecimal(7_750_000), Beneficiary.CLIENT);
-        assertEquals(BigDecimal.valueOf(1).divide(BigDecimal.valueOf(77), MathContext.DECIMAL32), priceRUB.get());
+        assertEquals(BigDecimal.valueOf(1).divide(BigDecimal.valueOf(77), MathContext.DECIMAL32), priceRub.get());
 
-        priceRUB = extendedCalculator.convertReversed(ClientOperation.SELL, Symbol.USD_RUB,
+        priceRub = extendedCalculator.convertReversed(ClientOperation.SELL, Symbol.USD_RUB,
                 new BigDecimal(7_750_000), Beneficiary.BANK);
-        assertEquals(BigDecimal.valueOf(1).divide(BigDecimal.valueOf(78), MathContext.DECIMAL32), priceRUB.get());
+        assertEquals(BigDecimal.valueOf(1).divide(BigDecimal.valueOf(78), MathContext.DECIMAL32), priceRub.get());
 
-        priceRUB = extendedCalculator.convertReversed(ClientOperation.SELL, Symbol.USD_RUB,
+        priceRub = extendedCalculator.convertReversed(ClientOperation.SELL, Symbol.USD_RUB,
                 new BigDecimal(0.5), Beneficiary.BANK);
-        assertEquals(BigDecimal.valueOf(1).divide(BigDecimal.valueOf(75), MathContext.DECIMAL32), priceRUB.get());
+        assertEquals(BigDecimal.valueOf(1).divide(BigDecimal.valueOf(75), MathContext.DECIMAL32), priceRub.get());
 
         FxConversionService calculator =
                 calculatorFactory.getFxConversionService(new ExternalQuotesServiceDemo());
         assertNotNull(calculator);
 
-        BigDecimal priceUSD = calculator.convert(ClientOperation.BUY,
+        BigDecimal priceUsd = calculator.convert(ClientOperation.BUY,
                 Symbol.USD_RUB, new BigDecimal(100));
-        assertEquals(BigDecimal.valueOf(84), priceUSD);
+        assertEquals(BigDecimal.valueOf(84), priceUsd);
 
-        priceUSD = calculator.convert(ClientOperation.BUY,
+        priceUsd = calculator.convert(ClientOperation.BUY,
                 Symbol.USD_RUB, new BigDecimal(2.55));
-        assertEquals(BigDecimal.valueOf(85), priceUSD);
+        assertEquals(BigDecimal.valueOf(85), priceUsd);
 
-        priceUSD = calculator.convert(ClientOperation.BUY,
+        priceUsd = calculator.convert(ClientOperation.BUY,
                 Symbol.USD_RUB, new BigDecimal(1_000_000));
-        assertEquals(BigDecimal.valueOf(84), priceUSD);
+        assertEquals(BigDecimal.valueOf(84), priceUsd);
 
     }
 }

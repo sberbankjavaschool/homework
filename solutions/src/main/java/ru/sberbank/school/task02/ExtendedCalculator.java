@@ -66,8 +66,10 @@ public class ExtendedCalculator extends Calculator implements ExtendedFxConversi
         List<ReverseQuote> reverseQuotes = new ArrayList<>();
 
         for (int i = 0; i < quotes.size(); i++) {
-            BigDecimal price = operation == ClientOperation.SELL ? quotes.get(i).getBid() : quotes.get(i).getOffer();
-            Volume volumeFrom = i == 0 ? Volume.from(0) : Volume.from(quotes.get(i - 1).getVolumeSize().multiply(price));
+            BigDecimal price = operation == ClientOperation.SELL
+                    ? quotes.get(i).getBid() : quotes.get(i).getOffer();
+            Volume volumeFrom = i == 0
+                    ? Volume.from(0) : Volume.from(quotes.get(i - 1).getVolumeSize().multiply(price));
             Volume volumeTo = Volume.from(quotes.get(i).getVolumeSize().multiply(price));
             price = BigDecimal.valueOf(1).divide(price, MathContext.DECIMAL32);
             ReverseQuote r = new ReverseQuote(volumeFrom, volumeTo, price);

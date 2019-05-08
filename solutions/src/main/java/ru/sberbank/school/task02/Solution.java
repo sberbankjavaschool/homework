@@ -19,23 +19,22 @@ public class Solution {
         ExtendedFxConversionService extendedCalculator =
                 calculatorFactory.getExtendedFxConversionService(new ExternalQuotesServiceDemo());
 
-        Beneficiary beneficiary = System.getenv("Beneficiary") == "CLIENT" ?
-                Beneficiary.CLIENT : Beneficiary.BANK;
+        Beneficiary beneficiary = System.getenv("Beneficiary") == "CLIENT"
+                ? Beneficiary.CLIENT : Beneficiary.BANK;
 
         try {
-            BigDecimal priceUSD = calculator.convert(ClientOperation.BUY,
+            BigDecimal priceUsd = calculator.convert(ClientOperation.BUY,
                     Symbol.USD_RUB, new BigDecimal(100));
-            System.out.println("USD: " + priceUSD);
+            System.out.println("USD: " + priceUsd);
 
-            Optional<BigDecimal> priceRUB = extendedCalculator.convertReversed(ClientOperation.BUY, Symbol.USD_RUB,
+            Optional<BigDecimal> priceRub = extendedCalculator.convertReversed(ClientOperation.BUY, Symbol.USD_RUB,
                     new BigDecimal(100), beneficiary);
-            if (priceRUB.isPresent()) {
-                System.out.println("RUB " + priceRUB.get());
+            if (priceRub.isPresent()) {
+                System.out.println("RUB " + priceRub.get());
             }
             else {
                 System.out.println("No reverseQuotes!");
             }
-
         } catch (NullPointerException ex) {
             System.out.println(ex.getMessage());
         } catch (IllegalArgumentException ex) {
