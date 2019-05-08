@@ -15,7 +15,7 @@ public class ReverseCalculatorTest {
     private ExternalQuotesService quotesService = new ExternalQuotesProvider();
 
     @Test
-    public void convertReversedNoDelta() {
+    public void convertReversedNoDeltaSell() {
         ExtendedFxConversionService calculator = factory.getExtendedFxConversionService(quotesService);
         Optional<BigDecimal> optionalOffer = calculator.convertReversed(ClientOperation.SELL, Symbol.USD_RUB,
                 BigDecimal.valueOf(1000), Beneficiary.CLIENT);
@@ -24,5 +24,17 @@ public class ReverseCalculatorTest {
             offer = optionalOffer.get();
         }
         Assertions.assertEquals(BigDecimal.valueOf(0.001).setScale(10, RoundingMode.HALF_UP), offer);
+    }
+
+    @Test
+    public void convertReversedNoDeltaBuy() {
+        ExtendedFxConversionService calculator = factory.getExtendedFxConversionService(quotesService);
+        Optional<BigDecimal> optionalOffer = calculator.convertReversed(ClientOperation.BUY, Symbol.USD_RUB,
+                BigDecimal.valueOf(1000), Beneficiary.CLIENT);
+        BigDecimal offer = null;
+        if (optionalOffer.isPresent()) {
+            offer = optionalOffer.get();
+        }
+        Assertions.assertEquals(BigDecimal.valueOf(0.005).setScale(10, RoundingMode.HALF_UP), offer);
     }
 }
