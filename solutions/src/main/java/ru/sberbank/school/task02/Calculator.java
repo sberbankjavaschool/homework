@@ -1,6 +1,7 @@
 package ru.sberbank.school.task02;
 
 import ru.sberbank.school.task02.exception.ConverterConfigurationException;
+import ru.sberbank.school.task02.exception.FxConversionException;
 import ru.sberbank.school.task02.exception.WrongSymbolException;
 import ru.sberbank.school.task02.util.ClientOperation;
 import ru.sberbank.school.task02.util.Quote;
@@ -18,12 +19,13 @@ public class Calculator implements FxConversionService {
 
     @Override
     public BigDecimal convert(ClientOperation operation, Symbol symbol, BigDecimal amount) {
-        if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new IllegalArgumentException();
+        if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0
+                || operation == null || symbol == null) {
+            throw new ConverterConfigurationException("Wrong parameters");
         }
         List<Quote> quotes = provider.getQuotes(symbol);
         if (quotes.isEmpty()) {
-            throw new WrongSymbolException("No quotes for this symbol");
+            throw new FxConversionException("No quotes found");
         }
 
         Quote current = null;
