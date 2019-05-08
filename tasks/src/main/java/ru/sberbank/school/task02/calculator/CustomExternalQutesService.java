@@ -19,7 +19,7 @@ public class CustomExternalQutesService implements ExternalQuotesService {
             throw new WrongSymbolException("Cross symbols are not supported!");
         }
         return asList(
-                buildQuote(symbol, -1, 8),
+                buildQuote(symbol, -1, 4),
                 buildQuote(symbol, 5000, 8),
                 buildQuote(symbol, 100, 10)
         );
