@@ -22,7 +22,7 @@ public class CustomExternalQutesService implements ExternalQuotesService {
                 buildQuote(symbol, 100, 10),
                 buildQuote(symbol, 5000, 8),
                 buildQuote(symbol, -1, 8),
-                buildQuote(symbol, 900000001, 5)
+                buildQuote(symbol, 900000009, 5)
         );
     }
 
