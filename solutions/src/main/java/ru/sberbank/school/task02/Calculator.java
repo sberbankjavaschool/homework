@@ -23,7 +23,7 @@ public class Calculator implements FxConversionService {
             throw new NullPointerException();
         }
         if (amount.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new IllegalArgumentException("Wrong parameters");
+            throw new IllegalArgumentException("Wrong amount");
         }
         List<Quote> quotes = provider.getQuotes(symbol);
         if (quotes == null || quotes.isEmpty()) {
