@@ -12,4 +12,9 @@ public class ServiceFactoryImpl implements ServiceFactory {
         return new FxConversionServiceImpl(externalQuotesService);
     }
 
+    public ExtendedFxConversionService getExtendedFxConversionService(ExternalQuotesService externalQuotesService) {
+        return new FxConversionServiceImpl(externalQuotesService);
+        //throw new UnsupportedOperationException();
+    }
+
 }

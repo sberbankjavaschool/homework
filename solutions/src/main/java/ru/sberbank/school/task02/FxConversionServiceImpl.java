@@ -2,13 +2,16 @@ package ru.sberbank.school.task02;
 
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
+import java.util.Optional;
 
+import ru.sberbank.school.task02.util.Beneficiary;
 import ru.sberbank.school.task02.util.ClientOperation;
 import ru.sberbank.school.task02.util.Quote;
 import ru.sberbank.school.task02.util.Symbol;
 
-public class FxConversionServiceImpl implements FxConversionService {
+public class FxConversionServiceImpl implements ExtendedFxConversionService {
     /**
      * Возвращает значение цены единицы базовой валюты для указанного объема.
      *
@@ -51,6 +54,44 @@ public class FxConversionServiceImpl implements FxConversionService {
         return (operation == ClientOperation.BUY ? exRate.getOffer() : exRate.getBid());
 
     }
+
+    /**
+     * Возвращает значение цены единицы котируемой валюты для указанного объема
+     * только в том случае если есть полное совпадение.
+     *
+     * @param operation   вид операции
+     * @param symbol      Инструмент
+     * @param amount      Объем
+     * @param beneficiary В чью пользу осуществляется округление
+     * @return Цена для указанного объема
+     */
+    @Override
+    public Optional<BigDecimal> convertReversed(ClientOperation operation,
+                                         Symbol symbol,
+                                         BigDecimal amount,
+                                         Beneficiary beneficiary) {
+        BigDecimal rightCur;
+        if (operation == ClientOperation.BUY) {
+            rightCur = convert(ClientOperation.SELL, symbol, amount);
+        } else {
+            rightCur = convert(ClientOperation.BUY, symbol, amount);
+        }
+
+        BigDecimal rightAmount = amount.divide(rightCur, 10, RoundingMode.HALF_UP);
+
+        BigDecimal revCur;
+        if (operation == ClientOperation.BUY) {
+            revCur = convert(ClientOperation.SELL, symbol, amount);
+        } else {
+            revCur = convert(ClientOperation.BUY, symbol, amount);
+        }
+
+        BigDecimal price = BigDecimal.ONE.divide(revCur, 10, RoundingMode.HALF_UP);
+        return Optional.ofNullable(price);
+
+
+    }
+
 
 }
 
