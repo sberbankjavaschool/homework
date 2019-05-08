@@ -1,7 +1,6 @@
 package ru.sberbank.school.task02;
 
-import ru.sberbank.school.task02.exception.ConverterConfigurationException;
-import ru.sberbank.school.task02.exception.WrongSymbolException;
+import ru.sberbank.school.task02.exception.FxConversionException;
 import ru.sberbank.school.task02.util.Beneficiary;
 import ru.sberbank.school.task02.util.ClientOperation;
 import ru.sberbank.school.task02.util.Quote;
@@ -25,13 +24,16 @@ public class ReverseCalculator implements ExtendedFxConversionService {
 
     @Override
     public Optional<BigDecimal> convertReversed(ClientOperation operation, Symbol symbol, BigDecimal amount,
-                                                Beneficiary beneficiary) throws ConverterConfigurationException {
-        if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new IllegalArgumentException();
+                                                Beneficiary beneficiary) {
+        if (amount == null || operation == null || symbol == null || beneficiary == null) {
+            throw new NullPointerException();
+        }
+        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Wrong amount");
         }
         List<Quote> quotes = provider.getQuotes(symbol);
         if (quotes.isEmpty()) {
-            throw new WrongSymbolException("No quotes for this symbol");
+            throw new FxConversionException("No quotes found");
         }
         Quote current = null;
         for (Quote quote: quotes) {
@@ -52,7 +54,35 @@ public class ReverseCalculator implements ExtendedFxConversionService {
     @Override
     public Optional<BigDecimal> convertReversed(ClientOperation operation, Symbol symbol, BigDecimal amount,
                                                 double delta, Beneficiary beneficiary) {
-        return Optional.empty();
+        if (delta == 0) {
+            return convertReversed(operation, symbol, amount, beneficiary);
+        } else {
+            Optional<BigDecimal> revertResultHighDelta = convertReversed(operation, symbol,
+                    amount.add(BigDecimal.valueOf(delta)), beneficiary);
+            Optional<BigDecimal> revertResultLowDelta = convertReversed(operation, symbol,
+                    amount.subtract(BigDecimal.valueOf(delta)), beneficiary);
+            if (!revertResultHighDelta.isPresent()) {
+                return revertResultLowDelta;
+            }
+            if (!revertResultLowDelta.isPresent()) {
+                return revertResultHighDelta;
+            }
+            if (revertResultHighDelta.get().compareTo(revertResultLowDelta.get()) > 0 ) {
+                if (operation == ClientOperation.BUY && beneficiary == Beneficiary.BANK
+                        || operation == ClientOperation.SELL && beneficiary == Beneficiary.CLIENT) {
+                    return revertResultHighDelta;
+                } else {
+                    return revertResultLowDelta;
+                }
+            } else {
+                if (operation == ClientOperation.BUY && beneficiary == Beneficiary.BANK
+                        || operation == ClientOperation.SELL && beneficiary == Beneficiary.CLIENT) {
+                    return revertResultLowDelta;
+                } else {
+                    return revertResultHighDelta;
+                }
+            }
+        }
     }
 
     @Override
