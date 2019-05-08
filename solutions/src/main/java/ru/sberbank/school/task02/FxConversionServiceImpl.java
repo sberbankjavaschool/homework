@@ -70,28 +70,18 @@ public class FxConversionServiceImpl implements ExtendedFxConversionService {
                                          Symbol symbol,
                                          BigDecimal amount,
                                          Beneficiary beneficiary) {
-        BigDecimal rightCur;
-        if (operation == ClientOperation.BUY) {
-            rightCur = convert(ClientOperation.SELL, symbol, amount);
-        } else {
-            rightCur = convert(ClientOperation.BUY, symbol, amount);
-        }
+        BigDecimal rightCur = operation == ClientOperation.BUY ? convert(ClientOperation.SELL, symbol, amount) :
+                convert(ClientOperation.BUY, symbol, amount);
 
         BigDecimal rightAmount = amount.divide(rightCur, 10, RoundingMode.HALF_UP);
 
-        BigDecimal revCur;
-        if (operation == ClientOperation.BUY) {
-            revCur = convert(ClientOperation.SELL, symbol, amount);
-        } else {
-            revCur = convert(ClientOperation.BUY, symbol, amount);
-        }
+        BigDecimal revCur = operation == ClientOperation.BUY ? convert(ClientOperation.SELL, symbol, amount) :
+                convert(ClientOperation.BUY, symbol, amount);
 
         BigDecimal price = BigDecimal.ONE.divide(revCur, 10, RoundingMode.HALF_UP);
         return Optional.ofNullable(price);
 
-
     }
-
 
 }
 
