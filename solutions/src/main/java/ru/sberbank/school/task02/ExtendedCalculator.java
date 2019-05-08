@@ -1,13 +1,11 @@
 package ru.sberbank.school.task02;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.*;
 
-import ru.sberbank.school.task02.util.Beneficiary;
-import ru.sberbank.school.task02.util.ClientOperation;
-import ru.sberbank.school.task02.util.Quote;
-import ru.sberbank.school.task02.util.Symbol;
+import ru.sberbank.school.task02.util.*;
 
 /**
  * Реализация обратного валютного калькулятора.
@@ -27,13 +25,14 @@ public class ExtendedCalculator extends Calculator implements ExtendedFxConversi
             throw new EmptyQuoteException("No quotes!");
         }
 
-        List<BigDecimal> prices = new ArrayList<>();
-        BigDecimal volume;
+        List<ReverseQuote> reverseQuotes = getReverseQuotes(quotes, operation);
 
-        for (Quote q : quotes) {
-            volume = operation == ClientOperation.SELL ? amount.divide(q.getBid(), RoundingMode.HALF_UP) : amount.divide(q.getOffer(), RoundingMode.HALF_UP);
-            if (volume.compareTo(q.getVolumeSize()) < 0) {
-                prices.add(operation == ClientOperation.SELL ? q.getBid() : q.getOffer());
+        List<BigDecimal> prices = new ArrayList<>();
+
+        for (ReverseQuote r : reverseQuotes) {
+            if (r.getVolumeFrom().isInfinity() && amount.compareTo(r.getVolumeToSize()) < 0 ||
+                    amount.compareTo(r.getVolumeFromSize()) >= 0 && amount.compareTo(r.getVolumeToSize()) < 0) {
+                prices.add(r.getPrice());
             }
         }
 
@@ -42,7 +41,7 @@ public class ExtendedCalculator extends Calculator implements ExtendedFxConversi
         }
 
         Collections.sort(prices);
-        return Optional.of(beneficiary == Beneficiary.CLIENT ? prices.get(0) : prices.get(prices.size() - 1));
+        return Optional.of(beneficiary == Beneficiary.CLIENT ? prices.get(prices.size() - 1) : prices.get(0));
     }
 
     @Override
@@ -50,5 +49,35 @@ public class ExtendedCalculator extends Calculator implements ExtendedFxConversi
                                                 double delta, Beneficiary beneficiary) {
         return Optional.empty();
     }
+
+    private void sortQuotes(List<Quote> quotes) {
+        quotes.sort( (q1, q2) -> {
+            if (q1.isInfinity()) {
+                return 1;
+            }
+            if (q2.isInfinity()) {
+                return -1;
+            }
+            return q1.getVolumeSize().compareTo(q2.getVolumeSize());
+        });
+    }
+
+    public List<ReverseQuote> getReverseQuotes(List<Quote> quotes, ClientOperation operation) {
+
+        sortQuotes(quotes);
+        List<ReverseQuote> reverseQuotes = new ArrayList<>();
+
+        for (int i = 0; i < quotes.size(); i++) {
+            BigDecimal price = operation == ClientOperation.SELL ? quotes.get(i).getBid() : quotes.get(i).getOffer();
+            Volume volumeFrom = i == 0 ? Volume.from(0) : Volume.from(quotes.get(i-1).getVolumeSize().multiply(price));
+            Volume volumeTo = Volume.from(quotes.get(i).getVolumeSize().multiply(price));
+            price = BigDecimal.valueOf(1).divide(price, MathContext.DECIMAL32);
+            ReverseQuote r = new ReverseQuote(volumeFrom, volumeTo, price);
+            reverseQuotes.add(r);
+        }
+
+        return reverseQuotes;
+    }
+
 }
 
