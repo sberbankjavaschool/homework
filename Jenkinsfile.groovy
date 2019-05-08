@@ -27,15 +27,15 @@ pipeline {
                         removeLabel('WRONG BRANCH')
                     }
                     try {
-                        try {
-                        sh "./gradlew --stacktrace tryToPushToForkRepo " +
-                                "-PsourceBranch='${pullRequest.headRef}' " +
-                                "-PforkRepo='https://github.com/${CHANGE_AUTHOR}/homework.git'"
-                        } catch (err) {
-                            pullRequest.comment("Не смог автоматически запушить в твой форк."
-                                    + " Добавь jenkins-java-school-2019 в коллабораторы и скинь ссылку в общий чат.\n" +
-                                    "Если это уже было сделано, значит автоматический пуш невозможен. Делай руками.")
-                        }
+                        //try {
+                        //    sh "./gradlew --stacktrace tryToPushToForkRepo " +
+                        //            "-PsourceBranch='${pullRequest.headRef}' " +
+                        //            "-PforkRepo='https://github.com/${CHANGE_AUTHOR}/homework.git'"
+                        //} catch (err) {
+                        //    pullRequest.comment("Не смог автоматически запушить в твой форк."
+                        //            + " Добавь jenkins-java-school-2019 в коллабораторы и скинь ссылку в общий чат.\n" +
+                        //            "Если это уже было сделано, значит автоматический пуш невозможен. Делай руками.")
+                        //}
                         sh "./gradlew --stacktrace checkIfSourceBranchPulled " +
                                 "-PsourceBranch='${pullRequest.headRef}' " +
                                 "-PforkRepo='https://github.com/${CHANGE_AUTHOR}/homework.git'"
