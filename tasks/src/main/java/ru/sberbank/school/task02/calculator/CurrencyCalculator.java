@@ -43,10 +43,10 @@ public class CurrencyCalculator implements FxConversionService {
             return new BigDecimal(0);
         }
         if (operation == ClientOperation.SELL) {
-            return quote.get().getOffer();
+            return quote.get().getBid();
         }
         if (operation == ClientOperation.BUY) {
-            return quote.get().getBid();
+            return quote.get().getOffer();
         }
         return new BigDecimal(0);
     }
