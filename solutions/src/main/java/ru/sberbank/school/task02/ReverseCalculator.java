@@ -27,7 +27,7 @@ public class ReverseCalculator implements ExtendedFxConversionService {
     public Optional<BigDecimal> convertReversed(ClientOperation operation, Symbol symbol, BigDecimal amount,
                                                 Beneficiary beneficiary) throws ConverterConfigurationException {
         if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new ConverterConfigurationException("Wrong amount provided");
+            throw new IllegalArgumentException();
         }
         List<Quote> quotes = provider.getQuotes(symbol);
         if (quotes.isEmpty()) {
@@ -47,6 +47,12 @@ public class ReverseCalculator implements ExtendedFxConversionService {
                 ? BigDecimal.ONE.divide(current.getBid(), 10, RoundingMode.HALF_UP)
                 : BigDecimal.ONE.divide(current.getOffer(), 10, RoundingMode.HALF_UP);
         return Optional.ofNullable(revertResult);
+    }
+
+    @Override
+    public Optional<BigDecimal> convertReversed(ClientOperation operation, Symbol symbol, BigDecimal amount,
+                                                double delta, Beneficiary beneficiary) {
+        return Optional.empty();
     }
 
     @Override
