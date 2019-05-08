@@ -7,6 +7,7 @@ import ru.sberbank.school.task02.util.ClientOperation;
 import ru.sberbank.school.task02.util.Symbol;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Optional;
 
 public class ReverseCalculatorTest {
@@ -22,6 +23,6 @@ public class ReverseCalculatorTest {
         if (optionalOffer.isPresent()) {
             offer = optionalOffer.get();
         }
-        Assertions.assertEquals(BigDecimal.valueOf(1000), offer);
+        Assertions.assertEquals(BigDecimal.valueOf(0.001).setScale(10, RoundingMode.HALF_UP), offer);
     }
 }
