@@ -26,18 +26,23 @@ public class Calculator implements FxConversionService {
 
         Quote current = null;
         for (Quote quote: quotes) {
-            if (quote.isInfinity() && (current == null)) {
-                current = quote;
-            } else if (amount.compareTo(quote.getVolumeSize()) < 0) {
-                if ((current == null) || current.isInfinity()
-                        || (current.getVolumeSize().compareTo(quote.getVolumeSize()) > 0)) {
-                    current = quote;
-                }
-            }
+            current = checkQuote(amount, quote, current);
         }
         if (current == null) {
             return null;
         }
         return operation == ClientOperation.BUY ? current.getOffer() : current.getBid();
+    }
+
+    Quote checkQuote(BigDecimal amount, Quote quote, Quote current) {
+        if (quote.isInfinity() && current == null) {
+            current = quote;
+        } else if (amount.compareTo(quote.getVolumeSize()) < 0) {
+            if (current == null || current.isInfinity()
+                    || current.getVolumeSize().compareTo(quote.getVolumeSize()) > 0) {
+                current = quote;
+            }
+        }
+        return current;
     }
 }
