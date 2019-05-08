@@ -19,8 +19,10 @@ public class Calculator implements FxConversionService {
 
     @Override
     public BigDecimal convert(ClientOperation operation, Symbol symbol, BigDecimal amount) {
-        if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0
-                || operation == null || symbol == null) {
+        if (amount == null || operation == null || symbol == null) {
+            throw new NullPointerException();
+        }
+        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("Wrong parameters");
         }
         List<Quote> quotes = provider.getQuotes(symbol);
