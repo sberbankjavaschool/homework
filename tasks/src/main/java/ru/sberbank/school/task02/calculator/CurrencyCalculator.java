@@ -28,7 +28,7 @@ public class CurrencyCalculator implements FxConversionService {
                               @NonNull Symbol symbol,
                               @NonNull BigDecimal amount) {
         quotes = externalQuotesService.getQuotes(Symbol.USD_RUB);
-        this.amountOfRequest = amount;
+        this.amountOfRequest = amount.setScale(0, BigDecimal.ROUND_FLOOR);
         this.symbolOfRequest = symbol;
         if (check()) {
             return operation(operation);
