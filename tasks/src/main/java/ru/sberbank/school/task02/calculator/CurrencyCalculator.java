@@ -30,11 +30,7 @@ public class CurrencyCalculator implements FxConversionService {
         quotes = externalQuotesService.getQuotes(Symbol.USD_RUB);
         this.amountOfRequest = amount.setScale(0, BigDecimal.ROUND_FLOOR);
         System.out.println("Get volume request: " + amount);
-        for (Quote quotes:externalQuotesService.getQuotes(symbolOfRequest)) {
-            System.out.println("Symbol quote:" + quotes.getSymbol().getSymbol() +
-                    " Quote volume: " + quotes.getVolume() + " Quote bid: " + quotes.getBid() +
-                    " Quote offer: " + quotes.getOffer());
-        }
+
         this.symbolOfRequest = symbol;
         if (check()) {
             return operation(operation);
@@ -70,6 +66,13 @@ public class CurrencyCalculator implements FxConversionService {
     }
 
     private List<Quote> filterQutesList() {
+        if (quotes.size() > 0) {
+            for (Quote quote : externalQuotesService.getQuotes(symbolOfRequest)) {
+                System.out.println("Symbol quote:" + quote.getSymbol().getSymbol() +
+                        " Quote volume: " + quote.getVolume() + " Quote bid: " + quote.getBid() +
+                        " Quote offer: " + quote.getOffer());
+            }
+        }
         List<Quote> filterBySymbolList = quotes.stream()
                 .filter(p -> p.getVolumeSize().compareTo(new BigDecimal(0)) > 0)
                 .filter(p -> p.getSymbol().getSymbol().equals(symbolOfRequest.getSymbol()))
