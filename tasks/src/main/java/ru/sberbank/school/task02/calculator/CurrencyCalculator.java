@@ -3,7 +3,6 @@ package ru.sberbank.school.task02.calculator;
 import ru.sberbank.school.task02.ExternalQuotesService;
 import ru.sberbank.school.task02.FxConversionService;
 import ru.sberbank.school.task02.util.ClientOperation;
-import ru.sberbank.school.task02.util.ExternalQuotesServiceDemo;
 import ru.sberbank.school.task02.util.Quote;
 import ru.sberbank.school.task02.util.Symbol;
 
@@ -15,7 +14,7 @@ import java.util.stream.Collectors;
 import lombok.NonNull;
 
 public class CurrencyCalculator implements FxConversionService {
-    private ExternalQuotesService externalQuotesService;
+    private final ExternalQuotesService externalQuotesService;
     private List<Quote> quotes = new ArrayList<>();
     private BigDecimal amountOfRequest;
     private Symbol symbolOfRequest;
@@ -28,14 +27,12 @@ public class CurrencyCalculator implements FxConversionService {
     public BigDecimal convert(@NonNull ClientOperation operation,
                               @NonNull Symbol symbol,
                               @NonNull BigDecimal amount) {
-
-//        externalQuotesService = new ExternalQuotesServiceDemo();
         quotes = externalQuotesService.getQuotes(Symbol.USD_RUB);
         this.amountOfRequest = amount;
         this.symbolOfRequest = symbol;
-
-        if (check())
+        if (check()) {
             return operation(operation);
+        }
         return new BigDecimal(0);
     }
 
@@ -45,8 +42,12 @@ public class CurrencyCalculator implements FxConversionService {
             System.out.println("No quote found");
             return new BigDecimal(0);
         }
-        if (operation == ClientOperation.SELL) return quote.get().getOffer();
-        if (operation == ClientOperation.BUY) return quote.get().getBid();
+        if (operation == ClientOperation.SELL) {
+            return quote.get().getOffer();
+        }
+        if (operation == ClientOperation.BUY) {
+            return quote.get().getBid();
+        }
         return new BigDecimal(0);
     }
 
@@ -62,7 +63,7 @@ public class CurrencyCalculator implements FxConversionService {
         return Optional.empty();
     }
 
-    public List<Quote> filterQutesList() {
+    private List<Quote> filterQutesList() {
         List<Quote> filterBySymbolList = quotes.stream()
                 .filter(p -> p.getVolumeSize().compareTo(new BigDecimal(0)) > 0)
                 .filter(p -> p.getSymbol().getSymbol().equals(symbolOfRequest.getSymbol()))
@@ -78,7 +79,9 @@ public class CurrencyCalculator implements FxConversionService {
         if (amountOfRequest.compareTo(new BigDecimal(0)) <= 0) {
             return false;
         }
-        if (symbolOfRequest == null)  return false;
+        if (symbolOfRequest == null)  {
+            return false;
+        }
         return true;
     }
 }
