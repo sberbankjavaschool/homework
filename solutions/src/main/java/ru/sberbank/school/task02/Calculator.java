@@ -21,10 +21,10 @@ public class Calculator implements FxConversionService {
     public BigDecimal convert(ClientOperation operation, Symbol symbol, BigDecimal amount) {
         if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0
                 || operation == null || symbol == null) {
-            throw new ConverterConfigurationException("Wrong parameters");
+            throw new IllegalArgumentException("Wrong parameters");
         }
         List<Quote> quotes = provider.getQuotes(symbol);
-        if (quotes.isEmpty()) {
+        if (quotes == null || quotes.isEmpty()) {
             throw new FxConversionException("No quotes found");
         }
 
