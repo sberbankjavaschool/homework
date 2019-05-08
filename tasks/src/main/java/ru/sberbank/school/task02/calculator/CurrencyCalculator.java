@@ -28,8 +28,9 @@ public class CurrencyCalculator implements FxConversionService {
                               @NonNull Symbol symbol,
                               @NonNull BigDecimal amount) {
         quotes = externalQuotesService.getQuotes(Symbol.USD_RUB);
-        this.amountOfRequest = amount.setScale(0, BigDecimal.ROUND_FLOOR);
+        this.amountOfRequest = amount.setScale(2, BigDecimal.ROUND_FLOOR);
         this.symbolOfRequest = symbol;
+        System.out.println("Get request volume: " +  amountOfRequest );
         if (check()) {
             return operation(operation);
         }
@@ -39,7 +40,6 @@ public class CurrencyCalculator implements FxConversionService {
     private BigDecimal operation(ClientOperation operation) {
         Optional<Quote> quote = findQuote();
         if (!quote.isPresent()) {
-            System.out.println("No quote found");
             return new BigDecimal(0);
         }
         if (operation == ClientOperation.SELL) {
@@ -56,7 +56,7 @@ public class CurrencyCalculator implements FxConversionService {
         List<Quote> sortedQuoteList = filterQutesList();
         for (Quote quote : sortedQuoteList) {
             amountQuote = quote.getVolumeSize();
-            if (amountQuote.compareTo(amountOfRequest) >= 0) {
+            if (amountQuote.compareTo(amountOfRequest) > 0) {
                 return Optional.of(quote);
             }
             if (quote.getVolume().isInfinity()) {
@@ -67,6 +67,7 @@ public class CurrencyCalculator implements FxConversionService {
     }
 
     private List<Quote> filterQutesList() {
+        showQuotes();
         List<Quote> filterBySymbolList = quotes.stream()
                 .filter(p -> p.getSymbol().getSymbol().equals(symbolOfRequest.getSymbol()))
                 .sorted(new CompareQutes())
@@ -85,5 +86,14 @@ public class CurrencyCalculator implements FxConversionService {
             return false;
         }
         return true;
+    }
+
+    public void showQuotes() {
+        for (Quote quote : quotes) {
+            System.out.println("Get Quote symbol: " + quote.getSymbol() +
+                    " volume: " + quote.getVolume() +
+                    " bid: " + quote.getBid() +
+                    " offer: " + quote.getOffer());
+        }
     }
 }
