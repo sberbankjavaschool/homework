@@ -8,30 +8,34 @@ import java.util.List;
 
 public class Converter implements FxConversionService {
 
-    private ExternalQuotesService quotesDatabase;
+    private ExternalQuotesService externalQuotesService;
 
     public Converter(ExternalQuotesService externalQuotesService) {
-        quotesDatabase = externalQuotesService;
+        this.externalQuotesService = externalQuotesService;
     }
 
     @Override
     public BigDecimal convert(ClientOperation operation, Symbol symbol, BigDecimal amount) {
-        List<Quote> quotes = quotesDatabase.getQuotes(symbol);
+        List<Quote> quotes = externalQuotesService.getQuotes(symbol);
 
-        if (quotes == null || quotes.isEmpty()) {
-            throw new FxConversionException("Price database not available");
-        }
-
-        if (amount.signum() <= 0) {
-            throw new FxConversionException("Amount less than or equal to 0");
-        }
+        checkData(quotes, amount);
 
         Quote quote = searchQuote(amount, quotes);
 
         return getPrice(operation, quote);
     }
 
-    private BigDecimal getPrice (ClientOperation operation, Quote quote) {
+    protected void checkData(List<Quote> quotes, BigDecimal amount) {
+        if (quotes == null || quotes.isEmpty()) {
+            throw new FxConversionException("Quotes list not available");
+        }
+
+        if (amount.signum() <= 0) {
+            throw new FxConversionException("Amount less than or equal to 0");
+        }
+    }
+
+    protected BigDecimal getPrice(ClientOperation operation, Quote quote) {
         switch (operation) {
             case BUY:
                 return quote.getOffer();
@@ -42,7 +46,7 @@ public class Converter implements FxConversionService {
         }
     }
 
-    private Quote searchQuote(BigDecimal amount, List<Quote> quotes) {
+    protected Quote searchQuote(BigDecimal amount, List<Quote> quotes) {
         Quote searchQuote = null;
         Quote quoteInfinity = null;
 
