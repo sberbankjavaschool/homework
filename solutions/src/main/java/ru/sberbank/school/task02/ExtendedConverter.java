@@ -20,7 +20,11 @@ public class ExtendedConverter extends Converter implements ExtendedFxConversion
     }
 
     @Override
-    public Optional<BigDecimal> convertReversed(ClientOperation operation, Symbol symbol, BigDecimal amount, Beneficiary beneficiary) {
+    public Optional<BigDecimal> convertReversed(ClientOperation operation,
+                                                Symbol symbol,
+                                                BigDecimal amount,
+                                                Beneficiary beneficiary) {
+
         List<Quote> quotes = externalQuotesService.getQuotes(symbol);
 
         checkData(quotes, amount, beneficiary);
@@ -35,10 +39,11 @@ public class ExtendedConverter extends Converter implements ExtendedFxConversion
             if (currQuote.getVolumeSize().compareTo(usd) > 0 || currQuote.isInfinity()) {
                 Quote quote3 = searchQuote(usd, quotes);
                 if (currQuote == quote3) {
-                    if (quote == null)
+                    if (quote == null) {
                         quote = quote3;
-                    else
+                    } else {
                         reserveQuote = quote3;
+                    }
                 }
             }
         }
@@ -57,7 +62,6 @@ public class ExtendedConverter extends Converter implements ExtendedFxConversion
 
     }
 
-
     private void checkData(List<Quote> quotes, BigDecimal amount, Beneficiary beneficiary) {
         super.checkData(quotes, amount);
         if (beneficiary != Beneficiary.CLIENT && beneficiary != Beneficiary.BANK) {
@@ -68,14 +72,26 @@ public class ExtendedConverter extends Converter implements ExtendedFxConversion
 
     private Quote choiceBeneficiary(Quote quote, Quote reserveQuote, Beneficiary beneficiary) {
         if (beneficiary == Beneficiary.CLIENT) {
-            if (reserveQuote.isInfinity()) return reserveQuote;
-            if (quote.isInfinity()) return quote;
-            if (quote.getVolumeSize().compareTo(reserveQuote.getVolumeSize()) < 0) return reserveQuote;
+            if (reserveQuote.isInfinity()) {
+                return reserveQuote;
+            }
+            if (quote.isInfinity()) {
+                return quote;
+            }
+            if (quote.getVolumeSize().compareTo(reserveQuote.getVolumeSize()) < 0) {
+                return reserveQuote;
+            }
 
         } else {
-            if (reserveQuote.isInfinity()) return quote;
-            if (quote.isInfinity()) return reserveQuote;
-            if (quote.getVolumeSize().compareTo(reserveQuote.getVolumeSize()) > 0) return reserveQuote;
+            if (reserveQuote.isInfinity()) {
+                return quote;
+            }
+            if (quote.isInfinity()) {
+                return reserveQuote;
+            }
+            if (quote.getVolumeSize().compareTo(reserveQuote.getVolumeSize()) > 0) {
+                return reserveQuote;
+            }
         }
         return quote;
     }
