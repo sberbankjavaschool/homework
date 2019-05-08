@@ -2,7 +2,6 @@ package ru.sberbank.school.task02;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
-import java.math.RoundingMode;
 import java.util.*;
 
 import ru.sberbank.school.task02.util.*;
@@ -26,12 +25,11 @@ public class ExtendedCalculator extends Calculator implements ExtendedFxConversi
         }
 
         List<ReverseQuote> reverseQuotes = getReverseQuotes(quotes, operation);
-
         List<BigDecimal> prices = new ArrayList<>();
 
         for (ReverseQuote r : reverseQuotes) {
-            if (r.getVolumeFrom().isInfinity() && amount.compareTo(r.getVolumeToSize()) < 0 ||
-                    amount.compareTo(r.getVolumeFromSize()) >= 0 && amount.compareTo(r.getVolumeToSize()) < 0) {
+            if (r.getVolumeFrom().isInfinity() && amount.compareTo(r.getVolumeToSize()) < 0
+                    || amount.compareTo(r.getVolumeFromSize()) >= 0 && amount.compareTo(r.getVolumeToSize()) < 0) {
                 prices.add(r.getPrice());
             }
         }
@@ -69,7 +67,7 @@ public class ExtendedCalculator extends Calculator implements ExtendedFxConversi
 
         for (int i = 0; i < quotes.size(); i++) {
             BigDecimal price = operation == ClientOperation.SELL ? quotes.get(i).getBid() : quotes.get(i).getOffer();
-            Volume volumeFrom = i == 0 ? Volume.from(0) : Volume.from(quotes.get(i-1).getVolumeSize().multiply(price));
+            Volume volumeFrom = i == 0 ? Volume.from(0) : Volume.from(quotes.get(i - 1).getVolumeSize().multiply(price));
             Volume volumeTo = Volume.from(quotes.get(i).getVolumeSize().multiply(price));
             price = BigDecimal.valueOf(1).divide(price, MathContext.DECIMAL32);
             ReverseQuote r = new ReverseQuote(volumeFrom, volumeTo, price);

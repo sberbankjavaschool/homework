@@ -66,14 +66,14 @@ public class Calculator implements FxConversionService {
     }
 
     /**
-     * Метод для сравнения двух значений с учетом isInfinity()
+     * Метод для сравнения двух значений с учетом isInfinity().
      * @param v первое число
      * @param q второе число
      * @return -1, 0, 1 согласно методу compareTo
      */
     private int volumeCompare(BigDecimal v, Quote q) {
         if (q.isInfinity()) {
-            return 1;
+            return -1;
         }
 
         return v.compareTo(q.getVolumeSize());
