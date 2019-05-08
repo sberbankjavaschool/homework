@@ -51,15 +51,15 @@ class CalculatorTest {
     @Test
     void convertIfProvidedNegativeAmount() {
         FxConversionService calculator = factory.getFxConversionService(quotesService);
-        BigDecimal offer = calculator.convert(ClientOperation.BUY, Symbol.USD_RUB, BigDecimal.valueOf(-1));
-        Assertions.assertNull(offer);
+        Assertions.assertThrows(IllegalArgumentException.class,
+                ()->calculator.convert(ClientOperation.BUY, Symbol.USD_RUB, BigDecimal.valueOf(-1)));
     }
 
     @Test
     void convertIfProvidedZeroAmount() {
         FxConversionService calculator = factory.getFxConversionService(quotesService);
-        BigDecimal offer = calculator.convert(ClientOperation.BUY, Symbol.USD_RUB, BigDecimal.ZERO);
-        Assertions.assertNull(offer);
+        Assertions.assertThrows(IllegalArgumentException.class,
+                ()->calculator.convert(ClientOperation.BUY, Symbol.USD_RUB, BigDecimal.valueOf(-1)));
     }
 
     @Test
