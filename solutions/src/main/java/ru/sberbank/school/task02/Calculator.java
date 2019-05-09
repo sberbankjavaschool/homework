@@ -50,8 +50,9 @@ public class Calculator implements FxConversionService {
         Quote currentQuote = null;
 
         for (Quote q : quotes) {
-            if (volumeCompare(amount, q) < 0) {
-                if (currentQuote == null || volumeCompare(currentQuote.getVolumeSize(), q) > 0) {
+            if (amount.compareTo(q.getVolumeSize()) < 0 || q.isInfinity()) {
+                if (currentQuote == null || currentQuote.getVolumeSize().compareTo(q.getVolumeSize()) < 0
+                || q.isInfinity()) {
                     currentQuote = q;
                 }
             }
@@ -65,17 +66,5 @@ public class Calculator implements FxConversionService {
 
     }
 
-    /**
-     * Метод для сравнения двух значений с учетом isInfinity().
-     * @param v первое число
-     * @param q второе число
-     * @return -1, 0, 1 согласно методу compareTo
-     */
-    private int volumeCompare(BigDecimal v, Quote q) {
-        if (q.isInfinity()) {
-            return -1;
-        }
 
-        return v.compareTo(q.getVolumeSize());
-    }
 }
