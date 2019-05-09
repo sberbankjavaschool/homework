@@ -33,13 +33,21 @@ public class FxClientControllerImpl implements FxClientController {
     @Override
     public FxResponse fetchResult(FxRequest requests) throws FxConversionException {
 
-        if (requests == null) throw new FxConversionException("Некорректный запрос");
+        if (requests == null) {
+            throw new FxConversionException("Некорректный запрос");
+        }
 
-        if (requests.getSymbol() == null) throw new FxConversionException("Некорректный запрос");
+        if (requests.getSymbol() == null) {
+            throw new FxConversionException("Некорректный запрос");
+        }
         String symbolAsString = requests.getSymbol();
-        if (requests.getDirection() == null) throw new FxConversionException("Некорректный запрос");
+        if (requests.getDirection() == null) {
+            throw new FxConversionException("Некорректный запрос");
+        }
         String directionAsString = requests.getDirection();
-        if (requests.getAmount() == null) throw new FxConversionException("Некорректный запрос");
+        if (requests.getAmount() == null) {
+            throw new FxConversionException("Некорректный запрос");
+        }
         String amountAsString = requests.getAmount();
 
         Symbol symbol;
