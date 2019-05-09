@@ -27,7 +27,7 @@ public class ExtendedCurrencyCalc extends CurrencyCalculator implements Extended
     @Override
     public Optional<BigDecimal> convertReversed(ClientOperation operation, Symbol symbol, BigDecimal amount,
                                                 double delta, Beneficiary beneficiary) {
-        if (operation == null || symbol == null || amount == null) {
+        if (operation == null || symbol == null || amount == null || beneficiary == null) {
             throw new NullPointerException("Arguments can't be null:\n" + "Operation: " + operation + "\n"
                     + "Symbol: " + symbol + "\n" + "Amount: " + amount + "\n" + "Beneficiary: " + beneficiary);
         }
@@ -43,42 +43,28 @@ public class ExtendedCurrencyCalc extends CurrencyCalculator implements Extended
             throw  new IllegalArgumentException("There are not quotes for this symbol");
         }
 
-        BigDecimal bigDecimalDelta = BigDecimal.valueOf(delta);
         Quote result = null;
 
         for (Quote quote : quoteList) {
-            BigDecimal localAmount = operation == ClientOperation.BUY
-                    ? amount.divide(quote.getOffer(), RoundingMode.HALF_UP)
-                    : amount.divide(quote.getBid(), RoundingMode.HALF_UP);
+            BigDecimal localAmount = getAmount(operation, amount, quote);
 
-            if (!quote.isInfinity()
-                    && quote.getVolumeSize().subtract(localAmount).abs().compareTo(bigDecimalDelta) <= 0) {
-                if (result == null) {
-                    result = quote;
-                } else {
-                    result = getQuotePleasureForBeneficiary(result, quote, beneficiary);
-                }
-            }
+            result = beneficiary == Beneficiary.BANK
+                    ? chooseQuote(localAmount.subtract(BigDecimal.valueOf(delta)), result, quote) :
+                    chooseQuote(localAmount.add(BigDecimal.valueOf(delta)), result, quote);
         }
 
         if (result == null) {
             return Optional.empty();
         }
 
-        return Optional.ofNullable(operation == ClientOperation.BUY ? result.getOffer() : result.getBid());
+        return Optional.ofNullable(getAmount(operation, BigDecimal.ONE, result));
 
     }
 
-    private Quote getQuotePleasureForBeneficiary(Quote quote1, Quote quote2, Beneficiary beneficiary) {
-        if (beneficiary == Beneficiary.BANK) {
-            return quote1.getOffer().compareTo(quote2.getOffer()) > 0 ? quote1 : quote2;
-        }
-
-        if (beneficiary == Beneficiary.CLIENT) {
-            return quote1.getOffer().compareTo(quote2.getOffer()) > 0 ? quote2 : quote1;
-        }
-
-        return quote1;
+    private BigDecimal getAmount(ClientOperation operation, BigDecimal amount, Quote quote) {
+        return operation == ClientOperation.BUY
+                ? amount.divide(quote.getOffer(), 10, RoundingMode.HALF_UP)
+                : amount.divide(quote.getBid(), 10, RoundingMode.HALF_UP);
     }
 
 }
