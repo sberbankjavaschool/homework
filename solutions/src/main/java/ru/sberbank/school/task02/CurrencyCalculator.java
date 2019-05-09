@@ -66,8 +66,11 @@ public class CurrencyCalculator implements FxConversionService {
                 if (amount.compareTo(quote2.getVolumeSize()) < 0) {
                     return  quote2;
                 }
-            } else if (!quote2.isInfinity() && quote2.getVolumeSize().compareTo(quote1.getVolumeSize()) < 0) {
-                return quote2;
+            } else {
+                if (!quote2.isInfinity() && amount.compareTo(quote2.getVolumeSize()) < 0
+                        && quote2.getVolumeSize().compareTo(quote1.getVolumeSize()) < 0) {
+                    return quote2;
+                }
             }
         }
 
