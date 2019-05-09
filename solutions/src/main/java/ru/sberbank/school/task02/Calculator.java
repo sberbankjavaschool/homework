@@ -1,8 +1,6 @@
 package ru.sberbank.school.task02;
 
-import ru.sberbank.school.task02.exception.ConverterConfigurationException;
 import ru.sberbank.school.task02.exception.FxConversionException;
-import ru.sberbank.school.task02.exception.WrongSymbolException;
 import ru.sberbank.school.task02.util.ClientOperation;
 import ru.sberbank.school.task02.util.Quote;
 import ru.sberbank.school.task02.util.Symbol;
@@ -35,7 +33,7 @@ public class Calculator implements FxConversionService {
             current = checkQuote(amount, quote, current);
         }
         if (current == null) {
-            return null;
+            throw new FxConversionException("No suitable quote found");
         }
         return operation == ClientOperation.BUY ? current.getOffer() : current.getBid();
     }
@@ -50,5 +48,18 @@ public class Calculator implements FxConversionService {
             }
         }
         return current;
+    }
+
+    void validate(ClientOperation operation, Symbol symbol, BigDecimal amount) {
+        if (operation == null) {
+            throw new NullPointerException("No operation provided");
+        }
+        if (symbol == null) {
+            throw new NullPointerException("No symbol provided");
+        }
+        if (amount == null) {
+            throw new NullPointerException("No amount provided");
+        }
+
     }
 }

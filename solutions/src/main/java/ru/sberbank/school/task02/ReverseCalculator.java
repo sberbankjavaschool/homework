@@ -25,9 +25,8 @@ public class ReverseCalculator implements ExtendedFxConversionService {
     @Override
     public Optional<BigDecimal> convertReversed(ClientOperation operation, Symbol symbol, BigDecimal amount,
                                                 Beneficiary beneficiary) {
-        if (amount == null || operation == null || symbol == null || beneficiary == null) {
-            throw new NullPointerException();
-        }
+        validate(operation, symbol, amount, beneficiary);
+
         if (amount.compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("Wrong amount");
         }
@@ -37,17 +36,15 @@ public class ReverseCalculator implements ExtendedFxConversionService {
         }
         Quote current = null;
         for (Quote quote: quotes) {
-            BigDecimal reverseAmount = operation == ClientOperation.BUY
-                    ? amount.divide(quote.getBid(), 10, RoundingMode.HALF_UP)
-                    : amount.divide(quote.getOffer(), 10, RoundingMode.HALF_UP);
+            BigDecimal price = operation == ClientOperation.BUY ? quote.getBid() : quote.getOffer();
+            BigDecimal reverseAmount = amount.divide(price, 10, RoundingMode.HALF_UP);
             current = calculator.checkQuote(reverseAmount, quote, current);
         }
         if (current == null) {
             return Optional.empty();
         }
-        BigDecimal revertResult = operation == ClientOperation.BUY
-                ? BigDecimal.ONE.divide(current.getBid(), 10, RoundingMode.HALF_UP)
-                : BigDecimal.ONE.divide(current.getOffer(), 10, RoundingMode.HALF_UP);
+        BigDecimal priceResult = operation == ClientOperation.BUY ? current.getBid() : current.getOffer();
+        BigDecimal revertResult = BigDecimal.ONE.divide(priceResult, 10, RoundingMode.HALF_UP);
         return Optional.ofNullable(revertResult);
     }
 
@@ -88,5 +85,12 @@ public class ReverseCalculator implements ExtendedFxConversionService {
     @Override
     public BigDecimal convert(ClientOperation operation, Symbol symbol, BigDecimal amount) {
         return calculator.convert(operation, symbol, amount);
+    }
+
+    private void validate(ClientOperation operation, Symbol symbol, BigDecimal amount, Beneficiary beneficiary) {
+        calculator.validate(operation, symbol, amount);
+        if (beneficiary == null) {
+            throw new NullPointerException("No beneficiary provided");
+        }
     }
 }
