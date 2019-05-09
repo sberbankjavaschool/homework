@@ -8,44 +8,45 @@ import java.util.List;
 
 public class Converter implements FxConversionService {
 
-    private ExternalQuotesService externalQuotes;
+    private ExternalQuotesService externalQuotesService;
 
     public Converter(ExternalQuotesService externalQuotesService) {
-        externalQuotes = externalQuotesService;
+        this.externalQuotesService = externalQuotesService;
     }
 
     @Override
     public BigDecimal convert(ClientOperation operation, Symbol symbol, BigDecimal amount) {
-        List<Quote> quotes = externalQuotes.getQuotes(symbol);
+        List<Quote> quotes = externalQuotesService.getQuotes(symbol);
 
+        checkData(quotes, amount);
+
+        Quote quote = searchQuote(amount, quotes);
+
+        return getPrice(operation, quote);
+    }
+
+    protected void checkData(List<Quote> quotes, BigDecimal amount) {
         if (quotes == null || quotes.isEmpty()) {
-            throw new FxConversionException("No volumes");
+            throw new FxConversionException("Quotes list not available");
         }
 
         if (amount.signum() <= 0) {
             throw new FxConversionException("Amount less than or equal to 0");
         }
-
-        BigDecimal price;
-
-        switch (operation) {
-            case BUY: {
-                price = searchQuote(amount, quotes).getOffer();
-                break;
-            }
-            case SELL: {
-                price = searchQuote(amount, quotes).getBid();
-                break;
-            }
-            default: {
-                throw new FxConversionException("Incorrect operation");
-            }
-        }
-
-        return price;
     }
 
-    private Quote searchQuote(BigDecimal amount, List<Quote> quotes) {
+    protected BigDecimal getPrice(ClientOperation operation, Quote quote) {
+        switch (operation) {
+            case BUY:
+                return quote.getOffer();
+            case SELL:
+                return quote.getBid();
+            default:
+                throw new FxConversionException("Incorrect operation");
+        }
+    }
+
+    protected Quote searchQuote(BigDecimal amount, List<Quote> quotes) {
         Quote searchQuote = null;
         Quote quoteInfinity = null;
 
