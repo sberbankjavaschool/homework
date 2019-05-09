@@ -1,6 +1,5 @@
 package ru.sberbank.school.task02;
 
-
 import ru.sberbank.school.task02.exception.FxConversionException;
 import ru.sberbank.school.task02.util.ClientOperation;
 import ru.sberbank.school.task02.util.Quote;
@@ -18,6 +17,9 @@ public class FxConversionServiceImpl implements FxConversionService {
 
     @Override
     public BigDecimal convert(ClientOperation operation, Symbol symbol, BigDecimal amount) {
+        if (amount.compareTo(BigDecimal.ZERO) < 0) {
+            throw new FxConversionException("Объем не может быть отрицательным");
+        }
         List<Quote> quoteList = externalQuotesService.getQuotes(symbol);
         if (quoteList == null || quoteList.isEmpty()) {
             throw new FxConversionException("Отсутстуют котировки на заданную валютную пару");
