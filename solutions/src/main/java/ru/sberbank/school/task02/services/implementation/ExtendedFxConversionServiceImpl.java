@@ -1,5 +1,7 @@
 package ru.sberbank.school.task02.services.implementation;
 
+import com.sun.xml.internal.ws.assembler.jaxws.MustUnderstandTubeFactory;
+import lombok.NonNull;
 import ru.sberbank.school.task02.ExtendedFxConversionService;
 import ru.sberbank.school.task02.services.InternalQuotesService;
 import ru.sberbank.school.task02.util.Beneficiary;
@@ -42,10 +44,10 @@ public class ExtendedFxConversionServiceImpl extends FxConversionServiceImpl imp
      * @return Цена для указанного объема
      */
     @Override
-    public Optional<BigDecimal> convertReversed(ClientOperation operation,
-                                                Symbol symbol,
-                                                BigDecimal amount,
-                                                Beneficiary beneficiary) {
+    public Optional<BigDecimal> convertReversed(@NonNull ClientOperation operation,
+                                                @NonNull Symbol symbol,
+                                                @NonNull BigDecimal amount,
+                                                @NonNull Beneficiary beneficiary) {
 
         List<Quote> quotes = internalQuotesService.getQuotes(symbol);
 
@@ -75,11 +77,11 @@ public class ExtendedFxConversionServiceImpl extends FxConversionServiceImpl imp
      * @return Цена для указанного объема
      */
     @Override
-    public Optional<BigDecimal> convertReversed(ClientOperation operation,
-                                                Symbol symbol,
-                                                BigDecimal amount,
-                                                double delta,
-                                                Beneficiary beneficiary) {
+    public Optional<BigDecimal> convertReversed(@NonNull ClientOperation operation,
+                                                @NonNull Symbol symbol,
+                                                @NonNull BigDecimal amount,
+                                                @NonNull double delta,
+                                                @NonNull Beneficiary beneficiary) {
 
         List<Quote> quotes = internalQuotesService.getQuotes(symbol);
 
@@ -106,6 +108,10 @@ public class ExtendedFxConversionServiceImpl extends FxConversionServiceImpl imp
                             ClientOperation operation,
                             BigDecimal amount,
                             Beneficiary beneficiary) {
+        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Wrong amount");
+        }
+
         BigDecimal quoteRate;
         BigDecimal targetValue;
 
@@ -127,8 +133,8 @@ public class ExtendedFxConversionServiceImpl extends FxConversionServiceImpl imp
             quoteRate = operation == BUY ? quote.getOffer() : quote.getBid();
             targetValue = amount.divide(quoteRate, SCALE, HALF_UP);
 
-            boolean targetValueLessThanQuoteValue = (targetValue.compareTo(quote.getVolumeSize()) <= 0);
-            boolean targetValueMoreThanPreviousQuoteValue = (targetValue.compareTo(previousQuote.getVolumeSize()) > 0);
+            boolean targetValueLessThanQuoteValue = (targetValue.compareTo(quote.getVolumeSize()) < 0);
+            boolean targetValueMoreThanPreviousQuoteValue = (targetValue.compareTo(previousQuote.getVolumeSize()) >= 0);
             boolean quoteIsInfinityAndTargetValueMoreThanMaxValue = (quote.isInfinity()
                     && targetValue.compareTo(targetQuote.getVolumeSize()) > 0);
 
