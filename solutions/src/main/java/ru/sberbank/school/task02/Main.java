@@ -23,7 +23,7 @@ public class Main {
         //Получение котировки
         ClientOperation testClientOperation = ClientOperation.BUY;
         Symbol testSymbol = USD_RUB;
-        BigDecimal testValue = BigDecimal.valueOf(0);
+        BigDecimal testValue = BigDecimal.valueOf(150);
 
         BigDecimal testPrice = fxConversionService.convert(testClientOperation, testSymbol, testValue);
         System.out.println(testPrice);
