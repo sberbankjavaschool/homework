@@ -9,6 +9,6 @@ public class CalculatorFactory implements ServiceFactory {
     
     @Override
     public ExtendedFxConversionService getExtendedFxConversionService(ExternalQuotesService externalQuotesService) {
-        return new ExtendedCalculator(externalQuotesService);
+        return null;
     }
 }
