@@ -52,8 +52,8 @@ public class Calculator implements FxConversionService {
 
         for (Quote q : quotes) {
             if (q.isInfinity() || amount.compareTo(q.getVolumeSize()) < 0) {
-                if (currentQuote == null || q.isInfinity()
-                        || currentQuote.getVolumeSize().compareTo(q.getVolumeSize()) > 0) {
+                if (currentQuote == null || !q.isInfinity()
+                        && currentQuote.getVolumeSize().compareTo(q.getVolumeSize()) > 0) {
                     currentQuote = q;
                 }
             }
