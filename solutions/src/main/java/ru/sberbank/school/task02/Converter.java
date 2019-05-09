@@ -8,45 +8,44 @@ import java.util.List;
 
 public class Converter implements FxConversionService {
 
-    private ExternalQuotesService externalQuotesService;
+    private ExternalQuotesService externalQuotes;
 
     public Converter(ExternalQuotesService externalQuotesService) {
-        this.externalQuotesService = externalQuotesService;
+        externalQuotes = externalQuotesService;
     }
 
     @Override
     public BigDecimal convert(ClientOperation operation, Symbol symbol, BigDecimal amount) {
-        List<Quote> quotes = externalQuotesService.getQuotes(symbol);
+        List<Quote> quotes = externalQuotes.getQuotes(symbol);
 
-        checkData(quotes, amount);
-
-        Quote quote = searchQuote(amount, quotes);
-
-        return getPrice(operation, quote);
-    }
-
-    protected void checkData(List<Quote> quotes, BigDecimal amount) {
         if (quotes == null || quotes.isEmpty()) {
-            throw new FxConversionException("Quotes list not available");
+            throw new FxConversionException("No volumes");
         }
 
         if (amount.signum() <= 0) {
             throw new FxConversionException("Amount less than or equal to 0");
         }
-    }
 
-    protected BigDecimal getPrice(ClientOperation operation, Quote quote) {
+        BigDecimal price;
+
         switch (operation) {
-            case BUY:
-                return quote.getOffer();
-            case SELL:
-                return quote.getBid();
-            default:
+            case BUY: {
+                price = searchQuote(amount, quotes).getOffer();
+                break;
+            }
+            case SELL: {
+                price = searchQuote(amount, quotes).getBid();
+                break;
+            }
+            default: {
                 throw new FxConversionException("Incorrect operation");
+            }
         }
+
+        return price;
     }
 
-    protected Quote searchQuote(BigDecimal amount, List<Quote> quotes) {
+    private Quote searchQuote(BigDecimal amount, List<Quote> quotes) {
         Quote searchQuote = null;
         Quote quoteInfinity = null;
 
