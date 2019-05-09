@@ -17,7 +17,7 @@ public class Solution {
 
         try {
             BigDecimal price = calculator.convert(ClientOperation.BUY,
-                    Symbol.USD_RUB, BigDecimal.valueOf(1000));
+                    Symbol.USD_RUB, BigDecimal.valueOf(11_000_000));
             System.out.println(price);
         } catch (FxConversionException ex) {
             System.out.println(ex.getMessage());
