@@ -59,16 +59,16 @@ public class ReverseCalculatorTest {
     public void convertReversedDeltaBuy() {
         ExtendedFxConversionService calculator = factory.getExtendedFxConversionService(quotesService);
         Optional<BigDecimal> optionalOffer = calculator.convertReversed(ClientOperation.BUY, Symbol.USD_RUB,
-                BigDecimal.valueOf(10000), 20, Beneficiary.CLIENT);
+                BigDecimal.valueOf(81_000), 1, Beneficiary.CLIENT);
         BigDecimal offer = null;
         if (optionalOffer.isPresent()) {
             offer = optionalOffer.get();
         }
-        Assertions.assertEquals(BigDecimal.valueOf(0.0025).setScale(10, RoundingMode.HALF_UP), offer);
+        Assertions.assertEquals(BigDecimal.valueOf(0.0011111111).setScale(10, RoundingMode.HALF_UP), offer);
     }
 
     @Test
-    public void convertReversedNullOperationThrowsNPEWithSpecificMessage() {
+    public void convertReversedNullOperationThrowsNPeWithSpecificMessage() {
         ExtendedFxConversionService calculator = factory.getExtendedFxConversionService(quotesService);
         exceptionRule.expect(NullPointerException.class);
         exceptionRule.expectMessage("No operation provided");
@@ -76,7 +76,7 @@ public class ReverseCalculatorTest {
     }
 
     @Test
-    public void convertReversedNullSymbolThrowsNPEWithSpecificMessage() {
+    public void convertReversedNullSymbolThrowsNPeWithSpecificMessage() {
         ExtendedFxConversionService calculator = factory.getExtendedFxConversionService(quotesService);
         exceptionRule.expect(NullPointerException.class);
         exceptionRule.expectMessage("No symbol provided");
@@ -84,7 +84,7 @@ public class ReverseCalculatorTest {
     }
 
     @Test
-    public void convertReversedNullAmountThrowsNPEWithSpecificMessage() {
+    public void convertReversedNullAmountThrowsNPeWithSpecificMessage() {
         ExtendedFxConversionService calculator = factory.getExtendedFxConversionService(quotesService);
         exceptionRule.expect(NullPointerException.class);
         exceptionRule.expectMessage("No amount provided");
@@ -92,7 +92,7 @@ public class ReverseCalculatorTest {
     }
 
     @Test
-    public void convertReversedZeroAmountThrowsIAE() {
+    public void convertReversedZeroAmountThrowsIAe() {
         ExtendedFxConversionService calculator = factory.getExtendedFxConversionService(quotesService);
         exceptionRule.expect(IllegalArgumentException.class);
         exceptionRule.expectMessage("Wrong amount");
@@ -100,7 +100,7 @@ public class ReverseCalculatorTest {
     }
 
     @Test
-    public void convertReversedNegativeAmountThrowsIAE() {
+    public void convertReversedNegativeAmountThrowsIAe() {
         ExtendedFxConversionService calculator = factory.getExtendedFxConversionService(quotesService);
         exceptionRule.expect(IllegalArgumentException.class);
         exceptionRule.expectMessage("Wrong amount");
@@ -108,7 +108,7 @@ public class ReverseCalculatorTest {
     }
 
     @Test
-    public void convertReversedNegativeDeltaThrowsIAE() {
+    public void convertReversedNegativeDeltaThrowsIAe() {
         ExtendedFxConversionService calculator = factory.getExtendedFxConversionService(quotesService);
         exceptionRule.expect(IllegalArgumentException.class);
         exceptionRule.expectMessage("Negative delta is mindless");
@@ -116,7 +116,7 @@ public class ReverseCalculatorTest {
     }
 
     @Test
-    public void convertReversedNullBeneficiaryThrowsNPEWithSpecificMessage() {
+    public void convertReversedNullBeneficiaryThrowsNPeWithSpecificMessage() {
         ExtendedFxConversionService calculator = factory.getExtendedFxConversionService(quotesService);
         exceptionRule.expect(NullPointerException.class);
         exceptionRule.expectMessage("No beneficiary provided");
