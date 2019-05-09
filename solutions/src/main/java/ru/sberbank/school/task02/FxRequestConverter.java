@@ -1,5 +1,6 @@
 package ru.sberbank.school.task02;
 
+import lombok.NonNull;
 import ru.sberbank.school.task02.exception.ConverterConfigurationException;
 import ru.sberbank.school.task02.exception.WrongSymbolException;
 import ru.sberbank.school.task02.util.ClientOperation;
@@ -10,7 +11,7 @@ import java.math.BigDecimal;
 
 public class FxRequestConverter {
 
-    public static Symbol getSymbol(FxRequest request) {
+    public static Symbol getSymbol(@NonNull FxRequest request) {
         if (Symbol.RUB_USD.getSymbol().equals(request.getSymbol())) {
             return Symbol.RUB_USD;
         }
@@ -20,21 +21,19 @@ public class FxRequestConverter {
         throw new WrongSymbolException("В запросе указана неверная валютная пара");
     }
 
-    public static ClientOperation getDirection(FxRequest request) {
+    public static ClientOperation getDirection(@NonNull FxRequest request) {
         try {
             return ClientOperation.valueOf(request.getDirection());
         } catch (IllegalArgumentException e) {
             throw new ConverterConfigurationException("В запросе указана неверная операция");
-        } catch (NullPointerException e) {
-            throw new ConverterConfigurationException("В запросе указана пустая операция");
         }
     }
 
-    public static BigDecimal getAmount(FxRequest request) {
+    public static BigDecimal getAmount(@NonNull FxRequest request) {
         BigDecimal amount;
         try {
             amount = BigDecimal.valueOf(Double.valueOf(request.getAmount()));
-        } catch (NumberFormatException | NullPointerException e) {
+        } catch (NumberFormatException e) {
             throw new ConverterConfigurationException("В запросе указано некорректное значение объема");
         }
         if (amount.compareTo(BigDecimal.ZERO) < 0) {
