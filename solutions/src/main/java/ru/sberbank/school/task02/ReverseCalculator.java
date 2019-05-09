@@ -53,10 +53,11 @@ public class ReverseCalculator implements ExtendedFxConversionService {
     public Optional<BigDecimal> convertReversed(ClientOperation operation, Symbol symbol, BigDecimal amount,
                                                 double delta, Beneficiary beneficiary) {
         if (delta < 0) {
-            throw new ConverterConfigurationException("Negative delta is mindless");
+            throw new IllegalArgumentException("Negative delta is mindless");
         }
-        if (delta == 0) {
-            return convertReversed(operation, symbol, amount, beneficiary);
+        Optional<BigDecimal> noDeltaResult = convertReversed(operation, symbol, amount, beneficiary);
+        if (noDeltaResult.isPresent() || delta == 0) {
+            return noDeltaResult;
         } else {
             Optional<BigDecimal> revertResultHighDelta = convertReversed(operation, symbol,
                     amount.add(BigDecimal.valueOf(delta)), beneficiary);
@@ -69,18 +70,16 @@ public class ReverseCalculator implements ExtendedFxConversionService {
                 return revertResultHighDelta;
             }
             if (revertResultHighDelta.get().compareTo(revertResultLowDelta.get()) > 0 ) {
-                if (operation == ClientOperation.BUY && beneficiary == Beneficiary.BANK
-                        || operation == ClientOperation.SELL && beneficiary == Beneficiary.CLIENT) {
-                    return revertResultHighDelta;
-                } else {
+                if (operation == ClientOperation.BUY ^ beneficiary == Beneficiary.BANK) {
                     return revertResultLowDelta;
+                } else {
+                    return revertResultHighDelta;
                 }
             } else {
-                if (operation == ClientOperation.BUY && beneficiary == Beneficiary.BANK
-                        || operation == ClientOperation.SELL && beneficiary == Beneficiary.CLIENT) {
-                    return revertResultLowDelta;
-                } else {
+                if (operation == ClientOperation.BUY ^ beneficiary == Beneficiary.BANK) {
                     return revertResultHighDelta;
+                } else {
+                    return revertResultLowDelta;
                 }
             }
         }
