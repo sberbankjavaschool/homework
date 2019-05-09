@@ -67,6 +67,10 @@ public class FxConversionServiceImpl implements FxConversionService {
 
         for (int i = 0; i < quotes.size(); i++) {
 
+            if (quotes.get(i).isInfinity()) {
+                throw new IllegalArgumentException("Объем равен Infinity");
+            }
+            
             double value = quotes.get(i).getVolumeSize().doubleValue();
 
             if (value > 0 && value < minVolume) {
