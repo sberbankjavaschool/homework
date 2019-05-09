@@ -34,7 +34,7 @@ public class ExtendedConverter extends Converter implements ExtendedFxConversion
 
         for (Quote currQuote : quotes) {
             BigDecimal price = getPrice(operation, currQuote);
-            BigDecimal usd = amount.divide(price, 10, BigDecimal.ROUND_HALF_UP);
+            BigDecimal usd = amount.divide(price, 15, BigDecimal.ROUND_HALF_UP);
 
             if (currQuote.getVolumeSize().compareTo(usd) > 0 || currQuote.isInfinity()) {
                 Quote quote3 = searchQuote(usd, quotes);
@@ -58,7 +58,7 @@ public class ExtendedConverter extends Converter implements ExtendedFxConversion
 
         BigDecimal price = getPrice(operation, quote);
 
-        return Optional.ofNullable(BigDecimal.ONE.divide(price, 10, BigDecimal.ROUND_HALF_UP));
+        return Optional.ofNullable(BigDecimal.ONE.divide(price, 15, BigDecimal.ROUND_HALF_UP));
 
     }
 
@@ -71,28 +71,18 @@ public class ExtendedConverter extends Converter implements ExtendedFxConversion
 
 
     private Quote choiceBeneficiary(Quote quote, Quote reserveQuote, Beneficiary beneficiary) {
-        if (beneficiary == Beneficiary.CLIENT) {
-            if (reserveQuote.isInfinity()) {
-                return reserveQuote;
-            }
-            if (quote.isInfinity()) {
-                return quote;
-            }
-            if (quote.getVolumeSize().compareTo(reserveQuote.getVolumeSize()) < 0) {
-                return reserveQuote;
-            }
-
-        } else {
-            if (reserveQuote.isInfinity()) {
-                return quote;
-            }
-            if (quote.isInfinity()) {
-                return reserveQuote;
-            }
-            if (quote.getVolumeSize().compareTo(reserveQuote.getVolumeSize()) > 0) {
-                return reserveQuote;
-            }
+        if (reserveQuote.isInfinity()) {
+            return beneficiary == Beneficiary.CLIENT ? reserveQuote : quote;
         }
+
+        if (quote.isInfinity()) {
+            return beneficiary == Beneficiary.CLIENT ? quote : reserveQuote;
+        }
+
+        if (quote.getVolumeSize().compareTo(reserveQuote.getVolumeSize()) < 0) {
+            return beneficiary == Beneficiary.CLIENT ? reserveQuote : quote;
+        }
+
         return quote;
     }
 
