@@ -21,20 +21,13 @@ public class ExtendedCurrencyCalc extends CurrencyCalculator implements Extended
     @Override
     public Optional<BigDecimal> convertReversed(ClientOperation operation, Symbol symbol, BigDecimal amount,
                                                 Beneficiary beneficiary) {
-        return convertReversed(operation, symbol, amount, 0, beneficiary);
-    }
-
-    @Override
-    public Optional<BigDecimal> convertReversed(ClientOperation operation, Symbol symbol, BigDecimal amount,
-                                                double delta, Beneficiary beneficiary) {
         if (operation == null || symbol == null || amount == null || beneficiary == null) {
             throw new NullPointerException("Arguments can't be null:\n" + "Operation: " + operation + "\n"
                     + "Symbol: " + symbol + "\n" + "Amount: " + amount + "\n" + "Beneficiary: " + beneficiary);
         }
 
-        if (amount.compareTo(BigDecimal.ZERO) <= 0 || delta < 0) {
-            throw new IllegalArgumentException("Amount can't be zero or less, current " + amount + "\n"
-                    + "delta can't be less that zero, current " + delta);
+        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Amount can't be zero or less, current " + amount );
         }
 
         List<Quote> quoteList = externalQuotesService.getQuotes(symbol);
@@ -46,11 +39,7 @@ public class ExtendedCurrencyCalc extends CurrencyCalculator implements Extended
         Quote result = null;
 
         for (Quote quote : quoteList) {
-            BigDecimal localAmount = getAmount(operation, amount, quote);
-
-            result = beneficiary == Beneficiary.BANK
-                    ? chooseQuote(localAmount.subtract(BigDecimal.valueOf(delta)), result, quote) :
-                    chooseQuote(localAmount.add(BigDecimal.valueOf(delta)), result, quote);
+            result = chooseQuote(getAmount(operation, amount, quote), result, quote);
         }
 
         if (result == null) {
@@ -58,10 +47,20 @@ public class ExtendedCurrencyCalc extends CurrencyCalculator implements Extended
         }
 
         return Optional.ofNullable(getAmount(operation, BigDecimal.ONE, result));
+    }
+
+    @Override
+    public Optional<BigDecimal> convertReversed(ClientOperation operation, Symbol symbol, BigDecimal amount,
+                                                double delta, Beneficiary beneficiary) {
+        return Optional.empty();
 
     }
 
     private BigDecimal getAmount(ClientOperation operation, BigDecimal amount, Quote quote) {
+        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Amount can't be zero or less, current " + amount);
+        }
+
         return operation == ClientOperation.BUY
                 ? amount.divide(quote.getOffer(), 10, RoundingMode.HALF_UP)
                 : amount.divide(quote.getBid(), 10, RoundingMode.HALF_UP);
