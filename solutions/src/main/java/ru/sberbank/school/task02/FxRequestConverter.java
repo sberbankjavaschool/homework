@@ -25,13 +25,15 @@ public class FxRequestConverter {
             return ClientOperation.valueOf(request.getDirection());
         } catch (IllegalArgumentException e) {
             throw new ConverterConfigurationException("В запросе указана неверная операция");
+        } catch (NullPointerException e) {
+            throw new ConverterConfigurationException("В запросе указана пустая операция");
         }
     }
 
     public static BigDecimal getAmount(FxRequest request) {
         try {
             return BigDecimal.valueOf(Double.valueOf(request.getAmount()));
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException | NullPointerException e) {
             throw new ConverterConfigurationException("В запросе указано некорректное значение объема");
         }
 

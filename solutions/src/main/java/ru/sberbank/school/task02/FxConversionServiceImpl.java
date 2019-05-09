@@ -27,7 +27,7 @@ public class FxConversionServiceImpl implements FxConversionService {
     @Override
     public BigDecimal convert(ClientOperation operation, Symbol symbol, BigDecimal amount) {
         List<Quote> quoteList = externalQuotesService.getQuotes(symbol);
-        if (quoteList.isEmpty()) {
+        if (quoteList == null || quoteList.isEmpty()) {
             throw new FxConversionException("Отсутстуют котировки на заданную валютную пару");
         }
         Quote targetQuote = null;
