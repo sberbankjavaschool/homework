@@ -16,14 +16,6 @@ public class FxConversionServiceImpl implements FxConversionService {
         this.externalQuotesService = externalQuotesService;
     }
 
-    /**
-     * Возвращает значение цены единицы базовой валюты для указанного объема.
-     *
-     * @param operation вид операции
-     * @param symbol    Инструмент
-     * @param amount    Объем
-     * @return Цена для указанного объема
-     */
     @Override
     public BigDecimal convert(ClientOperation operation, Symbol symbol, BigDecimal amount) {
         List<Quote> quoteList = externalQuotesService.getQuotes(symbol);
