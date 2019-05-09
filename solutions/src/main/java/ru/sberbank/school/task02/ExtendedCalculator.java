@@ -28,8 +28,8 @@ public class ExtendedCalculator extends Calculator implements ExtendedFxConversi
         List<BigDecimal> prices = new ArrayList<>();
 
         for (ReverseQuote r : reverseQuotes) {
-            if (r.getVolumeFrom().isInfinity() && amount.compareTo(r.getVolumeToSize()) < 0
-                    || amount.compareTo(r.getVolumeFromSize()) >= 0 && amount.compareTo(r.getVolumeToSize()) < 0) {
+            if ((r.getVolumeFrom().isInfinity() || amount.compareTo(r.getVolumeFromSize()) >= 0)
+                     && (r.getVolumeTo().isInfinity() || amount.compareTo(r.getVolumeToSize()) < 0)) {
                 prices.add(r.getPrice());
             }
         }
@@ -39,7 +39,7 @@ public class ExtendedCalculator extends Calculator implements ExtendedFxConversi
         }
 
         Collections.sort(prices);
-        return Optional.of(beneficiary == Beneficiary.CLIENT ? prices.get(prices.size() - 1) : prices.get(0));
+        return Optional.of(beneficiary == Beneficiary.CLIENT ^ operation == ClientOperation.BUY ? prices.get(prices.size() - 1) : prices.get(0));
     }
 
     @Override

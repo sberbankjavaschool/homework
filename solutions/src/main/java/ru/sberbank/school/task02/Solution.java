@@ -20,7 +20,7 @@ public class Solution {
         ExtendedFxConversionService extendedCalculator =
                 calculatorFactory.getExtendedFxConversionService(new ExternalQuotesServiceDemo());
 
-        Beneficiary beneficiary = System.getenv("Beneficiary") == "CLIENT"
+        Beneficiary beneficiary = System.getenv("Beneficiary").equals("CLIENT")
                 ? Beneficiary.CLIENT : Beneficiary.BANK;
 
         try {
@@ -28,8 +28,8 @@ public class Solution {
                     Symbol.USD_RUB, new BigDecimal(10_000_000));
             System.out.println("USD: " + priceUsd);
 
-            Optional<BigDecimal> priceRub = extendedCalculator.convertReversed(ClientOperation.BUY, Symbol.USD_RUB,
-                    new BigDecimal(83963.2994), beneficiary);
+            Optional<BigDecimal> priceRub = extendedCalculator.convertReversed(ClientOperation.SELL, Symbol.USD_RUB,
+                    new BigDecimal(250_000_000), beneficiary);
             if (priceRub.isPresent()) {
                 System.out.println("RUB " + priceRub.get());
             } else {
