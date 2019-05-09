@@ -18,7 +18,7 @@ public class FxConversionServiceImpl implements FxConversionService {
     @Override
     public BigDecimal convert(ClientOperation operation, Symbol symbol, BigDecimal amount) {
         if (amount.compareTo(BigDecimal.ZERO) < 0) {
-            throw new FxConversionException("Объем не может быть отрицательным");
+            throw new IllegalArgumentException("Объем не может быть отрицательным");
         }
         List<Quote> quoteList = externalQuotesService.getQuotes(symbol);
         if (quoteList == null || quoteList.isEmpty()) {
