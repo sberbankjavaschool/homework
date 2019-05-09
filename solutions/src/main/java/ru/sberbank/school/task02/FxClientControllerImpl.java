@@ -5,6 +5,7 @@ import ru.sberbank.school.task02.util.*;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class FxClientControllerImpl implements FxClientController {
@@ -26,9 +27,11 @@ public class FxClientControllerImpl implements FxClientController {
                 new ServiceFactoryImpl().getFxConversionService(new ExternalQuotesServiceDemo());
         try {
             BigDecimal answer = fxConversionService.convert(operation, symbol, amount);
-            return new FxResponse(symbol.getSymbol(), answer.toString(), amount.toString(), false);
+            return new FxResponse(symbol.getSymbol(), answer.toString(),
+                    amount.toString(), new Date().toString(), false);
         } catch (FxConversionException ignore) {
-            return new FxResponse(symbol.getSymbol(), "", amount.toString(), true);
+            return new FxResponse(symbol.getSymbol(), "",
+                    amount.toString(), new Date().toString(), true);
         }
     }
 }

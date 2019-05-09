@@ -16,7 +16,6 @@ public class FxConversionServiceImpl implements FxConversionService {
         this.externalQuotesService = externalQuotesService;
     }
 
-<<<<<<< HEAD
     /**
      * Возвращает значение цены единицы базовой валюты для указанного объема.
      *
@@ -31,11 +30,6 @@ public class FxConversionServiceImpl implements FxConversionService {
         if (quoteList.isEmpty()) {
             throw new FxConversionException("Отсутстуют котировки на заданную валютную пару");
         }
-=======
-    @Override
-    public BigDecimal convert(ClientOperation operation, Symbol symbol, BigDecimal amount) {
-        List<Quote> quoteList = externalQuotesService.getQuotes(symbol);
->>>>>>> d546d2fd06db1cff06faa4d90977720619d88ceb
         Quote targetQuote = null;
         for (Quote currentQuote : quoteList) {
             if (targetQuote == null && currentQuote.isInfinity()) {
