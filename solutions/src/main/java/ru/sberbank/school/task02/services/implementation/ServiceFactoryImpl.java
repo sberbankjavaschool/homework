@@ -6,7 +6,11 @@ import ru.sberbank.school.task02.FxConversionService;
 import ru.sberbank.school.task02.ServiceFactory;
 import ru.sberbank.school.task02.services.InternalQuotesService;
 
+/**
+ * Фабрика сервиса - валютного калькулятора.
+ */
 public class ServiceFactoryImpl implements ServiceFactory {
+
     /**
      * Возвращает инстанс FxConversionService реализованнную студентом.
      *
@@ -19,8 +23,15 @@ public class ServiceFactoryImpl implements ServiceFactory {
         return new FxConversionServiceImpl(internalQuotesService);
     }
 
+    /**
+     * Возвращает инстанс ExtendedFxConversionService.
+     *
+     * @param externalQuotesService Сервис-источник актуальных котировок
+     * @return объект - обратный валютный калькулятор
+     */
     @Override
     public ExtendedFxConversionService getExtendedFxConversionService(ExternalQuotesService externalQuotesService) {
-        return null;
+        InternalQuotesService internalQuotesService = new InternalQuotesServiceImpl(externalQuotesService);
+        return new ExtendedFxConversionServiceImpl(internalQuotesService);
     }
 }
