@@ -7,16 +7,17 @@ import ru.sberbank.school.task02.util.FxRequest;
 import ru.sberbank.school.task02.util.FxResponse;
 import ru.sberbank.school.task02.util.Symbol;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 public class FxClientControllerImpl implements FxClientController {
 
-    private ExternalQuotesService externalQuotesService;
+    private FxConversionService fxConversionService;
 
     public FxClientControllerImpl(@NonNull ExternalQuotesService externalQuotesService) {
-        this.externalQuotesService = externalQuotesService;
+        fxConversionService = new FxConversionServiceImpl(externalQuotesService);
     }
 
     @Override
@@ -33,15 +34,17 @@ public class FxClientControllerImpl implements FxClientController {
         ClientOperation operation = FxRequestConverter.getDirection(request);
         Symbol symbol = FxRequestConverter.getSymbol(request);
         BigDecimal amount = FxRequestConverter.getAmount(request);
-        FxConversionService fxConversionService =
-                new ServiceFactoryImpl().getFxConversionService(externalQuotesService);
         try {
             BigDecimal answer = fxConversionService.convert(operation, symbol, amount);
-            return new FxResponse(symbol.getSymbol(), answer.toString(),
-                    amount.toString(), new Date().toString(), false);
+            return new FxResponse(symbol.getSymbol(),
+                    answer.setScale(2,BigDecimal.ROUND_HALF_UP).toString(),
+                    amount.setScale(2,BigDecimal.ROUND_HALF_UP).toString(),
+                    new SimpleDateFormat("yyyy.MM.dd HH:mm:ss z").format(new Date()),
+                    false);
         } catch (FxConversionException e) {
             return new FxResponse(symbol.getSymbol(), null,
                     amount.toString(), new Date().toString(), true);
         }
     }
 }
+
