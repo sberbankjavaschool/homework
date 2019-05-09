@@ -38,15 +38,17 @@ public class FxClientControllerImpl implements FxClientController {
         }
 
         if (requests.getSymbol() == null) {
-            throw new FxConversionException("Некорректный запрос");
+            throw new FxConversionException("Некорректный запрос в поле symbol");
         }
         String symbolAsString = requests.getSymbol();
+
         if (requests.getDirection() == null) {
-            throw new FxConversionException("Некорректный запрос");
+            throw new FxConversionException("Некорректный запрос в поле direction");
         }
         String directionAsString = requests.getDirection();
+
         if (requests.getAmount() == null) {
-            throw new FxConversionException("Некорректный запрос");
+            throw new FxConversionException("Некорректный запрос в поле amount");
         }
         String amountAsString = requests.getAmount();
 
