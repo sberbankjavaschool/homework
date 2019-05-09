@@ -4,8 +4,6 @@ import ru.sberbank.school.task02.exception.FxConversionException;
 
 public class ServiceFactoryImpl implements ServiceFactory {
 
-
-
     @Override
     public FxConversionService getFxConversionService(ExternalQuotesService externalQuotesService) throws FxConversionException {
 
