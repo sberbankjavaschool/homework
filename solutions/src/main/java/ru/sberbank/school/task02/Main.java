@@ -5,6 +5,7 @@ import ru.sberbank.school.task02.util.ExternalQuotesServiceDemo;
 
 import ru.sberbank.school.task02.util.Symbol;
 
+import static ru.sberbank.school.task02.util.Symbol.RUB_USD;
 import static ru.sberbank.school.task02.util.Symbol.USD_RUB;
 import java.math.BigDecimal;
 
@@ -22,7 +23,7 @@ public class Main {
         //Получение котировки
         ClientOperation testClientOperation = ClientOperation.BUY;
         Symbol testSymbol = USD_RUB;
-        BigDecimal testValue = BigDecimal.valueOf(150);
+        BigDecimal testValue = BigDecimal.valueOf(0);
 
         BigDecimal testPrice = fxConversionService.convert(testClientOperation, testSymbol, testValue);
         System.out.println(testPrice);

@@ -21,10 +21,6 @@ public class FxConversionServiceImpl implements FxConversionService {
     public BigDecimal convert(ClientOperation operation, Symbol symbol, BigDecimal amount)
             throws FxConversionException, IllegalArgumentException {
 
-        if (amount == null || amount.compareTo(BigDecimal.valueOf(0)) < 0) {
-            throw new IllegalArgumentException("Аргумент amount не может быть отрицательным или null");
-        }
-
         if (operation == null) {
             throw new IllegalArgumentException("Аргумент operation не может быть null");
         }
@@ -33,8 +29,11 @@ public class FxConversionServiceImpl implements FxConversionService {
             throw new IllegalArgumentException("Аргумент symbol не может быть null");
         }
 
-        List<Quote> quotes = new ArrayList<>();
-        quotes = externalQuotesService.getQuotes(symbol);
+        if (amount == null || amount.compareTo(BigDecimal.valueOf(0.0)) <= 0) {
+            throw new IllegalArgumentException("Аргумент amount должен быть больше 0 и не null");
+        }
+
+        List<Quote> quotes = externalQuotesService.getQuotes(symbol);
 
         if (quotes == null || quotes.size() == 0) {
             throw new FxConversionException("Список котировок ExternalQuotesService не должен быть пустой");
