@@ -113,7 +113,8 @@ public class Client implements FxClientController {
     private String format(String string) {
         if (string != null) {
             return string.indexOf('.') != -1 ? string.substring(0, string.indexOf('.') + 3) : string;
-        } else
+        } else {
             return null;
+        }
     }
 }
