@@ -1,5 +1,6 @@
 package ru.sberbank.school.task02;
 
+import ru.sberbank.school.task02.exception.ConverterConfigurationException;
 import ru.sberbank.school.task02.exception.FxConversionException;
 import ru.sberbank.school.task02.util.Beneficiary;
 import ru.sberbank.school.task02.util.ClientOperation;
@@ -51,6 +52,9 @@ public class ReverseCalculator implements ExtendedFxConversionService {
     @Override
     public Optional<BigDecimal> convertReversed(ClientOperation operation, Symbol symbol, BigDecimal amount,
                                                 double delta, Beneficiary beneficiary) {
+        if (delta < 0) {
+            throw new ConverterConfigurationException("Negative delta is mindless");
+        }
         if (delta == 0) {
             return convertReversed(operation, symbol, amount, beneficiary);
         } else {
