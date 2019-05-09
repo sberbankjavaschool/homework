@@ -16,8 +16,8 @@ import static ru.sberbank.school.task02.util.QuoteBuilder.buildQuote;
  */
 public class ExternalQuotesServiceImpl implements ExternalQuotesService {
 
-    private static final int[] VOLUMES = {100, 300, 100_000, 1000, -1, 500, 1000, -1, 10_000, 100_000, 38000, -1, 1};
-    private static final int[] SPREADS = {10, 9, 15, 10, 9, 8, 6, 4, 5, 6, 8, 40, 1};
+    private static final int[] VOLUMES = {100, 30000, 100_001, 100_002, -1, 1};
+    private static final int[] SPREADS = {10,   8,      6,       4,     40, 11};
 
     /**
      * 28.04.2019
@@ -28,9 +28,6 @@ public class ExternalQuotesServiceImpl implements ExternalQuotesService {
      */
     @Override
     public List<Quote> getQuotes(Symbol symbol) {
-        if (symbol.isCross()) {
-            throw new WrongSymbolException("Cross symbols are not supported!");
-        }
 
         List<Quote> quotes = new ArrayList<>();
 
