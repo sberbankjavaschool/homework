@@ -18,7 +18,7 @@ public class Test {
 
         ExtendedFxConversionService exCalc2 = factory.getExtendedFxConversionService(quotesService);
         Optional<BigDecimal> revOffer = exCalc2.convertReversed(ClientOperation.BUY,
-                Symbol.USD_RUB, BigDecimal.valueOf(1000), Beneficiary.BANK);
+                Symbol.USD_RUB, BigDecimal.valueOf(10000), Beneficiary.BANK);
         System.out.println(revOffer);
     }
 }
