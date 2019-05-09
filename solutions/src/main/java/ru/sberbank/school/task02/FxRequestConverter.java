@@ -31,12 +31,16 @@ public class FxRequestConverter {
     }
 
     public static BigDecimal getAmount(FxRequest request) {
+        BigDecimal amount;
         try {
-            return BigDecimal.valueOf(Double.valueOf(request.getAmount()));
+            amount = BigDecimal.valueOf(Double.valueOf(request.getAmount()));
         } catch (NumberFormatException | NullPointerException e) {
             throw new ConverterConfigurationException("В запросе указано некорректное значение объема");
         }
-
+        if (amount.compareTo(BigDecimal.ZERO) < 0) {
+            throw new ConverterConfigurationException("В запросе указано отрицательное значение объема");
+        }
+        return amount;
     }
 
 
