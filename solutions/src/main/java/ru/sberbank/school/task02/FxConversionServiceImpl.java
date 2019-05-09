@@ -19,9 +19,9 @@ public class FxConversionServiceImpl implements FxConversionService {
 
     @Override
     public BigDecimal convert(ClientOperation operation, Symbol symbol, BigDecimal amount)
-            throws FxConversionException, IllegalArgumentException{
+            throws FxConversionException, IllegalArgumentException {
 
-        if (amount.compareTo(BigDecimal.valueOf(0)) < 0 || amount == null ) {
+        if (amount == null || amount.compareTo(BigDecimal.valueOf(0)) < 0) {
             throw new IllegalArgumentException("Аргумент amount не может быть отрицательным или null");
         }
 
@@ -36,7 +36,7 @@ public class FxConversionServiceImpl implements FxConversionService {
         List<Quote> quotes = new ArrayList<>();
         quotes = externalQuotesService.getQuotes(symbol);
 
-        if (quotes.size() == 0) {
+        if (quotes == null || quotes.size() == 0) {
             throw new FxConversionException("Список котировок ExternalQuotesService не должен быть пустой");
         }
 
