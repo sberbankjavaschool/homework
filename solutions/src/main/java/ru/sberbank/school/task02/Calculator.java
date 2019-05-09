@@ -48,36 +48,22 @@ public class Calculator implements FxConversionService {
             throw new EmptyQuoteException("No quotes!");
         }
 
-        BigDecimal volume = BigDecimal.valueOf(0);
         Quote currentQuote = null;
 
         for (Quote q : quotes) {
-            if (volumeCompare(amount, q.getVolumeSize()) < 0) {
-                if (volumeCompare(volume, q.getVolumeSize()) > 0 || volume.compareTo(BigDecimal.ZERO) == 0) {
-                    volume = q.getVolumeSize();
+            if (q.isInfinity() || amount.compareTo(q.getVolumeSize()) < 0) {
+                if (currentQuote == null || q.isInfinity()
+                        || currentQuote.getVolumeSize().compareTo(q.getVolumeSize()) > 0) {
                     currentQuote = q;
                 }
             }
         }
+
+        if (currentQuote == null) {
+            throw new EmptyQuoteException("No quotes for specified amount!");
+        }
+
         return operation == ClientOperation.BUY ? currentQuote.getOffer() : currentQuote.getBid();
-
     }
 
-    /**
-     * Метод для сравнения двух значений с учетом, что -1=Infinity.
-     * @param d1 первое число
-     * @param d2 второе число
-     * @return -1, 0, 1 согласно методу compareTo
-     */
-    private int volumeCompare(BigDecimal d1, BigDecimal d2) {
-        if (d1.compareTo(BigDecimal.ZERO) < 0) {
-            return 1;
-        }
-
-        if (d2.compareTo(BigDecimal.ZERO) < 0) {
-            return -1;
-        }
-
-        return d1.compareTo(d2);
-    }
 }
