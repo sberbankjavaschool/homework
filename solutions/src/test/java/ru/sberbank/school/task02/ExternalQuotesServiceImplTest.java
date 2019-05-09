@@ -1,5 +1,6 @@
 package ru.sberbank.school.task02;
 
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -30,6 +31,12 @@ public class ExternalQuotesServiceImplTest {
         assertNotEquals(0, quotes.size());
     }
 
+    /**
+     * В методе ExternalQuotesServiceImpl.getQuotes больше не вызывается исключение, т.к. оно мешало
+     * корректной работе обратного валютного калькулятора с кросс-парами. Тесты устарели.
+     */
+    @Ignore
+    @Deprecated
     @Test(expected = WrongSymbolException.class)
     public void getQuotesNegativeTest() {
         externalQuotesService.getQuotes(Symbol.RUB_USD);
@@ -38,6 +45,8 @@ public class ExternalQuotesServiceImplTest {
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
+    @Ignore
+    @Deprecated
     @Test
     public void getQuotesNegativeTestWithMessage() throws WrongSymbolException {
         thrown.expect(WrongSymbolException.class);

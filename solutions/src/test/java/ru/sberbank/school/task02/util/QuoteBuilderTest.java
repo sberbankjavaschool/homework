@@ -16,7 +16,7 @@ public class QuoteBuilderTest {
     public void buildQuoteSymbolTest() {
         int volume = 1_000_000;
         int spread = 8;
-        Quote quote = QuoteBuilder.buildQuote(USD_RUB, volume, spread);
+        Quote quote = quoteBuilder.buildQuote(USD_RUB, volume, spread);
         assertEquals(USD_RUB, quote.getSymbol());
     }
 
@@ -25,7 +25,7 @@ public class QuoteBuilderTest {
     public void buildQuoteVolumeTest() {
         int volume = 1_000;
         int spread = 6;
-        Quote quote = QuoteBuilder.buildQuote(USD_RUB, volume, spread);
+        Quote quote = quoteBuilder.buildQuote(USD_RUB, volume, spread);
         Volume target = Volume.from(1_000_000L);
         assertEquals(target, quote.getVolume());
     }
@@ -34,7 +34,7 @@ public class QuoteBuilderTest {
     public void buildQuoteBidTest() {
         int volume = 10_000;
         int spread = 5;
-        Quote quote = QuoteBuilder.buildQuote(USD_RUB, volume, spread);
+        Quote quote = quoteBuilder.buildQuote(USD_RUB, volume, spread);
 
         long value = 80L - 5L / 2L;
         BigDecimal target = BigDecimal.valueOf(value);
@@ -45,7 +45,7 @@ public class QuoteBuilderTest {
     public void buildQuoteOfferTest() {
         int volume = 10_000;
         int spread = 5;
-        Quote quote = QuoteBuilder.buildQuote(USD_RUB, volume, spread);
+        Quote quote = quoteBuilder.buildQuote(USD_RUB, volume, spread);
 
         long value = 80L + 5L / 2L;
         BigDecimal target = BigDecimal.valueOf(value);
