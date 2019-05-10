@@ -6,10 +6,12 @@ import java.math.RoundingMode;
 import java.util.List;
 import java.util.Optional;
 
+import lombok.NonNull;
 import ru.sberbank.school.task02.util.Beneficiary;
 import ru.sberbank.school.task02.util.ClientOperation;
 import ru.sberbank.school.task02.util.Quote;
 import ru.sberbank.school.task02.util.Symbol;
+import ru.sberbank.school.task02.exception.FxConversionException;
 
 
 public class FxConversionServiceImpl implements ExtendedFxConversionService {
@@ -29,18 +31,16 @@ public class FxConversionServiceImpl implements ExtendedFxConversionService {
     }
 
     @Override
-    public BigDecimal convert(ClientOperation operation, Symbol symbol, BigDecimal amount) {
-        if (operation == null) {
-            throw new NullPointerException("Operation is null");
-        }
-        if (symbol == null) {
-            throw new NullPointerException("Symbol is null");
-        }
+    public BigDecimal convert(@NonNull ClientOperation operation, Symbol symbol, BigDecimal amount) {
+
         if (amount.equals(BigDecimal.ZERO)) {
             throw new IllegalArgumentException("Amount is equal to ZERO");
         }
 
         List<Quote> quotes = exQuotes.getQuotes(symbol);
+        if (quotes == null || quotes.isEmpty()) {
+            throw new FxConversionException("No quotes found");
+        }
         Quote exRate = null;
 
         for (Quote q : quotes) {
@@ -52,6 +52,10 @@ public class FxConversionServiceImpl implements ExtendedFxConversionService {
                     exRate = q;
                 }
             }
+        }
+
+        if (exRate == null || exRate.getOffer() == null || exRate.getBid() == null) {
+            throw new FxConversionException("no rates for this amount");
         }
         return (operation == ClientOperation.BUY ? exRate.getOffer() : exRate.getBid());
 
@@ -77,9 +81,7 @@ public class FxConversionServiceImpl implements ExtendedFxConversionService {
         ClientOperation revertedOperation = operation == ClientOperation.BUY ? ClientOperation.SELL
                 : ClientOperation.BUY;
         BigDecimal rightCur = convert(revertedOperation, symbol, amount);
-
         BigDecimal rightAmount = amount.divide(rightCur, 10, RoundingMode.HALF_UP);
-
         BigDecimal revCur = convert(revertedOperation, symbol, rightAmount);
 
         BigDecimal price = BigDecimal.ONE.divide(revCur, 10, RoundingMode.HALF_UP);

@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import lombok.NonNull;
 import lombok.Builder;
 import ru.sberbank.school.task02.exception.WrongSymbolException;
 import ru.sberbank.school.task02.util.Quote;
@@ -14,7 +15,7 @@ import static java.util.Arrays.asList;
 
 public class ExternalQuotesServiceImpl implements ExternalQuotesService {
 
-    public List<Quote> getQuotes(Symbol symbol) {
+    public List<Quote> getQuotes(@NonNull Symbol symbol) {
         if (symbol.isCross()) {
             throw new WrongSymbolException("Cross symbols detected");
         }
@@ -31,7 +32,7 @@ public class ExternalQuotesServiceImpl implements ExternalQuotesService {
         return quotes;
     }
 
-    private Quote buildQuote(Symbol symbol, int volume, int spread) {
+    private Quote buildQuote(@NonNull Symbol symbol, int volume, int spread) {
         return new Quote(symbol, Volume.from(volume), (BigDecimal.valueOf(80 - spread / 2)),
                 (BigDecimal.valueOf(80 + spread / 2)));
     }

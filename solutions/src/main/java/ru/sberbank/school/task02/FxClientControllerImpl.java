@@ -1,6 +1,7 @@
 package ru.sberbank.school.task02;
 
 import lombok.NonNull;
+import ru.sberbank.school.task02.exception.FxConversionException;
 import ru.sberbank.school.task02.exception.WrongSymbolException;
 import ru.sberbank.school.task02.util.ClientOperation;
 import ru.sberbank.school.task02.util.Symbol;
@@ -35,7 +36,7 @@ public class FxClientControllerImpl implements FxClientController {
 
     public FxClientControllerImpl(FxConversionService converter) {
         if (converter == null) {
-            throw new NullPointerException("Converter isn't created");
+            throw new FxConversionException("Converter isn't created");
         }
         this.converter = converter;
     }
