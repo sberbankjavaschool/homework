@@ -14,6 +14,12 @@ public class FxConversionServiceImpl implements FxConversionService {
     ExternalQuotesService externalQuotesService;
 
     FxConversionServiceImpl(ExternalQuotesService externalQuotesService) {
+
+        if (externalQuotesService == null) {
+
+            throw new FxConversionException("ExternalQuotesService не должен быть null");
+        }
+
         this.externalQuotesService = externalQuotesService;
     }
 

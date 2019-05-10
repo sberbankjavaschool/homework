@@ -22,7 +22,6 @@ public class FxRequestConversionServiceImpl implements FxRequestConversionServic
                 symbol = Symbol.RUB_USD;
                 break;
             default:
-                symbol = null;
                 throw new FxConversionException("Некорректный запрос в поле symbol");
         }
 
@@ -45,7 +44,6 @@ public class FxRequestConversionServiceImpl implements FxRequestConversionServic
                 operation = ClientOperation.BUY;
                 break;
             default:
-                operation = null;
                 throw new FxConversionException("Некорректный запрос в поле direction");
         }
 
@@ -70,7 +68,6 @@ public class FxRequestConversionServiceImpl implements FxRequestConversionServic
                 beneficiary = Beneficiary.CLIENT;
                 break;
             default:
-                beneficiary = null;
                 throw new FxConversionException("Некорректный параметр SBRF_BENEFICIARY");
         }
 

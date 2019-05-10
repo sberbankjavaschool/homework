@@ -57,7 +57,7 @@ public class FxClientControllerImpl implements FxClientController {
         BigDecimal price = fxConversionService.convert(operation, symbol, amount);
 
         FxResponse fxResponse = new FxResponse(symbolAsString, String.valueOf(price.setScale(2)),
-                String.valueOf(amount.setScale(2)), String.valueOf(LocalDate.now()), false);
+                String.valueOf(amount.setScale(2)), String.valueOf(LocalDate.now()), directionAsString, false);
 
         return fxResponse;
     }
