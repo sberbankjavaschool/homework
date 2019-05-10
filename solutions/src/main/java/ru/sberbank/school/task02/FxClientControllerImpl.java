@@ -16,6 +16,7 @@ import java.util.List;
 public class FxClientControllerImpl implements FxClientController {
 
     private FxConversionService fxConversionService;
+    private DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM);
 
     public FxClientControllerImpl(@NonNull ExternalQuotesService externalQuotesService) {
         fxConversionService = new FxConversionServiceImpl(externalQuotesService);
@@ -40,14 +41,14 @@ public class FxClientControllerImpl implements FxClientController {
             return new FxResponse(symbol.getSymbol(),
                     answer.setScale(2,BigDecimal.ROUND_HALF_UP).toString(),
                     amount.setScale(2,BigDecimal.ROUND_HALF_UP).toString(),
-                    LocalDateTime.now().format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM)),
+                    LocalDateTime.now().format(dateTimeFormatter),
                     operation.toString(),
                     false);
         } catch (FxConversionException e) {
             return new FxResponse(symbol.getSymbol(),
                     null,
                     amount.setScale(2, BigDecimal.ROUND_HALF_UP).toString(),
-                    LocalDateTime.now().format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM)),
+                    LocalDateTime.now().format(dateTimeFormatter),
                     operation.toString(),
                     true);
         }
