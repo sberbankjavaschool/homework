@@ -48,6 +48,8 @@ public class FxClientControllerImpl implements FxClientController {
                 clientOperation.toString(),
                 false);
         } catch (FxConversionException e) {
+            throw new FxConversionException("Ошибка конвертации");
+        } finally {
             return response = new FxResponse(symbol.getSymbol(),
                 null,
                 amount.toString(),
