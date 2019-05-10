@@ -7,6 +7,7 @@ import ru.sberbank.school.task02.exception.WrongSymbolException;
 import ru.sberbank.school.task02.util.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.*;
 
 public class Client implements FxClientController {
@@ -43,7 +44,7 @@ public class Client implements FxClientController {
         boolean notFound = !response.isPresent();
         String price = notFound ? null : String.valueOf(response.get());
 
-        return new FxResponse(symbol.getSymbol(), price, String.valueOf(amount), new Date().toString(),
+        return new FxResponse(symbol.getSymbol(), price, String.valueOf(amount), LocalDate.now().toString(),
                 operation.toString(), notFound);
 
     }
