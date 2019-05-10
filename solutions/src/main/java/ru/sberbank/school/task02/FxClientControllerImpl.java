@@ -77,10 +77,10 @@ public class FxClientControllerImpl implements FxClientController {
         BigDecimal price = converter.convert(operation, symbol, amount);
         if (price == null) {
             return new FxResponse(request.getSymbol(), "", request.getAmount(), new Date().toString(),
-                    true);
+                    request.getDirection(), true);
         } else {
             return new FxResponse(request.getSymbol(), price.setScale(2, RoundingMode.HALF_UP).toString(),
-                    request.getAmount(), new Date().toString(), false);
+                    request.getAmount(), new Date().toString(), request.getDirection(), false);
         }
 
     }
