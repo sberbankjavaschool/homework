@@ -14,7 +14,8 @@ public class ServiceFactoryImpl implements ServiceFactory {
         return new FxConversionServiceImpl(externalQuotesService);
     }
 
-    public ExtendedFxConversionService getExtendedFxConversionService(@NonNull ExternalQuotesService externalQuotesService) {
+    public ExtendedFxConversionService getExtendedFxConversionService
+            (@NonNull ExternalQuotesService externalQuotesService) {
         return new FxConversionServiceImpl(externalQuotesService);
     }
 

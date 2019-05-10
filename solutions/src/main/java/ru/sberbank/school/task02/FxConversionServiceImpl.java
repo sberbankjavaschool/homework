@@ -35,7 +35,6 @@ public class FxConversionServiceImpl implements ExtendedFxConversionService {
 
     @Override
     public BigDecimal convert(@NonNull ClientOperation operation, Symbol symbol, BigDecimal amount) {
-
         if (amount.equals(BigDecimal.ZERO)) {
             throw new IllegalArgumentException("Amount is equal to ZERO");
         }
