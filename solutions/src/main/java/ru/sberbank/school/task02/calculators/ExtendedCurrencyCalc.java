@@ -29,16 +29,16 @@ public class ExtendedCurrencyCalc extends CurrencyCalc implements ExtendedFxConv
                                                 BigDecimal amount, double delta,
                                                 Beneficiary beneficiary) {
         if (operation == null || symbol == null || amount == null || beneficiary == null) {
-            throw new FxConversionException("Один из прерданных аргументов равен null");
+            return Optional.empty();
         }
 
         if (amount.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new IllegalArgumentException("Объем должен быть больше 0");
+            return Optional.empty();
         }
 
         List<Quote> quotes = getExternalQuotesService().getQuotes(symbol);
         if (quotes == null || quotes.isEmpty()) {
-            throw new FxConversionException("Список quotes равен null");
+            return Optional.empty();
         }
 
         Set<Quote> exactHit = new HashSet<>();
