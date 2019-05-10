@@ -6,6 +6,7 @@ import ru.sberbank.school.task02.util.ClientOperation;
 import ru.sberbank.school.task02.util.FxRequest;
 import ru.sberbank.school.task02.util.FxResponse;
 import ru.sberbank.school.task02.util.Symbol;
+
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -40,10 +41,15 @@ public class FxClientControllerImpl implements FxClientController {
                     answer.setScale(2,BigDecimal.ROUND_HALF_UP).toString(),
                     amount.setScale(2,BigDecimal.ROUND_HALF_UP).toString(),
                     new SimpleDateFormat("yyyy.MM.dd HH:mm:ss z").format(new Date()),
+                    operation.toString(),
                     false);
         } catch (FxConversionException e) {
-            return new FxResponse(symbol.getSymbol(), null,
-                    amount.toString(), new Date().toString(), true);
+            return new FxResponse(symbol.getSymbol(),
+                    null,
+                    amount.setScale(2, BigDecimal.ROUND_HALF_UP).toString(),
+                    new SimpleDateFormat("yyyy.MM.dd HH:mm:ss z").format(new Date()),
+                    operation.toString(),
+                    true);
         }
     }
 }
