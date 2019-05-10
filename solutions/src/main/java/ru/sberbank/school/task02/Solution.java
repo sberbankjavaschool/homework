@@ -1,5 +1,6 @@
 package ru.sberbank.school.task02;
 
+import ru.sberbank.school.task02.exception.FxConversionException;
 import ru.sberbank.school.task02.util.*;
 import ru.sberbank.school.task02.util.FxRequest;
 import ru.sberbank.school.task02.util.FxResponse;
@@ -7,14 +8,18 @@ import ru.sberbank.school.task02.util.FxResponse;
 public class Solution {
     public static void main(String[] args) {
 
-        CalculatorFactory calculatorFactory = new CalculatorFactory();
-        FxConversionService calculator =
-                calculatorFactory.getFxConversionService(new ExternalQuotesServiceDemo());
-        Client client = new Client(calculator);
+        try {
+            CalculatorFactory calculatorFactory = new CalculatorFactory();
+            FxConversionService calculator =
+                    calculatorFactory.getFxConversionService(new ExternalQuotesServiceDemo());
+            Client client = new Client(calculator);
 
-        FxRequest request = parseArgs(args);
-        FxResponse response = client.fetchResult(request);
-        System.out.println(response.toString());
+            FxRequest request = parseArgs(args);
+            FxResponse response = client.fetchResult(request);
+            System.out.println(response.toString());
+        } catch (FxConversionException ex) {
+            System.out.println("Error: " + ex.toString());
+        }
 
     }
 

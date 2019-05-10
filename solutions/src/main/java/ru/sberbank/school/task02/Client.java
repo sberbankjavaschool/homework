@@ -9,6 +9,8 @@ import ru.sberbank.school.task02.util.Symbol;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.text.Format;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -45,9 +47,10 @@ public class Client implements FxClientController {
 
         if (price != null) {
             price = price.setScale(2, RoundingMode.HALF_UP);
+
             FxResponse response = new FxResponse(symbol.getSymbol(), price.toString(),
                     amount.setScale(2, RoundingMode.HALF_UP).toString(),
-                    new Date().toString(), operation.toString(), false);
+                    getDate(), operation.toString(), false);
             return response;
         } else {
             throw new EmptyQuoteException("No quotes for specified amount!");
@@ -74,12 +77,10 @@ public class Client implements FxClientController {
             throw new NullPointerException("Direction can not be null!");
         }
 
-        if (operationStr.equalsIgnoreCase("BUY")) {
-            return ClientOperation.BUY;
-        } else if (operationStr.equalsIgnoreCase("SELL")) {
-            return ClientOperation.SELL;
-        } else {
-            throw  new WrongSymbolException("Wrong operation!");
+        try {
+            return ClientOperation.valueOf(operationStr);
+        } catch (IllegalArgumentException ex) {
+            throw new WrongSymbolException("Wrong operation!");
         }
 
     }
@@ -96,5 +97,11 @@ public class Client implements FxClientController {
             throw new WrongSymbolException("Amount should be a number!");
         }
 
+    }
+
+    private String getDate() {
+        Date date = new Date();
+        Format formatter = new SimpleDateFormat("yyyy-MM-dd");
+        return formatter.format(date);
     }
 }
