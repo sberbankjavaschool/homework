@@ -9,8 +9,8 @@ import ru.sberbank.school.task02.util.FxResponse;
 import ru.sberbank.school.task02.util.Symbol;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class FxClientControllerImpl implements FxClientController {
@@ -43,14 +43,14 @@ public class FxClientControllerImpl implements FxClientController {
             return response = new FxResponse(symbol.getSymbol(),
                 price.toString(),
                 amount.toString(),
-                new Date().toString(),
+                LocalDateTime.now().toString(),
                 clientOperation.toString(),
                 false);
         } else {
             return response = new FxResponse(symbol.getSymbol(),
                 null,
                 amount.toString(),
-                new Date().toString(),
+                LocalDateTime.now().toString(),
                 clientOperation.toString(),
                 true);
         }
