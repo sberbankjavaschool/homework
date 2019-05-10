@@ -32,7 +32,7 @@ public class CurrencyCalc implements FxConversionService {
         }
 
         if (BigDecimal.ZERO.compareTo(amount) >= 0) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Объем должен быть больше 0");
         }
 
         List<Quote> quotes = externalQuotesService.getQuotes(symbol);
@@ -40,13 +40,17 @@ public class CurrencyCalc implements FxConversionService {
             throw new FxConversionException("Список quotes не был сформирован");
         }
         sortQuotes(quotes);
-        Quote currentQuote = quotes.get(0);
+        Quote currentQuote = null;
 
         for (Quote quote : quotes) {
             if (amount.compareTo(quote.getVolumeSize()) < 0 || quote.isInfinity()) {
                 currentQuote = quote;
                 break;
             }
+        }
+
+        if (currentQuote == null) {
+            throw new FxConversionException("Quote не найден");
         }
 
         return operation == ClientOperation.BUY ? currentQuote.getOffer() : currentQuote.getBid();
