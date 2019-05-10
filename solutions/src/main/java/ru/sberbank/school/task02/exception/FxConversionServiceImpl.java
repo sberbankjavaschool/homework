@@ -26,7 +26,7 @@ public class FxConversionServiceImpl implements FxConversionService {
         }
 
         List<Quote> quotes = externalQuotesService.getQuotes(symbol);
-        if (quotes.isEmpty()) {
+        if (quotes == null) {
             throw new FxConversionException("externalQuotesService пустой");
         }
 
