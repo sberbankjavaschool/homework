@@ -71,13 +71,13 @@ public class FxConversionServiceImpl implements ExtendedFxConversionService {
                                          BigDecimal amount,
                                          Beneficiary beneficiary) {
 
-        BigDecimal rightCur = operation == ClientOperation.BUY ? convert(ClientOperation.SELL, symbol, amount) :
-                convert(ClientOperation.BUY, symbol, amount);
+        ClientOperation revertedOperation = operation == ClientOperation.BUY ? ClientOperation.SELL
+                : ClientOperation.BUY;
+        BigDecimal rightCur = convert(revertedOperation, symbol, amount);
 
         BigDecimal rightAmount = amount.divide(rightCur, 10, RoundingMode.HALF_UP);
 
-        BigDecimal revCur = operation == ClientOperation.BUY ? convert(ClientOperation.SELL, symbol, rightAmount) :
-                convert(ClientOperation.BUY, symbol, rightAmount);
+        BigDecimal revCur = convert(revertedOperation, symbol, rightAmount);
 
         BigDecimal price = BigDecimal.ONE.divide(revCur, 10, RoundingMode.HALF_UP);
         return Optional.ofNullable(price);
