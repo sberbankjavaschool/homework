@@ -12,24 +12,20 @@ public class CompareQuotesBenificiary implements Comparator<Quote> {
     private ClientOperation operation;
 
     public CompareQuotesBenificiary (ClientOperation operation, Beneficiary beneficiary) {
+
         this.beneficiary = beneficiary;
         this.operation = operation;
     }
 
     @Override
     public int compare(Quote quote1, Quote quote2) {
-        BigDecimal quoteVolume1 =  quote1.getVolume().getVolume();
-        BigDecimal quoteVolume2 =  quote2.getVolume().getVolume();
         if (quote1.getVolume().isInfinity()) {
             return 1;
         }
         if (quote2.getVolume().isInfinity()) {
             return -1;
         }
-        if (quoteVolume1.compareTo(quoteVolume2) == 0) {
-            return compareEqualQuotes(quote1, quote2);
-        }
-        return quoteVolume1.compareTo(quoteVolume2);
+        return compareEqualQuotes(quote1, quote2);
     }
 
     private int compareEqualQuotes(Quote quote1, Quote quote2) {

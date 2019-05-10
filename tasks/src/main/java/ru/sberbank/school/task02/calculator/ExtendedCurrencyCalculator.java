@@ -7,6 +7,8 @@ import ru.sberbank.school.task02.util.ClientOperation;
 import ru.sberbank.school.task02.util.Quote;
 import ru.sberbank.school.task02.util.Symbol;
 import java.math.BigDecimal;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Optional;
 
 public class ExtendedCurrencyCalculator extends CurrencyCalculator implements ExtendedFxConversionService {
@@ -29,6 +31,20 @@ public class ExtendedCurrencyCalculator extends CurrencyCalculator implements Ex
             return Optional.of(BigDecimal.valueOf(1).divide(quote.get().getOffer(), 10,rounding_mode));
         }
         System.out.println("Nothing find");
+        return Optional.empty();
+    }
+
+    Optional<Quote> findQuote(Comparator<Quote> comparator, List<Quote> quoteList) {
+        BigDecimal amountQuote;
+
+        for (Quote quote : quoteList) {
+            amountQuote = quote.getVolumeSize();
+
+            if (amountQuote.compareTo(amountOfRequest) <= 0 && !quote.getVolume().isInfinity()) {
+                quoteList.remove(quote);
+            }
+        }
+        quoteList.sort(comparator);
         return Optional.empty();
     }
 
