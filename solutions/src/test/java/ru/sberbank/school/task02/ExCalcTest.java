@@ -8,6 +8,7 @@ import ru.sberbank.school.task02.util.Symbol;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
+import java.math.RoundingMode;
 import java.util.Optional;
 
 import static org.junit.Assert.*;
@@ -24,7 +25,7 @@ public class ExCalcTest {
 
         Optional<BigDecimal> priceRub = extendedCalculator.convertReversed(ClientOperation.SELL, Symbol.USD_RUB,
                 new BigDecimal(7_000), Beneficiary.CLIENT);
-        assertEquals(BigDecimal.valueOf(1).divide(BigDecimal.valueOf(75), MathContext.DECIMAL32), priceRub.get());
+        assertEquals(BigDecimal.valueOf(1).divide(BigDecimal.valueOf(75), 10, RoundingMode.HALF_UP), priceRub.get());
 
         priceRub = extendedCalculator.convertReversed(ClientOperation.SELL, Symbol.USD_RUB,
                 new BigDecimal(7_500), Beneficiary.CLIENT);
@@ -32,15 +33,15 @@ public class ExCalcTest {
 
         priceRub = extendedCalculator.convertReversed(ClientOperation.SELL, Symbol.USD_RUB,
                 new BigDecimal(7_750_000), Beneficiary.CLIENT);
-        assertEquals(BigDecimal.valueOf(1).divide(BigDecimal.valueOf(77), MathContext.DECIMAL32), priceRub.get());
+        assertEquals(BigDecimal.valueOf(1).divide(BigDecimal.valueOf(77), 10, RoundingMode.HALF_UP), priceRub.get());
 
         priceRub = extendedCalculator.convertReversed(ClientOperation.SELL, Symbol.USD_RUB,
                 new BigDecimal(7_750_000), Beneficiary.BANK);
-        assertEquals(BigDecimal.valueOf(1).divide(BigDecimal.valueOf(78), MathContext.DECIMAL32), priceRub.get());
+        assertEquals(BigDecimal.valueOf(1).divide(BigDecimal.valueOf(78), 10, RoundingMode.HALF_UP), priceRub.get());
 
         priceRub = extendedCalculator.convertReversed(ClientOperation.SELL, Symbol.USD_RUB,
                 new BigDecimal(0.5), Beneficiary.BANK);
-        assertEquals(BigDecimal.valueOf(1).divide(BigDecimal.valueOf(75), MathContext.DECIMAL32), priceRub.get());
+        assertEquals(BigDecimal.valueOf(1).divide(BigDecimal.valueOf(75), 10, RoundingMode.HALF_UP), priceRub.get());
 
     }
 }
