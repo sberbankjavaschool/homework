@@ -22,12 +22,12 @@ public class FxConversionServiceImpl implements FxConversionService {
                               @NonNull BigDecimal amount) {
 
         if (!(amount.compareTo(BigDecimal.ZERO) > 0)) {
-            throw new ConverterConfigurationException("Amount меньше или равно нулю");
+            throw new IllegalArgumentException("Amount меньше или равно нулю");
         }
 
         List<Quote> quotes = externalQuotesService.getQuotes(symbol);
         if (quotes.isEmpty()) {
-            throw new ConverterConfigurationException("externalQuotesService пустой");
+            throw new FxConversionException("externalQuotesService пустой");
         }
 
         Quote bestQuotes = null;
