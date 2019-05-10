@@ -9,8 +9,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-
-
 public class FxConversionServiceImpl implements FxConversionService {
 
     ExternalQuotesService externalQuotesService;
@@ -21,19 +19,26 @@ public class FxConversionServiceImpl implements FxConversionService {
 
     @Override
     public BigDecimal convert(ClientOperation operation, Symbol symbol, BigDecimal amount)
-            throws FxConversionException {
+            throws FxConversionException, IllegalArgumentException {
 
-        if (amount.compareTo(BigDecimal.valueOf(0)) < 0) {
-            throw new FxConversionException("Объем не может быть отрицательным");
+        if (operation == null) {
+            throw new IllegalArgumentException("Аргумент operation не может быть null");
         }
 
-        List<Quote> quotes = new ArrayList<>();
-        quotes = externalQuotesService.getQuotes(symbol);
+        if (symbol == null) {
+            throw new IllegalArgumentException("Аргумент symbol не может быть null");
+        }
 
+        if (amount == null || amount.compareTo(BigDecimal.valueOf(0.0)) <= 0) {
+            throw new IllegalArgumentException("Аргумент amount должен быть больше 0 и не null");
+        }
 
-        if (quotes.size() == 0) {
+        List<Quote> quotes = externalQuotesService.getQuotes(symbol);
+
+        if (quotes == null || quotes.size() == 0) {
             throw new FxConversionException("Список котировок ExternalQuotesService не должен быть пустой");
         }
+
 
         /**
          * Цикл проходит по массиву и ищет два индекса:
