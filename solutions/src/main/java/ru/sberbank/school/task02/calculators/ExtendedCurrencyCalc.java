@@ -2,6 +2,7 @@ package ru.sberbank.school.task02.calculators;
 
 import ru.sberbank.school.task02.ExtendedFxConversionService;
 import ru.sberbank.school.task02.ExternalQuotesService;
+import ru.sberbank.school.task02.exception.FxConversionException;
 import ru.sberbank.school.task02.util.Beneficiary;
 import ru.sberbank.school.task02.util.ClientOperation;
 import ru.sberbank.school.task02.util.Quote;
@@ -28,7 +29,7 @@ public class ExtendedCurrencyCalc extends CurrencyCalc implements ExtendedFxConv
                                                 BigDecimal amount, double delta,
                                                 Beneficiary beneficiary) {
         if (operation == null || symbol == null || amount == null || beneficiary == null) {
-            throw new NullPointerException("Один из прерданных аргументов равен null");
+            throw new FxConversionException("Один из прерданных аргументов равен null");
         }
 
         if (amount.compareTo(BigDecimal.ZERO) <= 0) {
@@ -37,7 +38,7 @@ public class ExtendedCurrencyCalc extends CurrencyCalc implements ExtendedFxConv
 
         List<Quote> quotes = getExternalQuotesService().getQuotes(symbol);
         if (quotes == null || quotes.isEmpty()) {
-            throw new NullPointerException("Список quotes равен null");
+            throw new FxConversionException("Список quotes равен null");
         }
 
         Set<Quote> exactHit = new HashSet<>();
