@@ -1,6 +1,5 @@
 package ru.sberbank.school.task02.calculators;
 
-import lombok.NonNull;
 import ru.sberbank.school.task02.ExtendedFxConversionService;
 import ru.sberbank.school.task02.ExternalQuotesService;
 import ru.sberbank.school.task02.util.Beneficiary;
@@ -25,9 +24,13 @@ public class ExtendedCurrencyCalc extends CurrencyCalc implements ExtendedFxConv
     }
 
     @Override
-    public Optional<BigDecimal> convertReversed(@NonNull ClientOperation operation, @NonNull Symbol symbol,
-                                                @NonNull BigDecimal amount, double delta,
-                                                @NonNull Beneficiary beneficiary) {
+    public Optional<BigDecimal> convertReversed(ClientOperation operation, Symbol symbol,
+                                                BigDecimal amount, double delta,
+                                                Beneficiary beneficiary) {
+        if (operation == null || symbol == null || amount == null || beneficiary == null
+                || amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException();
+        }
 
         List<Quote> quotes = getExternalQuotesService().getQuotes(symbol);
         if (quotes == null || quotes.isEmpty()) {
