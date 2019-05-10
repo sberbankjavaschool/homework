@@ -31,7 +31,7 @@ public class FxRequestCheck {
 
     public static BigDecimal getAmount(@NonNull FxRequest request) {
         if (BigDecimal.valueOf(Double.valueOf(request.getAmount())).equals(BigDecimal.ZERO)) {
-            throw new IllegalArgumentException("Amount can't be equal to ZERO");
+            throw new IllegalArgumentException("Amount  can't be equal to ZERO");
         }
         BigDecimal rightAmount;
         try {
