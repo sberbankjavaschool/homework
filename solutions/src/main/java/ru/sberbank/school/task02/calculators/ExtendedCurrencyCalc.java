@@ -27,14 +27,17 @@ public class ExtendedCurrencyCalc extends CurrencyCalc implements ExtendedFxConv
     public Optional<BigDecimal> convertReversed(ClientOperation operation, Symbol symbol,
                                                 BigDecimal amount, double delta,
                                                 Beneficiary beneficiary) {
-        if (operation == null || symbol == null || amount == null || beneficiary == null
-                || amount.compareTo(BigDecimal.ZERO) <= 0) {
-            return Optional.empty();
+        if (operation == null || symbol == null || amount == null || beneficiary == null) {
+            throw new NullPointerException("Один из прерданных аргументов равен null");
+        }
+
+        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Объем должен быть больше 0");
         }
 
         List<Quote> quotes = getExternalQuotesService().getQuotes(symbol);
         if (quotes == null || quotes.isEmpty()) {
-            throw new NullPointerException();
+            throw new NullPointerException("Список quotes равен null");
         }
 
         Set<Quote> exactHit = new HashSet<>();

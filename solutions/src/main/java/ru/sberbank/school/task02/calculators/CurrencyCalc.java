@@ -17,7 +17,10 @@ public class CurrencyCalc implements FxConversionService {
 
     private ExternalQuotesService externalQuotesService;
 
-    public CurrencyCalc(@NonNull ExternalQuotesService externalQuotesService) {
+    public CurrencyCalc(ExternalQuotesService externalQuotesService) {
+        if (externalQuotesService == null) {
+            throw new FxConversionException("QuoteService не должен быть равен null");
+        }
         this.externalQuotesService = externalQuotesService;
     }
 
