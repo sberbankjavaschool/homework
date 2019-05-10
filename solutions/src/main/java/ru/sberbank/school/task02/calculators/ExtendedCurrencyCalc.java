@@ -29,7 +29,7 @@ public class ExtendedCurrencyCalc extends CurrencyCalc implements ExtendedFxConv
                                                 Beneficiary beneficiary) {
         if (operation == null || symbol == null || amount == null || beneficiary == null
                 || amount.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new IllegalArgumentException();
+            return Optional.empty();
         }
 
         List<Quote> quotes = getExternalQuotesService().getQuotes(symbol);
