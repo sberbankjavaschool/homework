@@ -1,7 +1,5 @@
 package ru.sberbank.school.task02;
 
-import ru.sberbank.school.task02.ExternalQuotesService;
-import ru.sberbank.school.task02.FxConversionService;
 import ru.sberbank.school.task02.util.ClientOperation;
 import ru.sberbank.school.task02.util.Quote;
 import ru.sberbank.school.task02.util.Symbol;
@@ -41,7 +39,7 @@ public class SimpleFxConversionService implements FxConversionService {
             }
 
             if (isQuoteVolumeBigger(quoteCandidate, amount)) {
-                if (quote == null || quote.isInfinity() || isQuoteVolumeBigger(quoteCandidate, quote.getVolumeSize())) {
+                if (quote == null || quote.isInfinity() || isQuoteVolumeBigger(quote, quoteCandidate.getVolumeSize())) {
                     quote = quoteCandidate;
                 }
             } else if (quoteCandidate.isInfinity()) {
