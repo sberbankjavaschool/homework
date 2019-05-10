@@ -25,8 +25,12 @@ public class CurrencyCalc implements FxConversionService {
     }
 
     @Override
-    public BigDecimal convert(@NonNull ClientOperation operation,
-                              @NonNull  Symbol symbol, @NonNull  BigDecimal amount) {
+    public BigDecimal convert(ClientOperation operation,
+                              Symbol symbol, BigDecimal amount) {
+        if (operation == null || symbol == null || amount == null) {
+            throw new FxConversionException("Один из прерданных аргументов равен null");
+        }
+
         if (BigDecimal.ZERO.compareTo(amount) >= 0) {
             throw new IllegalArgumentException();
         }
