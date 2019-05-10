@@ -33,7 +33,7 @@ public class FxClientControllerImpl implements FxClientController {
         System.out.println(controller.fetchResult(request));
     }
 
-    public FxClientControllerImpl (FxConversionService converter) {
+    public FxClientControllerImpl(FxConversionService converter) {
         if (converter == null) {
             throw new NullPointerException("Converter isn't created");
         }
