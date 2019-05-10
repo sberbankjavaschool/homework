@@ -32,6 +32,6 @@ public class FxResponse implements Serializable {
 
     @Override
     public String toString() {
-        return symbol + "(" + amount + ")" + ": " + (notFound ? "not found" : amount);
+        return symbol + "(" + amount + ")" + ": " + (notFound ? "not found" : price);
     }
 }
