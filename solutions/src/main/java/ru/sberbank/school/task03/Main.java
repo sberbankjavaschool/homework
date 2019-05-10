@@ -12,7 +12,9 @@ public class Main {
 
     public static void main(String[] args) {
 
-        if (args.length != 3) throw new FxConversionException("Неверное число аргументов");
+        if (args.length != 3) {
+            throw new FxConversionException("Неверное число аргументов");
+        }
 
         String symbol = args[0];
         String direction = args[1];

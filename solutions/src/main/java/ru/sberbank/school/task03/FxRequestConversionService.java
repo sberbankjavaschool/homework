@@ -6,10 +6,10 @@ import ru.sberbank.school.task02.util.Symbol;
 
 public interface FxRequestConversionService {
 
-    public Symbol getSymbol (String symbol);
+    public Symbol getSymbol(String symbol);
 
-    public ClientOperation getClientOperation (String operation);
+    public ClientOperation getClientOperation(String operation);
 
-    public Beneficiary getBeneficiary ();
+    public Beneficiary getBeneficiary();
 
 }

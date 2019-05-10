@@ -19,7 +19,6 @@ public class FxClientControllerImpl implements FxClientController {
                                   FxRequestConversionService fxRequestConversionService) {
 
         this.fxConversionService = fxConversionService;
-
         this.fxRequestConversionService = fxRequestConversionService;
     }
 

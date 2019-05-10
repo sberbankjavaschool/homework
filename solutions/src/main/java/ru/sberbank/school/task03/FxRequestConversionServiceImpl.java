@@ -7,7 +7,7 @@ import ru.sberbank.school.task02.util.Symbol;
 
 public class FxRequestConversionServiceImpl implements FxRequestConversionService {
 
-    public Symbol getSymbol (String symbolAsString) {
+    public Symbol getSymbol(String symbolAsString) {
 
         if (symbolAsString == null) {
             throw new FxConversionException("Некорректный запрос в поле symbol");
@@ -29,7 +29,7 @@ public class FxRequestConversionServiceImpl implements FxRequestConversionServic
     }
 
 
-    public ClientOperation getClientOperation (String operationAsString) {
+    public ClientOperation getClientOperation(String operationAsString) {
 
         if (operationAsString == null) {
             throw new FxConversionException("Некорректный запрос в поле direction");
@@ -51,7 +51,7 @@ public class FxRequestConversionServiceImpl implements FxRequestConversionServic
     }
 
 
-    public Beneficiary getBeneficiary () {
+    public Beneficiary getBeneficiary() {
 
         String beneficiaryAsString = System.getenv("SBRF_BENEFICIARY");
 

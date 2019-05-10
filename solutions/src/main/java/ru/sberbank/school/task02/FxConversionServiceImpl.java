@@ -25,14 +25,14 @@ public class FxConversionServiceImpl implements FxConversionService {
 
     @Override
     public BigDecimal convert(ClientOperation operation, Symbol symbol, BigDecimal amount)
-            throws FxConversionException, IllegalArgumentException {
+            throws FxConversionException, IllegalArgumentException, NullPointerException {
 
         if (operation == null) {
-            throw new IllegalArgumentException("Аргумент operation не может быть null");
+            throw new NullPointerException("Аргумент operation не может быть null");
         }
 
         if (symbol == null) {
-            throw new IllegalArgumentException("Аргумент symbol не может быть null");
+            throw new NullPointerException("Аргумент symbol не может быть null");
         }
 
         if (amount == null || amount.compareTo(BigDecimal.valueOf(0.0)) <= 0) {
@@ -47,7 +47,7 @@ public class FxConversionServiceImpl implements FxConversionService {
 
 
         /**
-         * Цикл проходит по массиву и ищет два индекса:
+         * Цикл проходит по массиву и ищет два индекса.
          * - индекс минимального объема volume (minIndex)
          * - индекс минимального минимального объема volume, который больше amount (minVolumeIndex)
          * Если amount больше самого большого объема volume и для него нет котировки
