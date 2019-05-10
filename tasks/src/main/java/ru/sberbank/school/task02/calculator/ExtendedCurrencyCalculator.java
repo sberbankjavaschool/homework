@@ -28,6 +28,7 @@ public class ExtendedCurrencyCalculator extends CurrencyCalculator implements Ex
         if (operation == ClientOperation.BUY) {
             return Optional.of(BigDecimal.valueOf(1).divide(quote.get().getOffer(), 10,rounding_mode));
         }
+        System.out.println("Nothing find");
         return Optional.empty();
     }
 
@@ -36,6 +37,9 @@ public class ExtendedCurrencyCalculator extends CurrencyCalculator implements Ex
         quotes = externalQuotesService.getQuotes(Symbol.USD_RUB);
         this.symbolOfRequest = symbol;
         this.amountOfRequest = amount;
+        System.out.println("Get benificiary: " + beneficiary.toString());
+        System.out.println("Get symbol: " + symbol.getSymbol());
+        System.out.println("Get client operation: " + operation.toString());
         System.out.println("Get request volume: " +  amountOfRequest );
         if ((beneficiary == Beneficiary.BANK && operation == ClientOperation.BUY) ||
                 (beneficiary == Beneficiary.CLIENT && operation == ClientOperation.SELL)) {
