@@ -24,9 +24,11 @@ public class Main {
         //Создание объекта валютного калькулятора FxConversionService с помощью ServiceFactory
         ServiceFactory serviceFactory = new ServiceFactoryImpl();
         FxConversionService fxConversionService = serviceFactory.getFxConversionService(externalQuotesService);
+        FxRequestConversionService fxRequestConversionService = new FxRequestConversionServiceImpl();
 
         //Создание контроллера со ссылкой на fxConversionService
-        FxClientController fxClientController = new FxClientControllerImpl(fxConversionService);
+        FxClientController fxClientController = new FxClientControllerImpl(fxConversionService,
+                fxRequestConversionService);
 
 
         //Создание объекта FxRequest и получение объекта FxResponse

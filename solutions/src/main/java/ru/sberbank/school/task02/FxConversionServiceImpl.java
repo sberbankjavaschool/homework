@@ -39,6 +39,7 @@ public class FxConversionServiceImpl implements FxConversionService {
             throw new FxConversionException("Список котировок ExternalQuotesService не должен быть пустой");
         }
 
+
         /**
          * Цикл проходит по массиву и ищет два индекса:
          * - индекс минимального объема volume (minIndex)
