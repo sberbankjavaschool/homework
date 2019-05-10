@@ -1,23 +1,27 @@
 package ru.sberbank.school.task02.calculator;
 
+import ru.sberbank.school.task02.ExtendedFxConversionService;
 import ru.sberbank.school.task02.ExternalQuotesService;
 import ru.sberbank.school.task02.FxConversionService;
+import ru.sberbank.school.task02.util.Beneficiary;
 import ru.sberbank.school.task02.util.ClientOperation;
 import ru.sberbank.school.task02.util.Quote;
 import ru.sberbank.school.task02.util.Symbol;
 
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.NonNull;
 
 public class CurrencyCalculator implements FxConversionService {
-    private final ExternalQuotesService externalQuotesService;
-    private List<Quote> quotes = new ArrayList<>();
-    private BigDecimal amountOfRequest;
-    private Symbol symbolOfRequest;
+    final ExternalQuotesService externalQuotesService;
+    List<Quote> quotes = new ArrayList<>();
+    BigDecimal amountOfRequest;
+    Symbol symbolOfRequest;
 
     public CurrencyCalculator(ExternalQuotesService externalQuotesService) {
         this.externalQuotesService = externalQuotesService;
@@ -37,23 +41,21 @@ public class CurrencyCalculator implements FxConversionService {
         return new BigDecimal(0);
     }
 
-    private BigDecimal operation(ClientOperation operation) {
-        Optional<Quote> quote = findQuote();
-        if (!quote.isPresent()) {
-            return new BigDecimal(0);
-        }
-        if (operation == ClientOperation.SELL) {
+    BigDecimal operation(ClientOperation operation) {
+        Optional<Quote> quote = findQuote(new CompareQutes());
+
+        if (quote.isPresent() && operation == ClientOperation.SELL) {
             return quote.get().getBid();
         }
-        if (operation == ClientOperation.BUY) {
+        if (quote.isPresent() && operation == ClientOperation.BUY) {
             return quote.get().getOffer();
         }
         return new BigDecimal(0);
     }
 
-    private Optional<Quote> findQuote() {
+    Optional<Quote> findQuote(Comparator<Quote> comparator) {
         BigDecimal amountQuote;
-        List<Quote> sortedQuoteList = filterQutesList();
+        List<Quote> sortedQuoteList = filterQutesList(comparator);
         for (Quote quote : sortedQuoteList) {
             amountQuote = quote.getVolumeSize();
             if (amountQuote.compareTo(amountOfRequest) > 0) {
@@ -66,16 +68,16 @@ public class CurrencyCalculator implements FxConversionService {
         return Optional.empty();
     }
 
-    private List<Quote> filterQutesList() {
-        showQuotes();
+    List<Quote> filterQutesList(Comparator<Quote> comparator) {
         List<Quote> filterBySymbolList = quotes.stream()
-                .filter(p -> p.getSymbol().getSymbol().equals(symbolOfRequest.getSymbol()))
-                .sorted(new CompareQutes())
+                .sorted(comparator)
                 .collect(Collectors.toList());
+        System.out.println("Sorted List: ");
+        showQuotes(filterBySymbolList);
         return filterBySymbolList;
     }
 
-    private boolean check() {
+    boolean check() {
         if (quotes.size() == 0) {
             return false;
         }
@@ -88,12 +90,21 @@ public class CurrencyCalculator implements FxConversionService {
         return true;
     }
 
-    public void showQuotes() {
-        for (Quote quote : quotes) {
-            System.out.println("Get Quote symbol: " + quote.getSymbol() +
-                    " volume: " + quote.getVolume() +
-                    " bid: " + quote.getBid() +
-                    " offer: " + quote.getOffer());
+    void showQuotes(List<Quote> showQutesList) {
+        for (Quote quote : showQutesList) {
+            System.out.println("Get Quote id: " + quote.getId()
+                    + " symbol: " + quote.getSymbol()
+                    + " volume: " + quote.getVolume()
+                    + " bid: " + quote.getBid()
+                    + " offer: " + quote.getOffer());
         }
+    }
+
+    void showQuote(Quote quote) {
+        System.out.println("Find quote: " + quote.getId()
+                + " symbol: " + quote.getSymbol()
+                + " volume: " + quote.getVolume()
+                + " bid: " + quote.getBid()
+                + " offer: " + quote.getOffer());
     }
 }

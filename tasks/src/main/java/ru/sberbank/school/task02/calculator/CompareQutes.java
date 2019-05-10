@@ -17,7 +17,8 @@ public class CompareQutes implements Comparator<Quote> {
         if (t1.getVolume().isInfinity()) {
             return -1;
         }
-        return quoteVolume1.compareTo(quoteVolume2) > 0 ? 1
-                : quoteVolume1.compareTo(quoteVolume2) == 0 ? 0 : -1;
+        return quoteVolume1.compareTo(quoteVolume2);
     }
+
+
 }
