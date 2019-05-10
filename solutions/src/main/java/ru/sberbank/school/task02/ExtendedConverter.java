@@ -1,6 +1,5 @@
 package ru.sberbank.school.task02;
 
-import ru.sberbank.school.task02.exception.ConverterConfigurationException;
 import ru.sberbank.school.task02.util.Beneficiary;
 import ru.sberbank.school.task02.util.ClientOperation;
 import ru.sberbank.school.task02.util.Quote;
@@ -27,8 +26,6 @@ public class ExtendedConverter extends Converter implements ExtendedFxConversion
 
         List<Quote> quotes = externalQuotesService.getQuotes(symbol);
 
-        checkData(quotes, amount, beneficiary);
-
         Quote quote = null;
         Quote reserveQuote = null;
 
@@ -37,12 +34,12 @@ public class ExtendedConverter extends Converter implements ExtendedFxConversion
             BigDecimal usd = amount.divide(price, 15, BigDecimal.ROUND_HALF_UP);
 
             if (currQuote.getVolumeSize().compareTo(usd) > 0 || currQuote.isInfinity()) {
-                Quote quote3 = searchQuote(usd, quotes);
-                if (currQuote == quote3) {
+                Quote quoteUsd = searchQuote(usd, quotes);
+                if (currQuote.getVolumeSize().compareTo(quoteUsd.getVolumeSize()) == 0) {
                     if (quote == null) {
-                        quote = quote3;
+                        quote = quoteUsd;
                     } else {
-                        reserveQuote = quote3;
+                        reserveQuote = quoteUsd;
                     }
                 }
             }
@@ -62,14 +59,6 @@ public class ExtendedConverter extends Converter implements ExtendedFxConversion
 
     }
 
-    private void checkData(List<Quote> quotes, BigDecimal amount, Beneficiary beneficiary) {
-        super.checkData(quotes, amount);
-        if (beneficiary != Beneficiary.CLIENT && beneficiary != Beneficiary.BANK) {
-            throw new ConverterConfigurationException("Incorrect beneficiary");
-        }
-    }
-
-
     private Quote choiceBeneficiary(Quote quote, Quote reserveQuote, Beneficiary beneficiary) {
         if (reserveQuote.isInfinity()) {
             return beneficiary == Beneficiary.CLIENT ? reserveQuote : quote;
@@ -85,5 +74,4 @@ public class ExtendedConverter extends Converter implements ExtendedFxConversion
 
         return quote;
     }
-
 }
