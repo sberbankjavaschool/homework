@@ -9,34 +9,49 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-
-
 public class FxConversionServiceImpl implements FxConversionService {
 
     ExternalQuotesService externalQuotesService;
 
     FxConversionServiceImpl(ExternalQuotesService externalQuotesService) {
+
+        if (externalQuotesService == null) {
+
+            throw new FxConversionException("ExternalQuotesService не должен быть null");
+        }
+
         this.externalQuotesService = externalQuotesService;
     }
 
     @Override
     public BigDecimal convert(ClientOperation operation, Symbol symbol, BigDecimal amount)
-            throws FxConversionException {
+            throws FxConversionException, NullPointerException, IllegalArgumentException {
 
-        if (amount.compareTo(BigDecimal.valueOf(0)) < 0) {
-            throw new FxConversionException("Объем не может быть отрицательным");
+        if (operation == null) {
+            throw new NullPointerException("Аргумент operation не может быть null");
         }
 
-        List<Quote> quotes = new ArrayList<>();
-        quotes = externalQuotesService.getQuotes(symbol);
+        if (symbol == null) {
+            throw new NullPointerException("Аргумент symbol не может быть null");
+        }
 
+        if (amount == null) {
+            throw new NullPointerException("Аргумент amount не может быть null");
+        }
 
-        if (quotes.size() == 0) {
+        if (amount.compareTo(BigDecimal.valueOf(0.0)) <= 0) {
+            throw new IllegalArgumentException("Аргумент amount должен быть больше 0");
+        }
+
+        List<Quote> quotes = externalQuotesService.getQuotes(symbol);
+
+        if (quotes == null || quotes.size() == 0) {
             throw new FxConversionException("Список котировок ExternalQuotesService не должен быть пустой");
         }
 
+
         /**
-         * Цикл проходит по массиву и ищет два индекса:
+         * Цикл проходит по массиву и ищет два индекса.
          * - индекс минимального объема volume (minIndex)
          * - индекс минимального минимального объема volume, который больше amount (minVolumeIndex)
          * Если amount больше самого большого объема volume и для него нет котировки
