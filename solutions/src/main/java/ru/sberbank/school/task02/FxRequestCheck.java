@@ -20,7 +20,6 @@ public class FxRequestCheck {
     }
 
     public static Symbol getSymbol(@NonNull FxRequest request) {
-
         if (request.getSymbol().toUpperCase().equals("USD/RUB")) {
             return Symbol.USD_RUB;
         } else if (request.getSymbol().toUpperCase().equals("RUB/USD")) {
@@ -31,7 +30,7 @@ public class FxRequestCheck {
 
     public static BigDecimal getAmount(@NonNull FxRequest request) {
         if (BigDecimal.valueOf(Double.valueOf(request.getAmount())).equals(BigDecimal.ZERO)) {
-            throw new IllegalArgumentException("Amount  can't be equal to ZERO");
+            throw new IllegalArgumentException("Amount can't be equal to ZERO");
         }
         BigDecimal rightAmount;
         try {

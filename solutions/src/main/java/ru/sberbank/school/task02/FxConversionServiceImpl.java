@@ -27,6 +27,9 @@ public class FxConversionServiceImpl implements ExtendedFxConversionService {
     private ExternalQuotesService exQuotes;
 
     public FxConversionServiceImpl(ExternalQuotesService externalQuotesService) {
+        if (externalQuotesService == null) {
+            throw new IllegalArgumentException("List of quotes is empty");
+        }
         this.exQuotes = externalQuotesService;
     }
 
