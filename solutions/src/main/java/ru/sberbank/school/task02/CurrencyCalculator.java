@@ -1,5 +1,9 @@
 package ru.sberbank.school.task02;
 
+
+
+import ru.sberbank.school.task02.exception.FxConversionException;
+
 import ru.sberbank.school.task02.util.ClientOperation;
 import ru.sberbank.school.task02.util.Quote;
 import ru.sberbank.school.task02.util.Symbol;
@@ -26,38 +30,55 @@ public class CurrencyCalculator implements FxConversionService {
 
         Quote quote = getSuitableQuote(symbol, amount);
 
-        return  operation == ClientOperation.BUY ? quote.getOffer() : quote.getBid();
+        return operation == ClientOperation.BUY ? quote.getOffer() : quote.getBid();
     }
 
     private Quote getSuitableQuote(Symbol symbol, BigDecimal amount) {
         List<Quote> quoteList = externalQuotesService.getQuotes(symbol);
 
-        if (quoteList.isEmpty()) {
-            throw  new IllegalArgumentException("There are not quotes for this symbol");
+        if (quoteList == null || quoteList.isEmpty()) {
+            throw new FxConversionException("There are not quotes for this symbol");
         }
 
         Quote result = null;
-        Quote infinityResult = null;
-        BigDecimal diff = null;
 
         for (Quote quote : quoteList) {
-            if (amount.compareTo(quote.getVolumeSize()) < 0 && !quote.isInfinity()) {
-                BigDecimal localDiff = quote.getVolumeSize().subtract(amount);
+            result = chooseQuote(amount, result, quote);
+        }
 
-                if (diff == null) {
-                    result = quote;
-                    diff = localDiff;
-                } else if (diff.compareTo(localDiff) > 0) {
-                    result = quote;
-                    diff = localDiff;
+        return result;
+
+    }
+
+    protected Quote chooseQuote(BigDecimal amount, Quote quote1, Quote quote2) {
+        if (amount == null) {
+            throw new NullPointerException("Amount can't be null");
+        }
+        if (quote2 == null) {
+            throw new NullPointerException("Amount can't be null");
+        }
+        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Amount can't be zero or less, current " + amount);
+        }
+
+        if (quote1 == null) {
+            if (quote2.isInfinity() || (!quote2.isInfinity() && amount.compareTo(quote2.getVolumeSize()) < 0)) {
+                return quote2;
+            }
+        } else {
+            if (quote1.isInfinity()) {
+                if (amount.compareTo(quote2.getVolumeSize()) < 0) {
+                    return  quote2;
                 }
-            } else if (quote.isInfinity()) {
-                infinityResult = quote;
+            } else {
+                if (!quote2.isInfinity() && amount.compareTo(quote2.getVolumeSize()) < 0
+                        && quote2.getVolumeSize().compareTo(quote1.getVolumeSize()) < 0) {
+                    return quote2;
+                }
             }
         }
 
-        return result != null ? result : infinityResult;
-
+        return quote1;
     }
 
 }
