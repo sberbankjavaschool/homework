@@ -52,8 +52,6 @@ public class SimpleFxConversionService implements FxConversionService {
                 if (!quoteCandidate.isInfinity() && isQuoteVolumeBigger(quoteCandidate, amount)) {
                     quote = isQuoteVolumeBigger(quoteCandidate, quote.getVolumeSize()) ? quoteCandidate : quote;
                 }
-
-
             }
         }
 
