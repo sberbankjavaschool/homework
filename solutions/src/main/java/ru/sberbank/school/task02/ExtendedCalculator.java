@@ -2,6 +2,7 @@ package ru.sberbank.school.task02;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
+import java.math.RoundingMode;
 import java.util.*;
 
 import ru.sberbank.school.task02.util.*;
@@ -39,7 +40,8 @@ public class ExtendedCalculator extends Calculator implements ExtendedFxConversi
         }
 
         Collections.sort(prices);
-        return Optional.of(beneficiary == Beneficiary.CLIENT ^ operation == ClientOperation.BUY ? prices.get(prices.size() - 1) : prices.get(0));
+        return Optional.of(beneficiary == Beneficiary.CLIENT ^ operation == ClientOperation.BUY
+                ? prices.get(prices.size() - 1) : prices.get(0));
     }
 
     @Override
@@ -71,7 +73,7 @@ public class ExtendedCalculator extends Calculator implements ExtendedFxConversi
             Volume volumeFrom = i == 0
                     ? Volume.from(0) : Volume.from(quotes.get(i - 1).getVolumeSize().multiply(price));
             Volume volumeTo = Volume.from(quotes.get(i).getVolumeSize().multiply(price));
-            price = BigDecimal.ONE.divide(price, MathContext.DECIMAL32);
+            price = BigDecimal.ONE.divide(price, 10, RoundingMode.HALF_UP);
             ReverseQuote r = new ReverseQuote(volumeFrom, volumeTo, price);
             reverseQuotes.add(r);
         }
