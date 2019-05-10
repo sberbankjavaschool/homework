@@ -25,7 +25,7 @@ public class FxConversionServiceImpl implements FxConversionService {
 
     @Override
     public BigDecimal convert(ClientOperation operation, Symbol symbol, BigDecimal amount)
-            throws FxConversionException, IllegalArgumentException, NullPointerException {
+            throws FxConversionException, NullPointerException {
 
         if (operation == null) {
             throw new NullPointerException("Аргумент operation не может быть null");
@@ -36,7 +36,7 @@ public class FxConversionServiceImpl implements FxConversionService {
         }
 
         if (amount == null || amount.compareTo(BigDecimal.valueOf(0.0)) <= 0) {
-            throw new IllegalArgumentException("Аргумент amount должен быть больше 0 и не null");
+            throw new NullPointerException("Аргумент amount должен быть больше 0 и не null");
         }
 
         List<Quote> quotes = externalQuotesService.getQuotes(symbol);
