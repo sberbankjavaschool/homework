@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import lombok.NonNull;
-import lombok.Builder;
 import ru.sberbank.school.task02.exception.WrongSymbolException;
 import ru.sberbank.school.task02.util.Quote;
 import ru.sberbank.school.task02.util.Symbol;
