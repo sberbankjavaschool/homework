@@ -19,7 +19,7 @@ public class ExtendedCurrencyCalculator extends CurrencyCalculator implements Ex
     }
 
     private Optional<BigDecimal> extendedOperation(ClientOperation operation, Beneficiary beneficiary) {
-        Optional<Quote> quote = findQuote(new CompareQuotesBenificiary(operation, beneficiary));
+        Optional<Quote> quote = findQuote(new CompareQuotesBenificiary(operation, beneficiary), quotes);
         if (!quote.isPresent()) {
             return Optional.empty();
         }
@@ -45,7 +45,8 @@ public class ExtendedCurrencyCalculator extends CurrencyCalculator implements Ex
             }
         }
         quoteList.sort(comparator);
-        return Optional.empty();
+        showQuotes(quoteList);
+        return Optional.of(quoteList.get(0));
     }
 
     @Override
@@ -57,12 +58,12 @@ public class ExtendedCurrencyCalculator extends CurrencyCalculator implements Ex
         System.out.println("Get symbol: " + symbol.getSymbol());
         System.out.println("Get client operation: " + operation.toString());
         System.out.println("Get request volume: " +  amountOfRequest );
-        if ((beneficiary == Beneficiary.BANK && operation == ClientOperation.BUY) ||
-                (beneficiary == Beneficiary.CLIENT && operation == ClientOperation.SELL)) {
+        if ((beneficiary == Beneficiary.BANK && operation == ClientOperation.BUY)
+                || (beneficiary == Beneficiary.CLIENT && operation == ClientOperation.SELL)) {
             rounding_mode = BigDecimal.ROUND_CEILING;
         }
-        if ((beneficiary == Beneficiary.BANK && operation == ClientOperation.SELL) ||
-                (beneficiary == Beneficiary.CLIENT && operation == ClientOperation.BUY)) {
+        if ((beneficiary == Beneficiary.BANK && operation == ClientOperation.SELL)
+                || (beneficiary == Beneficiary.CLIENT && operation == ClientOperation.BUY)) {
             rounding_mode = BigDecimal.ROUND_FLOOR;
         }
         this.amountOfRequest = amount.setScale(10, BigDecimal.ROUND_FLOOR);
@@ -74,7 +75,11 @@ public class ExtendedCurrencyCalculator extends CurrencyCalculator implements Ex
     }
 
     @Override
-    public Optional<BigDecimal> convertReversed(ClientOperation operation, Symbol symbol, BigDecimal amount, double delta, Beneficiary beneficiary) {
-        return Optional.empty();
+    public Optional<BigDecimal> convertReversed(ClientOperation operation,
+                                                Symbol symbol,
+                                                BigDecimal amount,
+                                                double delta,
+                                                Beneficiary beneficiary) {
+         return Optional.empty();
     }
 }
