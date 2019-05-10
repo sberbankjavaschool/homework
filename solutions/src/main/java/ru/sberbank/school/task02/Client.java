@@ -1,6 +1,7 @@
 package ru.sberbank.school.task02;
 
 import ru.sberbank.school.task02.exception.ConverterConfigurationException;
+import ru.sberbank.school.task02.exception.FxConversionException;
 import ru.sberbank.school.task02.exception.WrongSymbolException;
 import ru.sberbank.school.task02.util.*;
 
@@ -12,7 +13,7 @@ import java.util.*;
 public class Client implements FxClientController {
     private ExtendedFxConversionService converter;
     private String beneficiary;
-    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
 
     public Client(ExternalQuotesService externalQuotesService) {
         this.beneficiary = System.getenv("SBRF_BENEFICIARY");
@@ -21,27 +22,33 @@ public class Client implements FxClientController {
     }
 
     public static void main(String[] args) {
-        if (args.length < 3) {
-            throw new ConverterConfigurationException("Not enough input parameters");
+        try {
+            if (args.length < 3) {
+                throw new ConverterConfigurationException("Not enough input parameters");
+            }
+
+            ExternalQuotesService externalQuotesService = new ExternalQuotesServiceDemo();
+
+            Client client = new Client(externalQuotesService);
+
+            Map<String, String> params = new HashMap<>();
+
+            for (String arg : args) {
+                params.put(arg.split("=")[0], arg.split("=")[1]);
+            }
+
+            FxRequest request = new FxRequest(params.get("symbol"), params.get("direction"), params.get("amount"));
+
+            FxResponse response = client.fetchResult(request);
+
+            System.out.println(response);
+            System.out.println(response.getPrice());
+            System.out.println(response.getDate());
+
+        } catch (FxConversionException | IllegalArgumentException e) {
+            System.out.println(e.getMessage());
         }
 
-        ExternalQuotesService externalQuotesService = new ExternalQuotesServiceDemo();
-
-        Client client = new Client(externalQuotesService);
-
-        Map<String, String> params = new HashMap<>();
-
-        for (String arg : args) {
-            params.put(arg.split("=")[0], arg.split("=")[1]);
-        }
-
-        FxRequest request = new FxRequest(params.get("symbol"), params.get("direction"), params.get("amount"));
-
-        FxResponse response = client.fetchResult(request);
-
-        System.out.println(response);
-        System.out.println(response.getPrice());
-        System.out.println(response.getDate());
 
     }
 
