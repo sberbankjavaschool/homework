@@ -77,6 +77,9 @@ public class FxConversionServiceImpl implements ExtendedFxConversionService {
                                          Symbol symbol,
                                          BigDecimal amount,
                                          Beneficiary beneficiary) {
+        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Wrong amount");
+        }
 
         ClientOperation revertedOperation = operation == ClientOperation.BUY ? ClientOperation.SELL
                 : ClientOperation.BUY;
