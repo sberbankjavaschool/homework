@@ -1,6 +1,6 @@
 package ru.sberbank.school.task02;
 
-
+import lombok.NonNull;
 import ru.sberbank.school.task02.exception.FxConversionException;
 import ru.sberbank.school.task02.util.ClientOperation;
 import ru.sberbank.school.task02.util.Quote;
@@ -12,13 +12,21 @@ import java.util.List;
 public class FxConversionServiceImpl implements FxConversionService {
     private ExternalQuotesService externalQuotesService;
 
-    public FxConversionServiceImpl(ExternalQuotesService externalQuotesService) {
+    public FxConversionServiceImpl(@NonNull ExternalQuotesService externalQuotesService) {
         this.externalQuotesService = externalQuotesService;
     }
 
     @Override
-    public BigDecimal convert(ClientOperation operation, Symbol symbol, BigDecimal amount) {
+    public BigDecimal convert(@NonNull ClientOperation operation,
+                              @NonNull Symbol symbol,
+                              @NonNull BigDecimal amount) {
+        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Объем не может быть отрицательным или равным нулю");
+        }
         List<Quote> quoteList = externalQuotesService.getQuotes(symbol);
+        if (quoteList == null || quoteList.isEmpty()) {
+            throw new FxConversionException("Отсутстуют котировки на заданную валютную пару");
+        }
         Quote targetQuote = null;
         for (Quote currentQuote : quoteList) {
             if (targetQuote == null && currentQuote.isInfinity()) {
