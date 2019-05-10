@@ -73,7 +73,7 @@ public class FxConversionServiceImpl implements ExtendedFxConversionService {
      * @return Цена для указанного объема
      */
     @Override
-    public Optional<BigDecimal> convertReversed(ClientOperation operation,
+    public Optional<BigDecimal> convertReversed(@NonNull ClientOperation operation,
                                          Symbol symbol,
                                          BigDecimal amount,
                                          Beneficiary beneficiary) {

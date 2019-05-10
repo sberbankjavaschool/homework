@@ -88,7 +88,10 @@ public class FxClientControllerImpl implements FxClientController {
     }
 
     @Override
-    public List<FxResponse> fetchResult(List<FxRequest> requests) {
+    public List<FxResponse> fetchResult(@NonNull List<FxRequest> requests) {
+        if (requests.isEmpty()) {
+            throw new IllegalArgumentException("Empty request list");
+        }
         List<FxResponse> results = new ArrayList<>();
         for (FxRequest request : requests) {
             results.add(fetchResult(request));
