@@ -32,21 +32,22 @@ public class FxClientControllerImpl implements FxClientController {
 
     @Override
     public FxResponse fetchResult(FxRequest requests) {
-        FxResponse response;
+        FxResponse response = null;
 
         Symbol symbol = getSymbol(requests.getSymbol());
         ClientOperation clientOperation = getDirection(requests.getDirection());
         BigDecimal amount = getAmount(requests.getAmount());
-        BigDecimal price = fxConversionServiceImpl.convert(clientOperation, symbol, amount);
 
-        if(price != null) {
+        try {
+            BigDecimal price = fxConversionServiceImpl.convert(clientOperation, symbol, amount);
+
             return response = new FxResponse(symbol.getSymbol(),
                 price.toString(),
                 amount.toString(),
                 LocalDateTime.now().toString(),
                 clientOperation.toString(),
                 false);
-        } else {
+        } catch (FxConversionException e) {
             return response = new FxResponse(symbol.getSymbol(),
                 null,
                 amount.toString(),
@@ -54,7 +55,6 @@ public class FxClientControllerImpl implements FxClientController {
                 clientOperation.toString(),
                 true);
         }
-
     }
 
     public static Symbol getSymbol(@NonNull String symbol) {
