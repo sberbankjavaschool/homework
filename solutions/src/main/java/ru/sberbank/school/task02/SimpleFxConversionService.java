@@ -1,4 +1,4 @@
-package ru.sberbank.school;
+package ru.sberbank.school.task02;
 
 import ru.sberbank.school.task02.ExternalQuotesService;
 import ru.sberbank.school.task02.FxConversionService;
