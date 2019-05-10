@@ -53,8 +53,8 @@ public class ExtendedCalculator extends Calculator implements ExtendedFxConversi
         }
 
         Collections.sort(prices);
-        return Optional.of(beneficiary == Beneficiary.CLIENT ^ operation == ClientOperation.BUY
-                ? prices.get(prices.size() - 1) : prices.get(0));
+        return Optional.of(prices.get(beneficiary == Beneficiary.CLIENT ^ operation == ClientOperation.BUY
+                ? prices.size() - 1 : 0));
     }
 
     @Override
@@ -75,17 +75,24 @@ public class ExtendedCalculator extends Calculator implements ExtendedFxConversi
         });
     }
 
-    public List<ReverseQuote> getReverseQuotes(List<Quote> quotes, ClientOperation operation) {
+    private List<ReverseQuote> getReverseQuotes(List<Quote> quotes, ClientOperation operation) {
 
         sortQuotes(quotes);
         List<ReverseQuote> reverseQuotes = new ArrayList<>();
 
-        for (int i = 0; i < quotes.size(); i++) {
+        Iterator<Quote> iterator = quotes.iterator();
+        Quote qPrev = null;
+        Quote q = null;
+
+        while (iterator.hasNext()) {
+            qPrev = q;
+            q = iterator.next();
+
             BigDecimal price = operation == ClientOperation.SELL
-                    ? quotes.get(i).getBid() : quotes.get(i).getOffer();
-            Volume volumeFrom = i == 0
-                    ? Volume.from(0) : Volume.from(quotes.get(i - 1).getVolumeSize().multiply(price));
-            Volume volumeTo = Volume.from(quotes.get(i).getVolumeSize().multiply(price));
+                    ? q.getBid() : q.getOffer();
+            Volume volumeFrom = qPrev == null
+                    ? Volume.from(0) : Volume.from(qPrev.getVolumeSize().multiply(price));
+            Volume volumeTo = Volume.from(q.getVolumeSize().multiply(price));
             price = BigDecimal.ONE.divide(price, 10, RoundingMode.HALF_UP);
             ReverseQuote r = new ReverseQuote(volumeFrom, volumeTo, price);
             reverseQuotes.add(r);
