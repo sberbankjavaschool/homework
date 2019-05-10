@@ -11,7 +11,9 @@ import ru.sberbank.school.task02.util.ClientOperation;
 import ru.sberbank.school.task02.util.Quote;
 import ru.sberbank.school.task02.util.Symbol;
 
+
 public class FxConversionServiceImpl implements ExtendedFxConversionService {
+
     /**
      * Возвращает значение цены единицы базовой валюты для указанного объема.
      *
@@ -54,6 +56,7 @@ public class FxConversionServiceImpl implements ExtendedFxConversionService {
         return (operation == ClientOperation.BUY ? exRate.getOffer() : exRate.getBid());
 
     }
+
 
     /**
      * Возвращает значение цены единицы котируемой валюты для указанного объема
