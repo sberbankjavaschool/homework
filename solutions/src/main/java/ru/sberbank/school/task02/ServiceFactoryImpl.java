@@ -9,6 +9,6 @@ public class ServiceFactoryImpl implements ServiceFactory {
 
     @Override
     public ExtendedFxConversionService getExtendedFxConversionService(ExternalQuotesService externalQuotesService) {
-        return new ExtendedConverterService(externalQuotesService);
+        return null;
     }
 }
