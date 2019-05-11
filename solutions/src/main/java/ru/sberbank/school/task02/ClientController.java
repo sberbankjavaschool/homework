@@ -45,7 +45,8 @@ public class ClientController implements FxClientController {
         String priceResponse = String.valueOf(price.setScale(SCALE, HALF_UP));
         String date = RequesParser.getDate();
 
-        response = new FxResponse(symbol.getSymbol(), priceResponse, amount.toString(), date, clientOperation.toString(), false);
+        response = new FxResponse(symbol.getSymbol(), priceResponse,
+                String.valueOf(amount), date, String.valueOf(clientOperation), false);
 
         return response;
     }
