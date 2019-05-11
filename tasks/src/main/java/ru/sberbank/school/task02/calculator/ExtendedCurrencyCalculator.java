@@ -7,8 +7,6 @@ import ru.sberbank.school.task02.util.ClientOperation;
 import ru.sberbank.school.task02.util.Quote;
 import ru.sberbank.school.task02.util.Symbol;
 import java.math.BigDecimal;
-import java.util.Comparator;
-import java.util.List;
 import java.util.Optional;
 
 public class ExtendedCurrencyCalculator extends CurrencyCalculator implements ExtendedFxConversionService {
@@ -51,7 +49,7 @@ public class ExtendedCurrencyCalculator extends CurrencyCalculator implements Ex
                 || (beneficiary == Beneficiary.CLIENT && operation == ClientOperation.BUY)) {
             rounding_mode = BigDecimal.ROUND_FLOOR;
         }
-        this.amountOfRequest = amount.setScale(10, BigDecimal.ROUND_FLOOR);
+        this.amountOfRequest = amount.setScale(10, rounding_mode);
 
         if (check()) {
             return extendedOperation(operation, beneficiary);
