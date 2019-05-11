@@ -13,6 +13,9 @@ public class Converter implements FxConversionService {
     private ExternalQuotesService externalQuotesService;
 
     public Converter(ExternalQuotesService externalQuotesService) {
+        if (externalQuotesService == null) {
+            throw new FxConversionException("Передайте корректный QuoteService!");
+        }
         this.externalQuotesService = externalQuotesService;
     }
 
@@ -26,7 +29,7 @@ public class Converter implements FxConversionService {
 
         List<Quote> quotes = externalQuotesService.getQuotes(symbol);
 
-        if (quotes.isEmpty()) {
+        if (quotes == null || quotes.isEmpty()) {
             throw new FxConversionException("Список валют пуст!");
         }
 
