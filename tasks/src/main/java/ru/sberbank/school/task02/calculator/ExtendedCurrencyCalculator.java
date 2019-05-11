@@ -19,7 +19,7 @@ public class ExtendedCurrencyCalculator extends CurrencyCalculator implements Ex
     }
 
     private Optional<BigDecimal> extendedOperation(ClientOperation operation, Beneficiary beneficiary) {
-        Optional<Quote> quote = findQuote(new CompareQuotesBenificiary(operation, beneficiary), quotes);
+        Optional<Quote> quote = findQuote(new CompareQuotesBenificiary(operation, beneficiary));
         if (!quote.isPresent()) {
             return Optional.empty();
         }
@@ -32,21 +32,6 @@ public class ExtendedCurrencyCalculator extends CurrencyCalculator implements Ex
         }
         System.out.println("Nothing find");
         return Optional.empty();
-    }
-
-    Optional<Quote> findQuote(Comparator<Quote> comparator, List<Quote> quoteList) {
-        BigDecimal amountQuote;
-
-        for (Quote quote : quoteList) {
-            amountQuote = quote.getVolumeSize();
-
-            if (amountQuote.compareTo(amountOfRequest) <= 0 && !quote.getVolume().isInfinity()) {
-                quoteList.remove(quote);
-            }
-        }
-        quoteList.sort(comparator);
-        showQuotes(quoteList);
-        return Optional.of(quoteList.get(0));
     }
 
     @Override
