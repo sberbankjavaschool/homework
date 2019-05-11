@@ -7,6 +7,7 @@ import ru.sberbank.school.task02.util.Symbol;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 
 public class Calculator implements FxConversionService {
     private ExternalQuotesService provider;
@@ -51,15 +52,8 @@ public class Calculator implements FxConversionService {
     }
 
     void validate(ClientOperation operation, Symbol symbol, BigDecimal amount) {
-        if (operation == null) {
-            throw new NullPointerException("No operation provided");
-        }
-        if (symbol == null) {
-            throw new NullPointerException("No symbol provided");
-        }
-        if (amount == null) {
-            throw new NullPointerException("No amount provided");
-        }
-
+        Objects.requireNonNull(operation, "No operation provided");
+        Objects.requireNonNull(symbol, "No symbol provided");
+        Objects.requireNonNull(amount, "No amount provided");
     }
 }

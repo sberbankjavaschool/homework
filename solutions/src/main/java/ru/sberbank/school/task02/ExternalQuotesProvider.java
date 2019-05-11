@@ -15,7 +15,7 @@ public class ExternalQuotesProvider implements ExternalQuotesService {
         for (int i = 9; i > 0; i--) {
             quotes.add(new Quote(symbol, Volume.from(i * 10), new BigDecimal(i * 100), new BigDecimal(i * 1000)));
         }
-//        quotes.add(new Quote(symbol, Volume.INFINITY, new BigDecimal(1000), new BigDecimal(10000)));
+        quotes.add(new Quote(symbol, Volume.INFINITY, new BigDecimal(1000), new BigDecimal(10000)));
         return quotes;
     }
 }
