@@ -1,6 +1,4 @@
-package ru.sberbank.school.task02;
-
-import ru.sberbank.school.task02.exception.FxConversionException;
+package ru.sberbank.school.task02.exception;
 
 /**
  * Исключение для пустокого списка котировок.
