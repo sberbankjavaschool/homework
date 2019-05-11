@@ -1,7 +1,5 @@
 package ru.sberbank.school.task02.validators;
 
-import ru.sberbank.school.task02.exception.FxConversionException;
-
 import java.math.BigDecimal;
 
 /**
