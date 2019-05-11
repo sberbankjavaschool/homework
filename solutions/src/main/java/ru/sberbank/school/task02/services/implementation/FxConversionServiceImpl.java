@@ -1,5 +1,6 @@
 package ru.sberbank.school.task02.services.implementation;
 
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import ru.sberbank.school.task02.FxConversionService;
 import ru.sberbank.school.task02.services.InternalQuotesService;
@@ -10,14 +11,19 @@ import ru.sberbank.school.task02.util.Symbol;
 import java.math.BigDecimal;
 import java.util.List;
 
+import static ru.sberbank.school.task02.util.ClientOperation.BUY;
+import static ru.sberbank.school.task02.validators.AmountPositiveValidator.amountValidate;
+
 /**
- * Валютный калькулятор
+ * Валютный калькулятор: возвращает значение цены еденицы базовой валюты для заданного количества котируемой валюты.
+ * Для параметров BUY, USD/RUB, 1000, ситуация читается так:
+ * Клиент хочет купить 1000 долларов за рубли, сказать сколько будет стоить 1 доллар.
  * Created by Gregory Melnikov at 27.04.2019
  */
 @RequiredArgsConstructor
 public class FxConversionServiceImpl implements FxConversionService {
 
-    private final InternalQuotesService internalQuotesService;
+    protected final InternalQuotesService internalQuotesService;
 
     /**
      * Возвращает значение цены единицы базовой валюты для указанного объема.
@@ -28,7 +34,9 @@ public class FxConversionServiceImpl implements FxConversionService {
      * @return Цена для указанного объема
      */
     @Override
-    public BigDecimal convert(ClientOperation operation, Symbol symbol, BigDecimal amount) {
+    public BigDecimal convert(@NonNull ClientOperation operation, @NonNull Symbol symbol, @NonNull BigDecimal amount) {
+
+        amountValidate(amount);
 
         List<Quote> quotes = internalQuotesService.getQuotes(symbol);
 
@@ -47,6 +55,6 @@ public class FxConversionServiceImpl implements FxConversionService {
                 break;
             }
         }
-        return ClientOperation.BUY.equals(operation) ? targetQuote.getOffer() : targetQuote.getBid();
+        return operation == BUY ? targetQuote.getOffer() : targetQuote.getBid();
     }
 }
