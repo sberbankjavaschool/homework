@@ -30,7 +30,7 @@ public enum Symbols {
         }
     }
 
-    public static Symbol get (String key) {
+    public static Symbol get(String key) {
         return searchMap.get(key);
     }
 }
