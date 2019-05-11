@@ -35,7 +35,6 @@ public class ClientController implements FxClientController {
 
     @Override
     public FxResponse fetchResult(@NonNull FxRequest requests) {
-        FxResponse response;
 
         BigDecimal amount = RequesParser.getAmount(requests.getAmount());
         ClientOperation clientOperation = RequesParser.getClientOperetion(requests.getDirection());
@@ -45,9 +44,7 @@ public class ClientController implements FxClientController {
         String priceResponse = String.valueOf(price.setScale(SCALE, HALF_UP));
         String date = RequesParser.getDate();
 
-        response = new FxResponse(symbol.getSymbol(), priceResponse,
+        return new FxResponse(symbol.getSymbol(), priceResponse,
                 String.valueOf(amount), date, String.valueOf(clientOperation), false);
-
-        return response;
     }
 }
