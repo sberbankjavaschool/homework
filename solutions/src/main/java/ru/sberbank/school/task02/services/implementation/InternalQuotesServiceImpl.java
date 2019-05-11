@@ -3,7 +3,7 @@ package ru.sberbank.school.task02.services.implementation;
 import lombok.RequiredArgsConstructor;
 import ru.sberbank.school.task02.ExternalQuotesService;
 import ru.sberbank.school.task02.exception.FxConversionException;
-import ru.sberbank.school.task02.exeption.EmptyQuoteList;
+import ru.sberbank.school.task02.exeption.EmptyQuoteListException;
 import ru.sberbank.school.task02.services.InternalQuotesService;
 import ru.sberbank.school.task02.util.Quote;
 import ru.sberbank.school.task02.util.Symbol;
@@ -32,9 +32,6 @@ public class InternalQuotesServiceImpl implements InternalQuotesService {
 
         if (quotes == null) {
             throw new FxConversionException("Quotes not found for symbol " + symbol);
-        }
-        if (quotes.isEmpty()) {
-            throw new EmptyQuoteList("External quotes service must return at least one quote!");
         }
 
         quotes.sort((previous, next) -> {

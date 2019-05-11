@@ -10,10 +10,12 @@ import ru.sberbank.school.task02.util.FxResponse;
 import java.util.List;
 
 /**
- * Created by Gregory Melnikov at 03.05.2019
+ * Клиент для получения расчетных курсов из командной строки (args)
+ * Формат ввода аргументов командной строки: USD/RUB BUY 3359156.48 USD/RUB SELL 87913.92
+ * Created by Gregory Melnikov at 11.05.2019
  */
-public class Main {
-    
+public class FxClient {
+
     public static void main(String[] args) {
 
         FxRequestBuilder requestBuilder = new FxRequestBuilder();
@@ -30,10 +32,16 @@ public class Main {
                 serviceFactory.getExtendedFxConversionService(externalQuotesService);
         FxClientController clientController = new FxClientControllerImpl(conversionService);
 
-        List<FxResponse> responses = clientController.fetchResult(requests);
+        try {
+            List<FxResponse> responses = clientController.fetchResult(requests);
 
-        for (FxResponse response : responses) {
-            System.out.println("response: " + response.toString() + ", price: " + response.getPrice());
+            for (FxResponse response : responses) {
+                System.out.println("response: " + response.toString() + ", price: " + response.getPrice());
+            }
+        }
+        catch (RuntimeException e) {
+            System.out.println("Some trouble have arise while conversion");
+            System.err.println(e.getMessage());
         }
     }
 }

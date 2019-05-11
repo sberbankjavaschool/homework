@@ -135,10 +135,10 @@ public class ExtendedFxConversionServiceImpl extends FxConversionServiceImpl imp
             quoteRate = operation == BUY ? quote.getOffer() : quote.getBid();
             targetValue = amount.divide(quoteRate, SCALE, HALF_UP);
 
-            boolean targetValueLessThanQuoteValue = (targetValue.compareTo(quote.getVolumeSize()) <= 0);
-            boolean targetValueMoreThanPreviousQuoteValue = (targetValue.compareTo(previousQuote.getVolumeSize()) > 0);
-            boolean quoteIsInfinityAndTargetValueMoreThanMaxValue = (quote.isInfinity()
-                    && targetValue.compareTo(targetQuote.getVolumeSize()) > 0);
+            boolean targetValueLessThanQuoteValue = targetValue.compareTo(quote.getVolumeSize()) <= 0;
+            boolean targetValueMoreThanPreviousQuoteValue = targetValue.compareTo(previousQuote.getVolumeSize()) > 0;
+            boolean quoteIsInfinityAndTargetValueMoreThanMaxValue = quote.isInfinity()
+                    && targetValue.compareTo(targetQuote.getVolumeSize()) > 0;
 
             if (quoteIsInfinityAndTargetValueMoreThanMaxValue
                     || (targetValueLessThanQuoteValue && (targetValueMoreThanPreviousQuoteValue || volumeOverlay))) {
