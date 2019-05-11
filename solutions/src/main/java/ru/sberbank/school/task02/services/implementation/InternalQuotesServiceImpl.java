@@ -3,7 +3,6 @@ package ru.sberbank.school.task02.services.implementation;
 import lombok.RequiredArgsConstructor;
 import ru.sberbank.school.task02.ExternalQuotesService;
 import ru.sberbank.school.task02.exception.FxConversionException;
-import ru.sberbank.school.task02.exeption.EmptyQuoteListException;
 import ru.sberbank.school.task02.services.InternalQuotesService;
 import ru.sberbank.school.task02.util.Quote;
 import ru.sberbank.school.task02.util.Symbol;

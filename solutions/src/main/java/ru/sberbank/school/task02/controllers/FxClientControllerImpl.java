@@ -57,7 +57,7 @@ public class FxClientControllerImpl implements FxClientController {
                         BENEFICIARY);
 
                 if (convertResult.isPresent()) {
-                    price = convertResult.get().setScale(SCALE, HALF_UP).toString();
+                    price = convertResult.get().setScale(SCALE, HALF_UP).stripTrailingZeros().toPlainString();
                     notFound = false;
                 }
             } else {
@@ -66,7 +66,7 @@ public class FxClientControllerImpl implements FxClientController {
                         symbol,
                         amount);
 
-                price = convertResult.setScale(SCALE, HALF_UP).toString();
+                price = convertResult.setScale(SCALE, HALF_UP).stripTrailingZeros().toPlainString();
                 notFound = false;
             }
             responses.add(FxResponse.builder()

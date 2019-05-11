@@ -6,6 +6,7 @@ import ru.sberbank.school.task02.services.implementation.ServiceFactoryImpl;
 import ru.sberbank.school.task02.util.FxRequest;
 import ru.sberbank.school.task02.util.FxRequestBuilder;
 import ru.sberbank.school.task02.util.FxResponse;
+import ru.sberbank.school.task03.util.ResponseFormatterImpl;
 
 import java.util.List;
 
@@ -22,10 +23,6 @@ public class FxClient {
 
         List<FxRequest> requests = requestBuilder.buildRequests(args);
 
-        for (FxRequest request : requests) {
-            System.out.println(request.toString());
-        }
-
         ExternalQuotesService externalQuotesService = new ExternalQuotesServiceImpl();
         ServiceFactory serviceFactory = new ServiceFactoryImpl();
         ExtendedFxConversionService conversionService =
@@ -35,11 +32,10 @@ public class FxClient {
         try {
             List<FxResponse> responses = clientController.fetchResult(requests);
 
-            for (FxResponse response : responses) {
-                System.out.println("response: " + response.toString() + ", price: " + response.getPrice());
-            }
-        }
-        catch (RuntimeException e) {
+            ResponseFormatterImpl formatter = new ResponseFormatterImpl();
+            System.out.println(formatter.format(responses));
+
+        } catch (RuntimeException e) {
             System.out.println("Some trouble have arise while conversion");
             System.err.println(e.getMessage());
         }
