@@ -24,7 +24,7 @@ public class RequesParser {
     }
 
     public static ClientOperation getClientOperetion(@NonNull String clientOperetion) {
-            return ClientOperation.valueOf(clientOperetion);
+        return ClientOperation.valueOf(clientOperetion);
     }
 
     public static BigDecimal getAmount(@NonNull String amount) {
