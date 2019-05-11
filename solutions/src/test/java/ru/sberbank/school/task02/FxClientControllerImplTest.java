@@ -15,7 +15,7 @@ public class FxClientControllerImplTest {
     @Test
     public void mainWithCorrectArgsDoesNotThrowsAnything() {
         Assertions.assertDoesNotThrow(() ->
-            FxClientControllerImpl.main(new String[]{"-amount", "100", "-direction", "SELL", "-symbol", "USD/RUB"})
+                FxClientControllerImpl.main(new String[]{"-amount", "100", "-direction", "SELL", "-symbol", "USD/RUB"})
         );
     }
 
