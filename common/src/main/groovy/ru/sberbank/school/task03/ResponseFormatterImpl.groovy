@@ -82,36 +82,36 @@ class ResponseFormatterImpl implements ResponseFormatter {
                     result += "| ${date} | ${amount} | ${direction} | ${price}\n"
 
                     if (response.getDirection() == "BUY") {
-                        if (info.getSumBuyPrice() == 0) {
-                            info.setMinBuyPrice(price)
-                            info.setMaxBuyPrice(price)
-                            info.setBestBuyPriceAmount(amount)
-                            info.setWorstBuyPriceAmount(amount)
+                        if (!info.sumBuyPrice) {
+                            info.minBuyPrice = price
+                            info.maxBuyPrice = price
+                            info.bestBuyPriceAmount = amount
+                            info.worstBuyPriceAmount = amount
                         }
-                        info.addSumBuyPrice(price)
+                        info.sumBuyPrice += price
                         info.incCountBuyOperation()
-                        if (price < info.getMinBuyPrice()) {
-                            info.setBestBuyPriceAmount(amount)
-                            info.setMinBuyPrice(price)
-                        } else if (price > info.getMaxBuyPrice()) {
-                            info.setWorstBuyPriceAmount(amount)
-                            info.setMaxBuyPrice(price)
+                        if (price < info.minBuyPrice) {
+                            info.bestBuyPriceAmount = amount
+                            info.minBuyPrice = price
+                        } else if (price > info.maxBuyPrice) {
+                            info.worstBuyPriceAmount = amount
+                            info.maxBuyPrice = price
                         }
                     } else { //(response.getDirection() == "SELL")
-                        if (info.getSumSellPrice() == 0) {
-                            info.setMinSellPrice(price)
-                            info.setMaxSellPrice(price)
-                            info.setBestSellPriceAmount(amount)
-                            info.setWorstSellPriceAmount(amount)
+                        if (!info.sumSellPrice) {
+                            info.minSellPrice = price
+                            info.maxSellPrice = price
+                            info.bestSellPriceAmount = amount
+                            info.worstSellPriceAmount = amount
                         }
-                        info.addSumSellPrice(price)
+                        info.sumSellPrice += price
                         info.incCountSellOperation()
-                        if (price < info.getMinSellPrice()) {
-                            info.setBestSellPriceAmount(amount)
-                            info.setMinSellPrice(price)
-                        } else if (price > info.getMaxSellPrice()) {
-                            info.setWorstSellPriceAmount(amount)
-                            info.setMaxSellPrice(price)
+                        if (price < info.minSellPrice) {
+                            info.bestSellPriceAmount = amount
+                            info.minSellPrice = price
+                        } else if (price > info.maxSellPrice) {
+                            info.worstSellPriceAmount = amount
+                            info.maxSellPrice = price
                         }
                     }
                 }
@@ -142,49 +142,41 @@ class InfoAboutOperations {
     BigDecimal worstBuyPriceAmount = 0
     BigDecimal worstSellPriceAmount = 0
 
-    BigDecimal addSumBuyPrice(BigDecimal add) {
-        sumBuyPrice += add
-    }
-
-    BigDecimal addSumSellPrice(BigDecimal add) {
-        return sumSellPrice += add
-    }
-
     int incCountBuyOperation() {
-        return countBuyOperation++
+        countBuyOperation++
     }
 
     int incCountSellOperation() {
-        return countSellOperation++
+        countSellOperation++
     }
 
     BigDecimal getMeanBuyPrice() {
-        return (sumBuyPrice / countBuyOperation).setScale(2, BigDecimal.ROUND_HALF_UP)
+        (sumBuyPrice / countBuyOperation).setScale(2, BigDecimal.ROUND_HALF_UP)
     }
 
     BigDecimal getMeanSellPrice() {
-        return (sumSellPrice / countSellOperation).setScale(2, BigDecimal.ROUND_HALF_UP)
+        (sumSellPrice / countSellOperation).setScale(2, BigDecimal.ROUND_HALF_UP)
     }
 
     String getSellReport() {
         countSellOperation != 0 ?
                 """Отчет по операциям продажи:
-    минимальная цена: ${minSellPrice}
-    максимальная цена: ${maxSellPrice}
+    минимальная цена: $minSellPrice
+    максимальная цена: $maxSellPrice
     средняя цена: ${getMeanSellPrice()}
-    самая выгодная для клиента цена ${minSellPrice} на объеме ${bestSellPriceAmount}
-    самая невыгодная для клиента цена ${maxSellPrice} на объеме ${worstSellPriceAmount}\n"""
+    самая выгодная для клиента цена $minSellPrice на объеме $bestSellPriceAmount
+    самая невыгодная для клиента цена $maxSellPrice на объеме $worstSellPriceAmount\n"""
                 : """Операций продажи не было\n"""
     }
 
     String getBuyReport() {
         countBuyOperation != 0 ?
                 """Отчет по операциям покупки:
-    минимальная цена: ${minBuyPrice}
-    максимальная цена: ${maxBuyPrice}
+    минимальная цена: $minBuyPrice
+    максимальная цена: $maxBuyPrice
     средняя цена: ${getMeanBuyPrice()}
-    самая выгодная для клиента цена ${minBuyPrice} на объеме ${bestBuyPriceAmount}
-    самая невыгодная для клиента цена ${maxBuyPrice} на объеме ${worstBuyPriceAmount}\n"""
+    самая выгодная для клиента цена $minBuyPrice на объеме $bestBuyPriceAmount
+    самая невыгодная для клиента цена $maxBuyPrice на объеме $worstBuyPriceAmount\n"""
                 : """Операций покупки не было\n"""
     }
 }
