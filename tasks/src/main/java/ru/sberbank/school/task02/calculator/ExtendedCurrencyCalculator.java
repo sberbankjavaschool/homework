@@ -8,6 +8,7 @@ import ru.sberbank.school.task02.util.Quote;
 import ru.sberbank.school.task02.util.Symbol;
 import java.math.BigDecimal;
 import java.util.Optional;
+import java.math.RoundingMode;
 
 public class ExtendedCurrencyCalculator extends CurrencyCalculator implements ExtendedFxConversionService {
     private int rounding_mode;
@@ -25,11 +26,11 @@ public class ExtendedCurrencyCalculator extends CurrencyCalculator implements Ex
         showQuote(quote.get());
         if (operation == ClientOperation.SELL) {
                 System.out.println("Returl value: " + BigDecimal.valueOf(1).divide(quote.get().getBid(),10, rounding_mode));
-                return Optional.of(BigDecimal.valueOf(1).divide(quote.get().getBid(),10, rounding_mode));
+                return Optional.of(BigDecimal.valueOf(1).divide(quote.get().getBid(),10, RoundingMode.HALF_UP));
         }
         if (operation == ClientOperation.BUY) {
             System.out.println("Returl value: " + BigDecimal.valueOf(1).divide(quote.get().getOffer(),10, rounding_mode));
-            return Optional.of(BigDecimal.valueOf(1).divide(quote.get().getOffer(), 10, rounding_mode));
+            return Optional.of(BigDecimal.valueOf(1).divide(quote.get().getOffer(), 10, RoundingMode.HALF_UP));
         }
         System.out.println("Return Optional.empty()");
         return Optional.empty();
@@ -44,14 +45,14 @@ public class ExtendedCurrencyCalculator extends CurrencyCalculator implements Ex
         System.out.println("Get symbol: " + symbol.getSymbol());
         System.out.println("Get client operation: " + operation.toString());
         System.out.println("Get request volume: " +  amountOfRequest );
-        if ((beneficiary == Beneficiary.BANK && operation == ClientOperation.BUY)
-                || (beneficiary == Beneficiary.CLIENT && operation == ClientOperation.SELL)) {
-            rounding_mode = BigDecimal.ROUND_HALF_UP;
-        }
-        if ((beneficiary == Beneficiary.BANK && operation == ClientOperation.SELL)
-                || (beneficiary == Beneficiary.CLIENT && operation == ClientOperation.BUY)) {
-            rounding_mode = BigDecimal.ROUND_FLOOR;
-        }
+//        if ((beneficiary == Beneficiary.BANK && operation == ClientOperation.BUY)
+//                || (beneficiary == Beneficiary.CLIENT && operation == ClientOperation.SELL)) {
+//            rounding_mode = RoundingMode.HALF_UP;
+//        }
+//        if ((beneficiary == Beneficiary.BANK && operation == ClientOperation.SELL)
+//                || (beneficiary == Beneficiary.CLIENT && operation == ClientOperation.BUY)) {
+//            rounding_mode = BigDecimal.HALF_UP;
+//        }
         this.amountOfRequest = amount.setScale(10,  rounding_mode);
 
         if (check()) {
