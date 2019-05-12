@@ -24,9 +24,11 @@ public class ExtendedCurrencyCalculator extends CurrencyCalculator implements Ex
         }
         showQuote(quote.get());
         if (operation == ClientOperation.SELL) {
+                System.out.println("Returl value: " + BigDecimal.valueOf(1).divide(quote.get().getBid(),10, rounding_mode));
                 return Optional.of(BigDecimal.valueOf(1).divide(quote.get().getBid(),10, rounding_mode));
         }
         if (operation == ClientOperation.BUY) {
+            System.out.println("Returl value: " + BigDecimal.valueOf(1).divide(quote.get().getOffer(),10, rounding_mode));
             return Optional.of(BigDecimal.valueOf(1).divide(quote.get().getOffer(), 10, rounding_mode));
         }
         System.out.println("Return Optional.empty()");
