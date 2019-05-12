@@ -19,16 +19,17 @@ public class ExtendedCurrencyCalculator extends CurrencyCalculator implements Ex
     private Optional<BigDecimal> extendedOperation(ClientOperation operation, Beneficiary beneficiary) {
         Optional<Quote> quote = findQuote(new CompareQuotesBenificiary(operation, beneficiary));
         if (!quote.isPresent()) {
+            System.out.println("Return Optional.empty()");
             return Optional.empty();
         }
         showQuote(quote.get());
         if (operation == ClientOperation.SELL) {
-                return Optional.of(BigDecimal.valueOf(1).divide(quote.get().getBid(),10,rounding_mode));
+                return Optional.of(BigDecimal.valueOf(1).divide(quote.get().getBid(),10, rounding_mode));
         }
         if (operation == ClientOperation.BUY) {
-            return Optional.of(BigDecimal.valueOf(1).divide(quote.get().getOffer(), 10,rounding_mode));
+            return Optional.of(BigDecimal.valueOf(1).divide(quote.get().getOffer(), 10, rounding_mode));
         }
-        System.out.println("Nothing find");
+        System.out.println("Return Optional.empty()");
         return Optional.empty();
     }
 
@@ -49,11 +50,12 @@ public class ExtendedCurrencyCalculator extends CurrencyCalculator implements Ex
                 || (beneficiary == Beneficiary.CLIENT && operation == ClientOperation.BUY)) {
             rounding_mode = BigDecimal.ROUND_FLOOR;
         }
-        this.amountOfRequest = amount.setScale(10, rounding_mode);
+        this.amountOfRequest = amount.setScale(10,  rounding_mode);
 
         if (check()) {
             return extendedOperation(operation, beneficiary);
         }
+        System.out.println("Return Optional.empty() after check");
         return Optional.empty();
     }
 

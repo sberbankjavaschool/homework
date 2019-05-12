@@ -19,10 +19,12 @@ public class CustomExternalQutesService implements ExternalQuotesService {
             throw new WrongSymbolException("Cross symbols are not supported!");
         }
         return asList(
-                buildQuote(symbol, BigDecimal.valueOf(1967.8516202058), 10),
-                    buildQuote(symbol, BigDecimal.valueOf(104609.1564772603), 6),
-                buildQuote(symbol, BigDecimal.valueOf(5348845.9954557307), 10),
-                buildQuote(symbol, BigDecimal.valueOf(-1), 12)
+                buildQuote(symbol, BigDecimal.valueOf(2209.4564418306), 50, 60),
+                buildQuote(symbol, BigDecimal.valueOf(126559.8469597030), 53, 58),
+                buildQuote(symbol, BigDecimal.valueOf(5266223.9352269527), 54, 56),
+                buildQuote(symbol, BigDecimal.valueOf(-1), 49, 62),
+//                buildQuote(symbol, BigDecimal.valueOf(-1), 49, 42)
+                buildQuote(symbol, BigDecimal.valueOf(5266223.9352269527  ), 54, 56)
         );
     }
 
@@ -30,8 +32,16 @@ public class CustomExternalQutesService implements ExternalQuotesService {
         return Quote.builder()
                 .symbol(symbol)
                 .volume(Volume.from(volume))
-                .bid(BigDecimal.valueOf(80 - spread / 2))
-                .offer(BigDecimal.valueOf(80 + spread / 2))
+                .bid(BigDecimal.valueOf(55 - spread / 2))
+                .offer(BigDecimal.valueOf(55 + spread / 2))
+                .build();
+    }
+    private Quote buildQuote(Symbol symbol, BigDecimal volume, int bid, int offer) {
+        return Quote.builder()
+                .symbol(symbol)
+                .volume(Volume.from(volume))
+                .bid(BigDecimal.valueOf(bid))
+                .offer(BigDecimal.valueOf(offer))
                 .build();
     }
 }
