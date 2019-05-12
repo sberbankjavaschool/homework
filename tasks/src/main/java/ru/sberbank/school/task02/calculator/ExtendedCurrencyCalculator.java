@@ -45,6 +45,7 @@ public class ExtendedCurrencyCalculator extends CurrencyCalculator implements Ex
         System.out.println("Get symbol: " + symbol.getSymbol());
         System.out.println("Get client operation: " + operation.toString());
         System.out.println("Get request volume: " +  amountOfRequest );
+        showQuotes(quotes);
 //        if ((beneficiary == Beneficiary.BANK && operation == ClientOperation.BUY)
 //                || (beneficiary == Beneficiary.CLIENT && operation == ClientOperation.SELL)) {
 //            rounding_mode = RoundingMode.HALF_UP;

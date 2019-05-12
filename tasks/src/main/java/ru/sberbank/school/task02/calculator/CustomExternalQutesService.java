@@ -22,9 +22,9 @@ public class CustomExternalQutesService implements ExternalQuotesService {
                 buildQuote(symbol, BigDecimal.valueOf(6365.6519164959 ), 50, 60),
                 buildQuote(symbol, BigDecimal.valueOf(196336.5725447600 ), 53, 58),
                 buildQuote(symbol, BigDecimal.valueOf(4818427.9406094318 ), 54, 56),
-                buildQuote(symbol, BigDecimal.valueOf(-1), 49, 62),
+                buildQuote(symbol, BigDecimal.valueOf(4818427.9406094318 ), 47, 64),
+                buildQuote(symbol, BigDecimal.valueOf(-1), 47, 64)
 //                buildQuote(symbol, BigDecimal.valueOf(-1), 49, 42)
-                buildQuote(symbol, BigDecimal.valueOf(4818427.9406094318   ), 54, 56)
         );
     }
 
