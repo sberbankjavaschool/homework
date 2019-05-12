@@ -75,6 +75,14 @@ public class ExtendedCurrencyCalculator extends CurrencyCalculator implements Ex
     @Override
     public Optional<BigDecimal> convertReversed(ClientOperation operation, Symbol symbol, BigDecimal amount, Beneficiary beneficiary) {
         quotes = externalQuotesService.getQuotes(Symbol.USD_RUB);
+
+        if (operation == null) {
+            throw new NullPointerException("operation is null!");
+        }
+        if (beneficiary == null) {
+            throw new NullPointerException("beneficiary is null!");
+        }
+
         this.symbolOfRequest = symbol;
         this.amountOfRequest = amount;
         System.out.println("Get benificiary: " + beneficiary.toString());
