@@ -1,5 +1,6 @@
 package ru.sberbank.school.task02;
 
+import ru.sberbank.school.task02.exception.FxConversionException;
 import ru.sberbank.school.task02.util.ExternalQuotesServiceDemo;
 import ru.sberbank.school.task02.util.FxRequest;
 import ru.sberbank.school.task02.util.FxResponse;
@@ -11,7 +12,6 @@ public class ClientExample {
 
         Client client = new Client(calculator);
 
-
         try {
             String symbol = args[0];
             String direction = args[1];
@@ -21,6 +21,8 @@ public class ClientExample {
             System.out.println(response);
         } catch (ArrayIndexOutOfBoundsException arr) {
             throw new NullPointerException("There must be 3 arguments, but now it's only " + args.length);
+        } catch (NullPointerException | IllegalArgumentException | FxConversionException e) {
+            System.out.println(e.toString());
         }
     }
 }

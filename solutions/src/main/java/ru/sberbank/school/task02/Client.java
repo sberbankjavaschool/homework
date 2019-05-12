@@ -36,9 +36,8 @@ public class Client implements FxClientController {
 
     @Override
     public List<FxResponse> fetchResult(List<FxRequest> requests) {
-        if (requests == null) {
-            throw new NullPointerException("List of requests mustn't be null");
-        }
+        Objects.requireNonNull(requests, "List of requests mustn't be null");
+
         if (requests.isEmpty()) {
             throw new FxConversionException("List of requests mustn't be empty");
         }
@@ -53,10 +52,7 @@ public class Client implements FxClientController {
 
     @Override
     public FxResponse fetchResult(FxRequest requests) {
-        if (requests == null) {
-            throw new NullPointerException("Request must not be null");
-        }
-
+        Objects.requireNonNull(requests,"Request mustn't be null");
         Symbol symbol = getSymbol(requests);
         ClientOperation operation = getOperation(requests);
         BigDecimal amount = getAmount(requests);
@@ -76,7 +72,7 @@ public class Client implements FxClientController {
         DecimalFormatSymbols decimalSymbols = new DecimalFormatSymbols();
         decimalSymbols.setDecimalSeparator('.');
 
-        return new DecimalFormat("#.##", decimalSymbols).format(amount);
+        return new DecimalFormat("0.##", decimalSymbols).format(amount);
     }
 
     private Symbol getSymbol(FxRequest requests) {
@@ -95,11 +91,11 @@ public class Client implements FxClientController {
     private ClientOperation getOperation(FxRequest requests) {
         if (requests.getDirection().isEmpty()) {
             throw new FxConversionException("Whe haven't got operation");
-        } else if ((requests.getDirection().equalsIgnoreCase("BUY"))) {
-            return ClientOperation.BUY;
-        } else if ((requests.getDirection().equalsIgnoreCase("SELL"))) {
-            return ClientOperation.SELL;
-        } else {
+        }
+
+        try {
+            return ClientOperation.valueOf(requests.getDirection().toUpperCase());
+        } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException("Operation must be BUY or SELL, but current: "
                     + requests.getDirection());
         }
@@ -110,11 +106,13 @@ public class Client implements FxClientController {
             throw new FxConversionException("Whe haven't got amount");
         } else {
             try {
-                DecimalFormat decimalFormat = new DecimalFormat("#.#");
+                DecimalFormatSymbols decimalSymbols = new DecimalFormatSymbols();
+                decimalSymbols.setDecimalSeparator('.');
+                DecimalFormat decimalFormat = new DecimalFormat("#.#", decimalSymbols);
                 decimalFormat.setParseBigDecimal(true);
-                return  (BigDecimal) decimalFormat.parse(requests.getAmount());
+                return (BigDecimal) decimalFormat.parse(requests.getAmount());
             } catch (ParseException exc) {
-                throw new IllegalArgumentException("Amount argument is not number");
+                throw new FxConversionException("Amount argument is not number");
             }
         }
     }
