@@ -7,8 +7,12 @@ import ru.sberbank.school.task02.util.ClientOperation;
 import ru.sberbank.school.task02.util.Quote;
 import ru.sberbank.school.task02.util.Symbol;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Optional;
 import java.math.RoundingMode;
+import java.util.stream.Collectors;
 
 public class ExtendedCurrencyCalculator extends CurrencyCalculator implements ExtendedFxConversionService {
     private int rounding_mode;
@@ -18,7 +22,7 @@ public class ExtendedCurrencyCalculator extends CurrencyCalculator implements Ex
     }
 
     private Optional<BigDecimal> extendedOperation(ClientOperation operation, Beneficiary beneficiary) {
-        Optional<Quote> quote = findQuote(new CompareQuotesBenificiary(operation, beneficiary));
+        Optional<Quote> quote = findQuote(new CompareQuotesByPrice(operation, beneficiary), quotes);
         if (!quote.isPresent()) {
             System.out.println("Return Optional.empty()");
             return Optional.empty();
@@ -35,6 +39,38 @@ public class ExtendedCurrencyCalculator extends CurrencyCalculator implements Ex
         System.out.println("Return Optional.empty()");
         return Optional.empty();
     }
+
+    Optional<Quote> findQuote(Comparator<Quote> comparator, List<Quote> quotes) {
+        BigDecimal amountQuote;
+        List<Quote> finalQuoteList = new ArrayList<>();
+        for (Quote quote: quotes) {
+            if (quote.getVolume().isInfinity() || quote.getVolumeSize().compareTo(amountOfRequest) > 0) {
+                finalQuoteList.add(quote);
+            }
+        }
+
+        List<Quote> sortedQuoteList = filterQutesList(comparator, finalQuoteList);
+        for (Quote quote : sortedQuoteList) {
+            amountQuote = quote.getVolumeSize();
+            if (amountQuote.compareTo(amountOfRequest) > 0) {
+                return Optional.of(quote);
+            }
+            if (quote.getVolume().isInfinity()) {
+                return Optional.of(quote);
+            }
+        }
+        return Optional.empty();
+    }
+
+    List<Quote> filterQutesList(Comparator<Quote> comparator, List<Quote> quotes) {
+        List<Quote> filterBySymbolList = quotes.stream()
+                .sorted(comparator)
+                .collect(Collectors.toList());
+        System.out.println("Sorted List: ");
+        showQuotes(filterBySymbolList);
+        return filterBySymbolList;
+    }
+
 
     @Override
     public Optional<BigDecimal> convertReversed(ClientOperation operation, Symbol symbol, BigDecimal amount, Beneficiary beneficiary) {
