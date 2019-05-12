@@ -1,7 +1,6 @@
 package ru.sberbank.school.task03
 
 import ru.sberbank.school.task02.util.FxResponse
-
 class ResponseFormatterImpl implements ResponseFormatter {
     /**
      * Выводит отформатированный по шаблону список ответов.
@@ -9,20 +8,23 @@ class ResponseFormatterImpl implements ResponseFormatter {
      * @param responses список ответов, валютного сервиса
      * @return отформатированную строку по шаблону
      */
+
     @Override
     String format(List<FxResponse> responses) {
         Objects.requireNonNull(responses, "переданный список операций не инициализирован")
-
         if (responses.isEmpty()) {
             throw new IllegalArgumentException("Передан пустой список операций")
         }
+        String result = """"""
+        result += getHeader(responses)
+        result += getBody(responses)
+        result += getFooter(responses)
+        return result
+    }
 
-        String result = "Отчет об изменении котировок для валют "
+    String getHeader(List<FxResponse> responses) {
+        String result = """Отчет об изменении котировок для валют """
         Set<String> symbolList = new HashSet<>()
-        int mostRequestedSymbolCount = 0
-        String mostRequestedSymbol = null
-
-        //Добавляем список валют
         for (FxResponse response : responses) {
             if (symbolList.add(response.getSymbol())) {
                 if (symbolList.size() == 1) {
@@ -32,26 +34,45 @@ class ResponseFormatterImpl implements ResponseFormatter {
                 }
             }
         }
-        result += "\n"
+        result
+    }
 
+    String getFooter(List<FxResponse> responses) {
+        int mostRequestedSymbolCount = 0
+        String mostRequestedSymbol = null
+        Set<String> symbolList = new HashSet<>()
+        for (FxResponse response : responses) {
+            symbolList.add(response.getSymbol())
+        }
         for (String symbol : symbolList) {
-            result += """
-Данные по инструменту: ${symbol}
-| Дата и время запроса | amount | operation(direction) | price
-"""
             int thisSymbolCount = 0
-            int countBuyOperation = 0
-            int countSellOperation = 0
-            BigDecimal minBuyPrice = 0
-            BigDecimal minSellPrice = 0
-            BigDecimal maxBuyPrice = 0
-            BigDecimal maxSellPrice = 0
-            BigDecimal sumBuyPrice = 0
-            BigDecimal sumSellPrice = 0
-            BigDecimal bestBuyPriceAmount = 0
-            BigDecimal bestSellPriceAmount = 0
-            BigDecimal worstBuyPriceAmount = 0
-            BigDecimal worstSellPriceAmount = 0
+            for (FxResponse response : responses) {
+                if (response.getSymbol() == symbol) {
+                    if (++thisSymbolCount > mostRequestedSymbolCount) {
+                        mostRequestedSymbolCount = thisSymbolCount
+                        mostRequestedSymbol = symbol
+                    }
+                }
+            }
+        }
+        String result = """\nВсего запросов сделано: ${responses.size()}
+Больше всего запросов по: ${mostRequestedSymbol} (${mostRequestedSymbolCount})"""
+    }
+
+    String getBody(List<FxResponse> responses) {
+        String result = "\n"
+        Set<String> symbolList = new HashSet<>()
+        for (FxResponse response : responses) {
+            symbolList.add(response.getSymbol())
+        }
+        result += getSymbolsInfo(symbolList, responses)
+    }
+
+    String getSymbolsInfo(HashSet<String> symbolList, List<FxResponse> responses) {
+        String result = """"""
+        for (String symbol : symbolList) {
+            InfoAboutOperations info = new InfoAboutOperations()
+            result += getSymbolTopic(symbol)
             for (FxResponse response : responses) {
                 if (response.getSymbol() == symbol) {
                     String date = response.getDate()
@@ -61,70 +82,109 @@ class ResponseFormatterImpl implements ResponseFormatter {
                     result += "| ${date} | ${amount} | ${direction} | ${price}\n"
 
                     if (response.getDirection() == "BUY") {
-                        if (sumBuyPrice == 0) {
-                            minBuyPrice = price
-                            maxBuyPrice = price
-                            bestBuyPriceAmount = worstBuyPriceAmount = amount
+                        if (info.getSumBuyPrice() == 0) {
+                            info.setMinBuyPrice(price)
+                            info.setMaxBuyPrice(price)
+                            info.setBestBuyPriceAmount(amount)
+                            info.setWorstBuyPriceAmount(amount)
                         }
-                        sumBuyPrice += price
-                        countBuyOperation++
-                        if (price < minBuyPrice) {
-                            bestBuyPriceAmount = amount
-                            minBuyPrice = price
-                        } else if (price > maxBuyPrice) {
-                            worstBuyPriceAmount = amount
-                            maxBuyPrice = price
+                        info.addSumBuyPrice(price)
+                        info.incCountBuyOperation()
+                        if (price < info.getMinBuyPrice()) {
+                            info.setBestBuyPriceAmount(amount)
+                            info.setMinBuyPrice(price)
+                        } else if (price > info.getMaxBuyPrice()) {
+                            info.setWorstBuyPriceAmount(amount)
+                            info.setMaxBuyPrice(price)
                         }
                     } else { //(response.getDirection() == "SELL")
-                        if (sumSellPrice == 0) {
-                            minSellPrice = price
-                            maxSellPrice = price
-                            bestSellPriceAmount = worstSellPriceAmount = amount
+                        if (info.getSumSellPrice() == 0) {
+                            info.setMinSellPrice(price)
+                            info.setMaxSellPrice(price)
+                            info.setBestSellPriceAmount(amount)
+                            info.setWorstSellPriceAmount(amount)
                         }
-                        sumSellPrice += price
-                        countSellOperation++
-                        if (price < minSellPrice) {
-                            bestSellPriceAmount = amount
-                            minSellPrice = price
-                        } else if (price > maxSellPrice) {
-                            worstSellPriceAmount = amount
-                            maxSellPrice = price
+                        info.addSumSellPrice(price)
+                        info.incCountSellOperation()
+                        if (price < info.getMinSellPrice()) {
+                            info.setBestSellPriceAmount(amount)
+                            info.setMinSellPrice(price)
+                        } else if (price > info.getMaxSellPrice()) {
+                            info.setWorstSellPriceAmount(amount)
+                            info.setMaxSellPrice(price)
                         }
-                    }
-                    if (++thisSymbolCount > mostRequestedSymbolCount) {
-                        mostRequestedSymbolCount = thisSymbolCount
-                        mostRequestedSymbol = symbol
                     }
                 }
             }
-
-            result += countBuyOperation != 0 ?
-                    """Отчет по операциям покупки:
-    минимальная цена: ${minBuyPrice}
-    максимальная цена: ${maxBuyPrice}
-    средняя цена: ${sumBuyPrice}
-    самая выгодная для клиента цена ${minBuyPrice} на объеме ${bestBuyPriceAmount}
-    самая невыгодная для клиента цена ${maxBuyPrice} на объеме ${worstBuyPriceAmount} 
-"""
-                    : """Операций покупки не было
-"""
-
-            result += countSellOperation != 0 ?
-                    """Отчет по операциям продажи:
-    минимальная цена: ${minSellPrice}
-    максимальная цена: ${maxSellPrice}
-    средняя цена: ${sumSellPrice}
-    самая выгодная для клиента цена ${minSellPrice} на объеме ${bestSellPriceAmount}
-    самая невыгодная для клиента цена ${maxSellPrice} на объеме ${worstSellPriceAmount}
-"""
-                    : """Операций продажи не было
-"""
+            result += info.getBuyReport()
+            result += info.getSellReport()
         }
+        result
+    }
 
-        result += """
-Всего запросов сделано: ${responses.size()}
-Больше всего запросов по: ${mostRequestedSymbol} (${mostRequestedSymbolCount})"""
-        return result
+    String getSymbolTopic(String symbol) {
+        """\nДанные по инструменту: ${symbol}
+| Дата и время запроса | amount | operation(direction) | price\n"""
     }
 }
 
+class InfoAboutOperations {
+    int countBuyOperation = 0
+    int countSellOperation = 0
+    BigDecimal minBuyPrice = 0
+    BigDecimal minSellPrice = 0
+    BigDecimal maxBuyPrice = 0
+    BigDecimal maxSellPrice = 0
+    BigDecimal sumBuyPrice = 0
+    BigDecimal sumSellPrice = 0
+    BigDecimal bestBuyPriceAmount = 0
+    BigDecimal bestSellPriceAmount = 0
+    BigDecimal worstBuyPriceAmount = 0
+    BigDecimal worstSellPriceAmount = 0
+
+    BigDecimal addSumBuyPrice(BigDecimal add) {
+        sumBuyPrice += add
+    }
+
+    BigDecimal addSumSellPrice(BigDecimal add) {
+        return sumSellPrice += add
+    }
+
+    int incCountBuyOperation() {
+        return countBuyOperation++
+    }
+
+    int incCountSellOperation() {
+        return countSellOperation++
+    }
+
+    BigDecimal getMeanBuyPrice() {
+        return (sumBuyPrice / countBuyOperation).setScale(2, BigDecimal.ROUND_HALF_UP)
+    }
+
+    BigDecimal getMeanSellPrice() {
+        return (sumSellPrice / countSellOperation).setScale(2, BigDecimal.ROUND_HALF_UP)
+    }
+
+    String getSellReport() {
+        countSellOperation != 0 ?
+                """Отчет по операциям продажи:
+    минимальная цена: ${minSellPrice}
+    максимальная цена: ${maxSellPrice}
+    средняя цена: ${getMeanSellPrice()}
+    самая выгодная для клиента цена ${minSellPrice} на объеме ${bestSellPriceAmount}
+    самая невыгодная для клиента цена ${maxSellPrice} на объеме ${worstSellPriceAmount}\n"""
+                : """Операций продажи не было\n"""
+    }
+
+    String getBuyReport() {
+        countBuyOperation != 0 ?
+                """Отчет по операциям покупки:
+    минимальная цена: ${minBuyPrice}
+    максимальная цена: ${maxBuyPrice}
+    средняя цена: ${getMeanBuyPrice()}
+    самая выгодная для клиента цена ${minBuyPrice} на объеме ${bestBuyPriceAmount}
+    самая невыгодная для клиента цена ${maxBuyPrice} на объеме ${worstBuyPriceAmount}\n"""
+                : """Операций покупки не было\n"""
+    }
+}
