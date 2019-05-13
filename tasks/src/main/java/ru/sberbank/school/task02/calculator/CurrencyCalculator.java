@@ -9,15 +9,10 @@ import ru.sberbank.school.task02.util.Symbol;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 import lombok.NonNull;
 
 public class CurrencyCalculator implements FxConversionService {
     private final ExternalQuotesService externalQuotesService;
-    private List<Quote> quotes = new ArrayList<>();
-    private BigDecimal amountOfRequest;
-    private Symbol symbolOfRequest;
 
     public CurrencyCalculator(ExternalQuotesService externalQuotesService) {
         this.externalQuotesService = externalQuotesService;
@@ -27,73 +22,40 @@ public class CurrencyCalculator implements FxConversionService {
     public BigDecimal convert(@NonNull ClientOperation operation,
                               @NonNull Symbol symbol,
                               @NonNull BigDecimal amount) {
-        quotes = externalQuotesService.getQuotes(Symbol.USD_RUB);
-        this.amountOfRequest = amount.setScale(2, BigDecimal.ROUND_FLOOR);
-        this.symbolOfRequest = symbol;
-        System.out.println("Get request volume: " +  amountOfRequest );
-        if (check()) {
-            return operation(operation);
-        }
-        return new BigDecimal(0);
+        System.out.println("Get request volume: " +  amount );
+        return operation(operation, symbol, amount);
     }
 
-    private BigDecimal operation(ClientOperation operation) {
-        Optional<Quote> quote = findQuote();
-        if (!quote.isPresent()) {
-            return new BigDecimal(0);
+    private BigDecimal operation(ClientOperation operation, Symbol symbol, BigDecimal amount) {
+        List<Quote> quotes = filterQutesList(externalQuotesService.getQuotes(symbol), amount);
+        if (quotes.size() > 0 && operation == ClientOperation.SELL) {
+            return quotes.get(0).getBid();
         }
-        if (operation == ClientOperation.SELL) {
-            return quote.get().getBid();
+        if (quotes.size() > 0 && operation == ClientOperation.BUY) {
+            return quotes.get(0).getOffer();
         }
-        if (operation == ClientOperation.BUY) {
-            return quote.get().getOffer();
-        }
-        return new BigDecimal(0);
+        return BigDecimal.ZERO;
     }
 
-    private Optional<Quote> findQuote() {
-        BigDecimal amountQuote;
-        List<Quote> sortedQuoteList = filterQutesList();
-        for (Quote quote : sortedQuoteList) {
-            amountQuote = quote.getVolumeSize();
-            if (amountQuote.compareTo(amountOfRequest) > 0) {
-                return Optional.of(quote);
-            }
-            if (quote.getVolume().isInfinity()) {
-                return Optional.of(quote);
-            }
-        }
-        return Optional.empty();
-    }
-
-    private List<Quote> filterQutesList() {
-        showQuotes();
-        List<Quote> filterBySymbolList = quotes.stream()
-                .filter(p -> p.getSymbol().getSymbol().equals(symbolOfRequest.getSymbol()))
-                .sorted(new CompareQutes())
-                .collect(Collectors.toList());
-        return filterBySymbolList;
-    }
-
-    private boolean check() {
-        if (quotes.size() == 0) {
-            return false;
-        }
-        if (amountOfRequest.compareTo(new BigDecimal(0)) <= 0) {
-            return false;
-        }
-        if (symbolOfRequest == null)  {
-            return false;
-        }
-        return true;
-    }
-
-    public void showQuotes() {
+    private List<Quote> filterQutesList(List<Quote> quotes, BigDecimal amountOfRequest) {
+        showQuotes(quotes);
+        quotes.sort(new CompareQutes());
+        List<Quote> filteredList = new ArrayList<>();
         for (Quote quote : quotes) {
-            System.out.println("Get Quote symbol: " + quote.getSymbol() +
-                    " volume: " + quote.getVolume() +
-                    " bid: " + quote.getBid() +
-                    " offer: " + quote.getOffer());
+            if (quote.getVolumeSize().compareTo(amountOfRequest) > 0
+            || quote.getVolume().isInfinity()) {
+                filteredList.add(quote);
+            }
+        }
+        return filteredList;
+    }
+
+    void showQuotes(List<Quote> quotes) {
+        for (Quote quote : quotes) {
+            System.out.println("Get Quote symbol: " + quote.getSymbol()
+                    + " volume: " + quote.getVolume()
+                    + " bid: " + quote.getBid()
+                    + " offer: " + quote.getOffer());
         }
     }
 }
