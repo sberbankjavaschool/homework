@@ -19,28 +19,35 @@ public class CompareQuotesBenificiary implements Comparator<Quote> {
 
     @Override
     public int compare(Quote quote1, Quote quote2) {
-        BigDecimal quoteVolume1 =  quote1.getVolume().getVolume();
-        BigDecimal quoteVolume2 =  quote2.getVolume().getVolume();
-        if (quote1.getVolume().isInfinity()) {
-            return 1;
-        }
-        if (quote2.getVolume().isInfinity()) {
-            return -1;
-        }
-        if (quoteVolume1.compareTo(quoteVolume2) == 0) {
-            compareEqualQuotes(quote1, quote2);
-        }
-        return quoteVolume1.compareTo(quoteVolume2);
+//        BigDecimal quoteVolume1 =  quote1.getVolume().getVolume();
+//        BigDecimal quoteVolume2 =  quote2.getVolume().getVolume();
+//        if (quote1.getVolume().isInfinity()) {
+//            return 1;
+//        }
+//        if (quote2.getVolume().isInfinity()) {
+//            return -1;
+//        }
+//        if (quoteVolume1.compareTo(quoteVolume2) == 0) {
+//            compareEqualQuotes(quote1, quote2);
+//        }
+        return compareEqualQuotes(quote1, quote2);
     }
 
     private int compareEqualQuotes(Quote quote1, Quote quote2) {
-
-        if ((beneficiary == Beneficiary.BANK && operation == ClientOperation.BUY)
-                || (beneficiary == Beneficiary.CLIENT && operation == ClientOperation.SELL)) {
-                return quote2.getOffer().compareTo(quote1.getOffer());
+        //Ищем большую цену
+        if (beneficiary == Beneficiary.BANK && operation == ClientOperation.BUY) {
+                return quote1.getOffer().compareTo(quote2.getOffer());
         }
-        if ((beneficiary == Beneficiary.BANK && operation == ClientOperation.SELL)
-                || (beneficiary == Beneficiary.CLIENT && operation == ClientOperation.BUY)) {
+        //Ищем меньшую цену
+        if (beneficiary == Beneficiary.BANK && operation == ClientOperation.SELL) {
+            return quote2.getOffer().compareTo(quote1.getOffer());
+        }
+        //Ищем большую цену
+        if (beneficiary == Beneficiary.CLIENT && operation == ClientOperation.SELL) {
+            return quote1.getBid().compareTo(quote2.getBid());
+        }
+        //Ищем меньшую цену
+        if (beneficiary == Beneficiary.CLIENT && operation == ClientOperation.BUY) {
             return quote2.getBid().compareTo(quote1.getBid());
         }
         return 0;
