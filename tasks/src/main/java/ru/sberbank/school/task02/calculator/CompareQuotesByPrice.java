@@ -24,7 +24,7 @@ public class CompareQuotesByPrice implements Comparator<Quote> {
     }
 
     private int compareEqualQuotes(Quote quote1, Quote quote2) {
-
+        //н
         if ((beneficiary == Beneficiary.BANK && operation == ClientOperation.BUY)) {
             return quote2.getOffer().compareTo(quote1.getOffer());
         }

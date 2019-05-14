@@ -23,7 +23,7 @@ public class ExtendedCurrencyCalculator extends CurrencyCalculator implements Ex
     }
 
     private Optional<BigDecimal> extendedOperation(ClientOperation operation, Beneficiary beneficiary) {
-        Optional<Quote> quote = findQuote(new CompareQuotesByPrice(operation, beneficiary), quotes, operation);
+        Optional<Quote> quote = findQuote(new CompareQuotesBenificiary(operation, beneficiary), quotes, operation);
         if (!quote.isPresent()) {
             System.out.println("Return Optional.empty()");
             return Optional.empty();
@@ -52,11 +52,13 @@ public class ExtendedCurrencyCalculator extends CurrencyCalculator implements Ex
             }
             if (quote.getVolume().isInfinity()
                     || quote.getVolumeSize().multiply(countCurr).compareTo(amountOfRequest) > 0) {
+                System.out.println();
                 finalQuoteList.add(quote);
             }
         }
         if (finalQuoteList.size() > 0) {
             finalQuoteList.sort(comparator);
+            showQuotes(finalQuoteList);
             return Optional.of(finalQuoteList.get(0));
         }
         return Optional.empty();
