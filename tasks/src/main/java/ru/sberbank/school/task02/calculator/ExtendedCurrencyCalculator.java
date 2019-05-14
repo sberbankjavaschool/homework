@@ -51,7 +51,7 @@ public class ExtendedCurrencyCalculator extends CurrencyCalculator implements Ex
                 countCurr = quote.getOffer();
             }
             if (quote.getVolume().isInfinity()
-                    || quote.getVolumeSize().compareTo(amountOfRequest.multiply(countCurr)) > 0) {
+                    || quote.getVolumeSize().multiply(countCurr).compareTo(amountOfRequest) > 0) {
                 finalQuoteList.add(quote);
             }
         }
