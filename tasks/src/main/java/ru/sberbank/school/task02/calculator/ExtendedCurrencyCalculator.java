@@ -43,16 +43,16 @@ public class ExtendedCurrencyCalculator extends CurrencyCalculator implements Ex
 
     Optional<Quote> findQuote(Comparator<Quote> comparator, List<Quote> quotes, ClientOperation operation) {
         List<Quote> finalQuoteList = new ArrayList<>();
-        BigDecimal countCurr;
+        BigDecimal countCurr, volumeInCurr;
         for (Quote quote: quotes) {
             if (operation == ClientOperation.SELL) {
                 countCurr = quote.getBid();
             } else {
                 countCurr = quote.getOffer();
             }
+            volumeInCurr = quote.getVolumeSize().multiply(countCurr).setScale(10, RoundingMode.HALF_UP);
             if (quote.getVolume().isInfinity()
-                    || quote.getVolumeSize().multiply(countCurr).compareTo(amountOfRequest) > 0) {
-                System.out.println();
+                    || volumeInCurr.compareTo(amountOfRequest) > 0) {
                 finalQuoteList.add(quote);
             }
         }
