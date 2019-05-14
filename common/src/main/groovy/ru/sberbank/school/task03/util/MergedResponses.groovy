@@ -26,19 +26,6 @@ class MergedResponses {
         prices.add(response.getPrice())
         count = count + 1
     }
-
-
-    @Override
-    public String toString() {
-        return "MergedResponses{" +
-                "symbols=" + symbols +
-                ", dates=" + dates +
-                ", amounts=" + amounts +
-                ", directions=" + directions +
-                ", prices=" + prices +
-                ", count=" + count +
-                '}'
-    }
 }
 
 

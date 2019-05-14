@@ -1,6 +1,5 @@
 package ru.sberbank.school.task03
 
-import ru.sberbank.school.task02.exception.FxConversionException
 import ru.sberbank.school.task02.util.FxResponse
 import ru.sberbank.school.task03.util.BodyData
 import ru.sberbank.school.task03.util.MergedResponses
@@ -10,13 +9,11 @@ import java.math.RoundingMode
 class ResponseFormatterImpl implements ResponseFormatter {
     @Override
     String format(List<FxResponse> responses) {
-        Objects.requireNonNull(responses, "List of responses cant't be null")
-
-        if (responses.isEmpty()) {
-            throw new FxConversionException("List of responses can't be empty")
-        }
-
-        createHeader(responses) + getBody(responses)
+        Map<String, MergedResponses> responsesMap = createMap(responses)
+        BodyData bodyData = getBodyData(responsesMap)
+        """${createHeader(responses)}          
+${bodyData.textOfBody}
+${createResume(bodyData)}"""
     }
 
     private String createHeader(List<FxResponse> responses) {
@@ -29,38 +26,32 @@ class ResponseFormatterImpl implements ResponseFormatter {
         }
 
         for (def i = 0; i < set.size(); i++) {
-            result+=  " " + set.getAt(i)
+            result +=  " ${set[i]}"
 
             if (i != set.size() - 1){
                 result+=","
             }
         }
 
-        result + "\n"
+        result
     }
 
-    private String getBody(List<FxResponse> responses) {
-        Map instMap = [:].withDefault { key -> return [] } as LinkedHashMap<String, MergedResponses>
+    private Map<String, MergedResponses> createMap(List<FxResponse> responses) {
+        Map map = [:].withDefault { key -> return [] } as LinkedHashMap<String, MergedResponses>
 
         responses.each { FxResponse response ->
             def symbol = response.getSymbol()
 
-            if (!instMap.containsKey(symbol)) {
-                instMap.put(symbol, new MergedResponses(symbol, response))
+            if (!map.containsKey(symbol)) {
+                map.put(symbol, new MergedResponses(symbol, response))
             } else {
-                MergedResponses mr = instMap.getAt(symbol)
+                MergedResponses mr = map.getAt(symbol)
                 mr.addNewItem(response)
-                instMap.putAt(symbol, mr)
+                map[symbol] = mr
             }
         }
 
-        BodyData resumeResp = getBodyData(instMap)
-        def body = resumeResp.getTextOfBody()
-        def count = resumeResp.getCount()
-        def mostPopular = resumeResp.getMostPopular()
-        def mostPopCount = resumeResp.getMostPopularCount()
-
-        "${body}\nВсего запросов сделано: ${count}\nБольше всего запросов по: ${mostPopular} (${mostPopCount})\n"
+        return map
     }
 
     private BodyData getBodyData(Map<String, MergedResponses> map) {
@@ -83,8 +74,6 @@ class ResponseFormatterImpl implements ResponseFormatter {
             def maxPriceAmountBuy
             def count
             String operation
-            String minStr
-            String maxStr
 
             result += "\nДанные по инструменту: ${k}\n"
 
@@ -98,57 +87,55 @@ class ResponseFormatterImpl implements ResponseFormatter {
                     sum = amount
                     max = amount
                     min = amount
-                    minStr = srtAmount
-                    maxStr = srtAmount
 
-                    if (operation.equalsIgnoreCase("sell")) {
-                        minPriceAmountSell = srtAmount
-                        maxPriceAmountSell = srtAmount
+                    if (operation == "SELL") {
                         minPriceSell = price
                         maxPriceSell = price
+                        maxPriceAmountSell = srtAmount
+                        minPriceAmountSell = srtAmount
                     } else {
-                        minPriceAmountBuy = srtAmount
-                        maxPriceAmountBuy = srtAmount
                         minPriceBuy = price
                         maxPriceBuy = price
+                        maxPriceAmountBuy = srtAmount
+                        minPriceAmountBuy = srtAmount
                     }
                 } else {
-                    sum = sum.add(amount)
+                    sum = sum + amount
 
-                    if (max.compareTo(amount) < 0) {
+                    if (max < amount) {
                         max = amount
-                        maxStr = srtAmount
                     }
 
-                    if (min.compareTo(amount) > 0) {
+                    if (min > amount) {
                         min = amount
-                        minStr = srtAmount
                     }
 
-                    if (operation.equalsIgnoreCase("sell")) {
-                        if (minPriceAmountSell == null||minPriceSell.compareTo(price) > 0) {
+                    if (operation =="SELL") {
+                        if (minPriceSell == null || minPriceSell  > price) {
                             minPriceSell = price
                             minPriceAmountSell = srtAmount
                         }
 
-                        if (maxPriceSell == null||maxPriceSell.compareTo(price) < 0) {
+                        if (minPriceSell == null || maxPriceSell < price) {
                             maxPriceSell = price
                             maxPriceAmountSell = srtAmount
                         }
                     } else {
-                        if (minPriceAmountBuy == null || minPriceBuy.compareTo(price) > 0) {
+                        if (minPriceBuy == null || minPriceBuy > price) {
                             minPriceBuy = price
                             minPriceAmountBuy = srtAmount
                         }
 
-                        if (maxPriceAmountBuy == null || maxPriceBuy.compareTo(price) < 0) {
+                        if (maxPriceBuy == null || maxPriceBuy < price) {
                             maxPriceBuy = price
                             maxPriceAmountBuy = srtAmount
+
                         }
                     }
                 }
                 def date = v.getDates().get(i)
-                result += "| ${date} | ${srtAmount} | ${operation} | ${price} |\n"
+                result += "| ${date} | ${amount.setScale(2, RoundingMode.HALF_UP)} | ${operation} " +
+                        "| ${price.setScale(2, RoundingMode.HALF_UP)} |\n"
 
                 count = v.getCount()
 
@@ -160,29 +147,33 @@ class ResponseFormatterImpl implements ResponseFormatter {
 
             reqCount += count
 
-            def avg = sum.divide(BigDecimal.valueOf(count), 2, RoundingMode.HALF_UP)
+            def avg = sum / 2
 
-            result += "Данные по суммам (мин = ${minStr} / сред = ${avg} / макс = ${maxStr})\n"
+            result += "Данные по суммам (мин = ${min.setScale(2, RoundingMode.HALF_UP)} / " +
+                    "сред = ${avg} / макс = ${max.setScale(2, RoundingMode.HALF_UP)})\n"
 
             if (minPriceAmountSell != null) {
-                result += "При продаже:\n- cамая выгодная для клиента цена ${maxPriceSell}" +
-                        " на объеме ${maxPriceAmountSell}\n"
-
-                if (maxPriceSell.compareTo(minPriceSell) != 0) {
-                    result += "- cамая невыгодная для клиента цена ${minPriceSell} на объеме ${minPriceAmountSell}\n"
-                }
+                result += """При продаже:
+- cамая выгодная для клиента цена ${maxPriceSell} на объеме ${maxPriceAmountSell}
+- cамая невыгодная для клиента цена ${minPriceSell} на объеме ${minPriceAmountSell}
+"""
             }
 
             if (minPriceAmountBuy != null) {
-                result += "При покупке:\n- cамая выгодная для клиента цена ${minPriceBuy}" +
-                        " на объеме ${minPriceAmountBuy}\n"
-
-                if (maxPriceBuy.compareTo(minPriceBuy) != 0) {
-                    result += "- cамая невыгодная для клиента цена ${maxPriceBuy} на объеме ${maxPriceAmountBuy}\n"
-                }
+                result += """При покупке:
+- cамая выгодная для клиента цена ${minPriceBuy} на объеме ${minPriceAmountBuy}
+- cамая невыгодная для клиента цена ${maxPriceBuy} на объеме ${maxPriceAmountBuy}
+"""
             }
         }
 
         return new BodyData(result, mostPopular, mostPopularCount, reqCount)
+    }
+
+    private String createResume(BodyData bodyData) {
+        """Всего запросов сделано: ${bodyData.count}
+Больше всего запросов по: ${bodyData.mostPopular} (${bodyData.mostPopularCount})
+"""
+
     }
 }

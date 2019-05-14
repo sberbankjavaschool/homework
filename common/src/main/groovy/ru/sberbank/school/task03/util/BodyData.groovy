@@ -12,20 +12,4 @@ class BodyData {
         this.mostPopularCount = mostPopularCount
         this.count = count
     }
-
-    def getTextOfBody() {
-        return textOfBody
-    }
-
-    def getMostPopular() {
-        return mostPopular
-    }
-
-    def getMostPopularCount() {
-        return mostPopularCount
-    }
-
-    def getCount() {
-        return count
-    }
 }
