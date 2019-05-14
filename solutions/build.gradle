@@ -20,6 +20,7 @@ javadoc {
 }
 
 dependencies {
+    implementation project(":common")
     implementation project(":tasks")
 
     compileOnly 'org.projectlombok:lombok:1.18.6'

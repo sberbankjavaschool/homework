@@ -12,6 +12,7 @@ import ru.sberbank.school.task02.exception.ConverterConfigurationException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Date;
@@ -82,7 +83,7 @@ public class FxClientControllerImpl implements FxClientController {
                     request.getDirection(), true);
         } else {
             return new FxResponse(request.getSymbol(), price.setScale(2, RoundingMode.HALF_UP).toString(),
-                    request.getAmount(), LocalDate.now().toString(), request.getDirection(), false);
+                    request.getAmount(), LocalDateTime.now().toString(), request.getDirection(), false);
         }
 
     }

@@ -10,12 +10,11 @@ public class ServiceFactoryImpl implements ServiceFactory {
      * @param externalQuotesService Сервис-источник актуальных котировок
      * @return объект - валютный калькулятор
      */
-    public FxConversionService getFxConversionService(@NonNull ExternalQuotesService externalQuotesService) {
+    public FxConversionService getFxConversionService(ExternalQuotesService externalQuotesService) {
         return new FxConversionServiceImpl(externalQuotesService);
     }
 
-    public ExtendedFxConversionService getExtendedFxConversionService
-            (@NonNull ExternalQuotesService externalQuotesService) {
+    public ExtendedFxConversionService getExtendedFxConversionService(ExternalQuotesService externalQuotesService) {
         return new FxConversionServiceImpl(externalQuotesService);
     }
 
