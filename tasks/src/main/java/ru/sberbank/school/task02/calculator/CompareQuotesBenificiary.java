@@ -34,21 +34,21 @@ public class CompareQuotesBenificiary implements Comparator<Quote> {
     }
 
     private int compareEqualQuotes(Quote quote1, Quote quote2) {
-        //Ищем большую цену
+        //Ищем большую цену продажи банком
         if (beneficiary == Beneficiary.BANK && operation == ClientOperation.BUY) {
                 return quote1.getOffer().compareTo(quote2.getOffer());
         }
-        //Ищем меньшую цену
+        //Ищем меньшую цену покупки банком
         if (beneficiary == Beneficiary.BANK && operation == ClientOperation.SELL) {
-            return quote2.getOffer().compareTo(quote1.getOffer());
+            return  quote2.getBid().compareTo(quote1.getBid());
         }
-        //Ищем большую цену
+        //Ищем большую цену покупки банком
         if (beneficiary == Beneficiary.CLIENT && operation == ClientOperation.SELL) {
             return quote1.getBid().compareTo(quote2.getBid());
         }
-        //Ищем меньшую цену
+        //Ищем меньшую цену продажи банком
         if (beneficiary == Beneficiary.CLIENT && operation == ClientOperation.BUY) {
-            return quote2.getBid().compareTo(quote1.getBid());
+            return quote2.getOffer().compareTo(quote1.getOffer());
         }
         return 0;
     }
