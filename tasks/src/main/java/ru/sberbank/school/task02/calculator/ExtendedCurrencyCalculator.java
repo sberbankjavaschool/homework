@@ -6,13 +6,14 @@ import ru.sberbank.school.task02.util.Beneficiary;
 import ru.sberbank.school.task02.util.ClientOperation;
 import ru.sberbank.school.task02.util.Quote;
 import ru.sberbank.school.task02.util.Symbol;
+
+import java.lang.management.OperatingSystemMXBean;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.math.RoundingMode;
-import java.util.stream.Collectors;
 
 public class ExtendedCurrencyCalculator extends CurrencyCalculator implements ExtendedFxConversionService {
     private int rounding_mode;
@@ -22,7 +23,7 @@ public class ExtendedCurrencyCalculator extends CurrencyCalculator implements Ex
     }
 
     private Optional<BigDecimal> extendedOperation(ClientOperation operation, Beneficiary beneficiary) {
-        Optional<Quote> quote = findQuote(new CompareQuotesByPrice(operation, beneficiary), quotes);
+        Optional<Quote> quote = findQuote(new CompareQuotesByPrice(operation, beneficiary), quotes, operation);
         if (!quote.isPresent()) {
             System.out.println("Return Optional.empty()");
             return Optional.empty();
@@ -40,10 +41,17 @@ public class ExtendedCurrencyCalculator extends CurrencyCalculator implements Ex
         return Optional.empty();
     }
 
-    Optional<Quote> findQuote(Comparator<Quote> comparator, List<Quote> quotes) {
+    Optional<Quote> findQuote(Comparator<Quote> comparator, List<Quote> quotes, ClientOperation operation) {
         List<Quote> finalQuoteList = new ArrayList<>();
+        BigDecimal countCurr;
         for (Quote quote: quotes) {
-            if (quote.getVolume().isInfinity() || quote.getVolumeSize().compareTo(amountOfRequest) > 0) {
+            if (operation == ClientOperation.SELL) {
+                countCurr = quote.getBid();
+            } else {
+                countCurr = quote.getOffer();
+            }
+            if (quote.getVolume().isInfinity()
+                    || quote.getVolumeSize().compareTo(amountOfRequest.multiply(countCurr)) > 0) {
                 finalQuoteList.add(quote);
             }
         }
