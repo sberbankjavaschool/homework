@@ -26,7 +26,7 @@ ${createResume(bodyData)}"""
         }
 
         for (def i = 0; i < set.size(); i++) {
-            result +=  " ${set[i]}"
+            result += " ${set[i]}"
 
             if (i != set.size() - 1){
                 result+=","
@@ -51,7 +51,7 @@ ${createResume(bodyData)}"""
             }
         }
 
-        return map
+         map
     }
 
     private BodyData getBodyData(Map<String, MergedResponses> map) {
