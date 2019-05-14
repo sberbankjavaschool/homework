@@ -58,6 +58,7 @@ public class ExtendedCurrencyCalculator extends CurrencyCalculator implements Ex
         }
         if (finalQuoteList.size() > 0) {
             finalQuoteList.sort(comparator);
+            System.out.println("Sorted list: ");
             showQuotes(finalQuoteList);
             return Optional.of(finalQuoteList.get(0));
         }
