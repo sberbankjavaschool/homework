@@ -21,8 +21,7 @@ ${createResume(bodyData)}"""
         def result = "Отчет об изменении котировок для валют"
 
         responses.each { FxResponse response ->
-            set.add(response.getSymbol().substring(0, 3));
-            set.add(response.getSymbol().substring(4))
+            set.add(response.getSymbol())
         }
 
         for (def i = 0; i < set.size(); i++) {
@@ -154,15 +153,15 @@ ${createResume(bodyData)}"""
 
             if (minPriceAmountSell != null) {
                 result += """При продаже:
-- cамая выгодная для клиента цена ${maxPriceSell} на объеме ${maxPriceAmountSell}
-- cамая невыгодная для клиента цена ${minPriceSell} на объеме ${minPriceAmountSell}
+- cамая выгодная для клиента цена ${maxPriceSell.setScale(2, RoundingMode.HALF_UP)} на объеме ${maxPriceAmountSell}
+- cамая невыгодная для клиента цена ${minPriceSell.setScale(2, RoundingMode.HALF_UP)} на объеме ${minPriceAmountSell}
 """
             }
 
             if (minPriceAmountBuy != null) {
                 result += """При покупке:
-- cамая выгодная для клиента цена ${minPriceBuy} на объеме ${minPriceAmountBuy}
-- cамая невыгодная для клиента цена ${maxPriceBuy} на объеме ${maxPriceAmountBuy}
+- cамая выгодная для клиента цена ${minPriceBuy.setScale(2, RoundingMode.HALF_UP)} на объеме ${minPriceAmountBuy}
+- cамая невыгодная для клиента цена ${maxPriceBuy.setScale(2, RoundingMode.HALF_UP)} на объеме ${maxPriceAmountBuy}
 """
             }
         }
