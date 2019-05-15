@@ -6,16 +6,11 @@ import ru.sberbank.school.task02.util.Beneficiary;
 import ru.sberbank.school.task02.util.ClientOperation;
 import ru.sberbank.school.task02.util.Quote;
 import ru.sberbank.school.task02.util.Symbol;
-
-import java.lang.management.OperatingSystemMXBean;
 import java.math.BigDecimal;
 import java.util.*;
 import java.math.RoundingMode;
 
 public class ExtendedCurrencyCalculator extends CurrencyCalculator implements ExtendedFxConversionService {
-    private int rounding_mode;
-    Date currentDate = new Date();
-
     public ExtendedCurrencyCalculator(ExternalQuotesService externalQuotesService) {
         super(externalQuotesService);
     }
@@ -28,11 +23,9 @@ public class ExtendedCurrencyCalculator extends CurrencyCalculator implements Ex
         }
         showQuote(quote.get());
         if (operation == ClientOperation.SELL) {
-                System.out.println("Returl value: " + BigDecimal.valueOf(1).divide(quote.get().getBid(),10, RoundingMode.HALF_UP));
                 return Optional.of(BigDecimal.valueOf(1).divide(quote.get().getBid(),10, RoundingMode.HALF_UP));
         }
         if (operation == ClientOperation.BUY) {
-            System.out.println("Returl value: " + BigDecimal.valueOf(1).divide(quote.get().getOffer(),10, RoundingMode.HALF_UP));
             return Optional.of(BigDecimal.valueOf(1).divide(quote.get().getOffer(), 10, RoundingMode.HALF_UP));
         }
         System.out.println("Return Optional.empty()");
@@ -55,7 +48,6 @@ public class ExtendedCurrencyCalculator extends CurrencyCalculator implements Ex
         }
         if (finalQuoteList.size() > 0) {
             finalQuoteList.sort(comparator);
-            System.out.println(currentDate.toString() + " Sorted list: ");
             showQuotes(finalQuoteList);
             return Optional.of(finalQuoteList.get(0));
         }
@@ -80,15 +72,6 @@ public class ExtendedCurrencyCalculator extends CurrencyCalculator implements Ex
         System.out.println("Get client operation: " + operation.toString());
         System.out.println("Get request volume: " +  amountOfRequest );
         showQuotes(quotes);
-//        if ((beneficiary == Beneficiary.BANK && operation == ClientOperation.BUY)
-//                || (beneficiary == Beneficiary.CLIENT && operation == ClientOperation.SELL)) {
-//            rounding_mode = RoundingMode.HALF_UP;
-//        }
-//        if ((beneficiary == Beneficiary.BANK && operation == ClientOperation.SELL)
-//                || (beneficiary == Beneficiary.CLIENT && operation == ClientOperation.BUY)) {
-//            rounding_mode = BigDecimal.HALF_UP;
-//        }
-        this.amountOfRequest = amount.setScale(10,  rounding_mode);
 
         if (check()) {
             return extendedOperation(operation, beneficiary, quotes);
