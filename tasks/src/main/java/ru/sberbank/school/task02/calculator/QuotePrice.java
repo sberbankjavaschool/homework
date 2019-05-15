@@ -15,4 +15,9 @@ public class QuotePrice {
         this.amountInCurr = amountInCurr;
         this.price = price;
     }
+
+    @Override
+    public String toString() {
+        return  "Price " + price + " amount of all " + amountInCurr;
+    }
 }

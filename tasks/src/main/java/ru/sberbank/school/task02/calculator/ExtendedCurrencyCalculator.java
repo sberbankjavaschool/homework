@@ -67,10 +67,10 @@ public class ExtendedCurrencyCalculator extends CurrencyCalculator implements Ex
         BigDecimal realVolume;
         for (Quote quote: externalQuotesService.getQuotes(symbol)) {
             if (operation == ClientOperation.SELL) {
-                realVolume = quote.getVolumeSize().multiply(quote.getBid());
+                realVolume = quote.getVolumeSize();//.multiply(quote.getBid());
                 quotePrices.add(new QuotePrice(realVolume,quote.getBid()));
             } else {
-                realVolume = quote.getVolumeSize().multiply(quote.getOffer());
+                realVolume = quote.getVolumeSize();//.multiply(quote.getOffer());
                 quotePrices.add(new QuotePrice(realVolume,quote.getOffer()));
             }
             System.out.println("Add quote with real volume " + realVolume);
