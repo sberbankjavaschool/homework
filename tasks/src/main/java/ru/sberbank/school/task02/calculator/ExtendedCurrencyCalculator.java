@@ -37,7 +37,7 @@ public class ExtendedCurrencyCalculator extends CurrencyCalculator implements Ex
 
         List<QuotePrice> finalQuoteList = new ArrayList<>();
         for (QuotePrice quotePrice: quotePrices) {
-            if (amountOfRequest.compareTo(quotePrice.getAmountInCurr()) > 0
+            if (quotePrice.getAmountInCurr().compareTo(amountOfRequest) > 0
             || amountOfRequest.compareTo(BigDecimal.ZERO) < 0) {
                 finalQuoteList.add(quotePrice);
                 System.out.println("Amount " + quotePrice.getAmountInCurr() + " price: " + quotePrice.getPrice());
@@ -74,5 +74,15 @@ public class ExtendedCurrencyCalculator extends CurrencyCalculator implements Ex
         }
         return extendedOperation(operation, beneficiary, quotePrices, amount);
     }
+
+    void showQuotes(List<Quote> quotes) {
+        for (Quote quote : quotes) {
+            System.out.println("Get Quote symbol: " + quote.getSymbol()
+                    + " volume: " + quote.getVolume()
+                    + " bid: " + quote.getBid()
+                    + " offer: " + quote.getOffer());
+        }
+    }
+
 
 }
