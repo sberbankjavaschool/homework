@@ -66,6 +66,7 @@ public class ExtendedCurrencyCalculator extends CurrencyCalculator implements Ex
         List<QuotePrice> quotePrices = new ArrayList<>();
         BigDecimal realVolume;
         for (Quote quote: externalQuotesService.getQuotes(symbol)) {
+            System.out.println("get quote symbol " + quote.getSymbol().getSymbol());
             if (operation == ClientOperation.SELL) {
                 realVolume = quote.getVolumeSize();//.multiply(quote.getBid());
                 quotePrices.add(new QuotePrice(realVolume,quote.getBid()));
