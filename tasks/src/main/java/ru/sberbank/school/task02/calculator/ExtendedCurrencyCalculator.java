@@ -9,14 +9,12 @@ import ru.sberbank.school.task02.util.Symbol;
 
 import java.lang.management.OperatingSystemMXBean;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.math.RoundingMode;
 
 public class ExtendedCurrencyCalculator extends CurrencyCalculator implements ExtendedFxConversionService {
     private int rounding_mode;
+    Date currentDate = new Date();
 
     public ExtendedCurrencyCalculator(ExternalQuotesService externalQuotesService) {
         super(externalQuotesService);
@@ -53,12 +51,11 @@ public class ExtendedCurrencyCalculator extends CurrencyCalculator implements Ex
             volumeInCurr = quote.getVolumeSize().multiply(countCurr).setScale(10, RoundingMode.HALF_UP);
             if (quote.getVolume().isInfinity() || volumeInCurr.compareTo(amountOfRequest) > 0) {
                 finalQuoteList.add(quote);
-                System.out.println("add quote to list with value: " + quote.getVolumeSize());
             }
         }
         if (finalQuoteList.size() > 0) {
             finalQuoteList.sort(comparator);
-            System.out.println("Sorted list: ");
+            System.out.println(currentDate.toString() + " Sorted list: ");
             showQuotes(finalQuoteList);
             return Optional.of(finalQuoteList.get(0));
         }

@@ -4,7 +4,6 @@ import ru.sberbank.school.task02.util.Beneficiary;
 import ru.sberbank.school.task02.util.ClientOperation;
 import ru.sberbank.school.task02.util.Quote;
 
-import java.math.BigDecimal;
 import java.util.Comparator;
 
 public class CompareQuotesBenificiary implements Comparator<Quote> {
