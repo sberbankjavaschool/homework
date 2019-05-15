@@ -38,7 +38,7 @@ public class ExtendedCurrencyCalculator extends CurrencyCalculator implements Ex
         List<QuotePrice> finalQuoteList = new ArrayList<>();
         for (QuotePrice quotePrice: quotePrices) {
             if (quotePrice.getAmountInCurr().compareTo(amountOfRequest) > 0
-            || amountOfRequest.compareTo(BigDecimal.ZERO) < 0) {
+            || quotePrice.getAmountInCurr().compareTo(BigDecimal.ZERO) < 0) {
                 finalQuoteList.add(quotePrice);
                 System.out.println("Amount " + quotePrice.getAmountInCurr() + " price: " + quotePrice.getPrice());
             }
