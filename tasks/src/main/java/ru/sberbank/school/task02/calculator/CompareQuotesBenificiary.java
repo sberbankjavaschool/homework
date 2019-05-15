@@ -6,33 +6,27 @@ import ru.sberbank.school.task02.util.Quote;
 
 import java.util.Comparator;
 
-public class CompareQuotesBenificiary implements Comparator<Quote> {
+public class CompareQuotesBenificiary implements Comparator<QuotePrice> {
     private Beneficiary beneficiary;
     private ClientOperation operation;
 
     public CompareQuotesBenificiary (ClientOperation operation, Beneficiary beneficiary) {
-
         this.beneficiary = beneficiary;
         this.operation = operation;
     }
 
     @Override
-    public int compare(Quote quote1, Quote quote2) {
-        //Ищем большую цену продажи банком
-        if (beneficiary == Beneficiary.BANK && operation == ClientOperation.BUY) {
-            return quote2.getOffer().compareTo(quote1.getOffer());
+    public int compare(QuotePrice quote1, QuotePrice quote2) {
+        //Ищем большую цену продажи банком//Offer
+        if ((beneficiary == Beneficiary.BANK && operation == ClientOperation.BUY)
+        || (beneficiary == Beneficiary.CLIENT && operation == ClientOperation.SELL)){
+            return quote2.getPrice().compareTo(quote1.getPrice());
         }
-        //Ищем меньшую цену покупки банком
-        if (beneficiary == Beneficiary.BANK && operation == ClientOperation.SELL) {
-            return  quote1.getBid().compareTo(quote2.getBid());
-        }
-        //Ищем большую цену покупки банком
-        if (beneficiary == Beneficiary.CLIENT && operation == ClientOperation.SELL) {
-            return quote2.getBid().compareTo(quote1.getBid());
-        }
-        //Ищем меньшую цену продажи банком
-        if (beneficiary == Beneficiary.CLIENT && operation == ClientOperation.BUY) {
-            return quote1.getOffer().compareTo(quote2.getOffer());
+        //Ищем меньшую цену покупки банком//bid
+        //Ищем меньшую цену продажи банком//offer
+        if ((beneficiary == Beneficiary.BANK && operation == ClientOperation.SELL) ||
+                (beneficiary == Beneficiary.CLIENT && operation == ClientOperation.BUY) ) {
+            return  quote1.getPrice().compareTo(quote2.getPrice());
         }
         return 0;
     }

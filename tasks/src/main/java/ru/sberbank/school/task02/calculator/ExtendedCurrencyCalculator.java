@@ -15,77 +15,59 @@ public class ExtendedCurrencyCalculator extends CurrencyCalculator implements Ex
         super(externalQuotesService);
     }
 
-    private Optional<BigDecimal> extendedOperation(ClientOperation operation, Beneficiary beneficiary, List<Quote> quotes) {
-        Optional<Quote> quote = findQuote(new CompareQuotesBenificiary(operation, beneficiary), quotes, operation);
-        if (!quote.isPresent()) {
-            System.out.println("Return Optional.empty()");
+    private Optional<BigDecimal> extendedOperation(ClientOperation operation,
+                                                   Beneficiary beneficiary,
+                                                   List<QuotePrice> quotePrices,
+                                                   BigDecimal amountOfRequest) {
+
+
+        Optional<QuotePrice> quotePrice = findQuote(new CompareQuotesBenificiary(operation, beneficiary),
+                quotePrices,
+                amountOfRequest);
+
+        if (!quotePrice.isPresent()) {
             return Optional.empty();
         }
-        showQuote(quote.get());
-        if (operation == ClientOperation.SELL) {
-                return Optional.of(BigDecimal.valueOf(1).divide(quote.get().getBid(),10, RoundingMode.HALF_UP));
-        }
-        if (operation == ClientOperation.BUY) {
-            return Optional.of(BigDecimal.valueOf(1).divide(quote.get().getOffer(), 10, RoundingMode.HALF_UP));
-        }
-        System.out.println("Return Optional.empty()");
-        return Optional.empty();
+        return Optional.of(BigDecimal.valueOf(1).divide(quotePrice.get().getPrice(),10, RoundingMode.HALF_UP));
     }
 
-    Optional<Quote> findQuote(Comparator<Quote> comparator, List<Quote> quotes, ClientOperation operation) {
-        List<Quote> finalQuoteList = new ArrayList<>();
-        BigDecimal countCurr, volumeInCurr;
-        for (Quote quote: quotes) {
-            if (operation == ClientOperation.SELL) {
-                countCurr = quote.getBid();
-            } else {
-                countCurr = quote.getOffer();
-            }
-            volumeInCurr = quote.getVolumeSize().multiply(countCurr).setScale(10, RoundingMode.HALF_UP);
-            if (quote.getVolume().isInfinity() || volumeInCurr.compareTo(amountOfRequest) > 0) {
-                finalQuoteList.add(quote);
+    Optional<QuotePrice> findQuote(Comparator<QuotePrice> comparator,
+                              List<QuotePrice> quotePrices,
+                              BigDecimal amountOfRequest) {
+
+        List<QuotePrice> finalQuoteList = new ArrayList<>();
+        for (QuotePrice quotePrice: quotePrices) {
+            if (amountOfRequest.compareTo(quotePrice.getAmountInCurr()) > 0
+            || amountOfRequest.compareTo(BigDecimal.ZERO) < 0) {
+                finalQuoteList.add(quotePrice);
+                System.out.println("Amount " + quotePrice.getAmountInCurr() + " price: " + quotePrice.getPrice());
             }
         }
+        finalQuoteList.sort(comparator);
         if (finalQuoteList.size() > 0) {
-            finalQuoteList.sort(comparator);
-            showQuotes(finalQuoteList);
             return Optional.of(finalQuoteList.get(0));
+        } else {
+            return Optional.empty();
         }
-        return Optional.empty();
     }
 
     @Override
     public Optional<BigDecimal> convertReversed(ClientOperation operation, Symbol symbol, BigDecimal amount, Beneficiary beneficiary) {
-        quotes = externalQuotesService.getQuotes(Symbol.USD_RUB);
-
         if (operation == null) {
             throw new NullPointerException("operation is null!");
         }
         if (beneficiary == null) {
             throw new NullPointerException("beneficiary is null!");
         }
-
-        this.symbolOfRequest = symbol;
-        this.amountOfRequest = amount;
-        System.out.println("Get benificiary: " + beneficiary.toString());
-        System.out.println("Get symbol: " + symbol.getSymbol());
-        System.out.println("Get client operation: " + operation.toString());
-        System.out.println("Get request volume: " +  amountOfRequest );
-        showQuotes(quotes);
-
-        if (check()) {
-            return extendedOperation(operation, beneficiary, quotes);
+        List<QuotePrice> quotePrices = new ArrayList<>();
+        for (Quote quote: externalQuotesService.getQuotes(symbol)) {
+            if (operation == ClientOperation.SELL) {
+                quotePrices.add(new QuotePrice(quote.getVolumeSize().multiply(quote.getBid()),quote.getBid()));
+            } else {
+                quotePrices.add(new QuotePrice(quote.getVolumeSize().multiply(quote.getOffer()),quote.getOffer()));
+            }
         }
-        System.out.println("Return Optional.empty() after check");
-        return Optional.empty();
+        return extendedOperation(operation, beneficiary, quotePrices, amount);
     }
 
-    @Override
-    public Optional<BigDecimal> convertReversed(ClientOperation operation,
-                                                Symbol symbol,
-                                                BigDecimal amount,
-                                                double delta,
-                                                Beneficiary beneficiary) {
-         return Optional.empty();
-    }
 }

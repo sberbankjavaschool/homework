@@ -19,6 +19,4 @@ public class CompareQutes implements Comparator<Quote> {
         }
         return quoteVolume1.compareTo(quoteVolume2);
     }
-
-
 }
