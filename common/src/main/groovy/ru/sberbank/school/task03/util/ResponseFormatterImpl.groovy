@@ -2,8 +2,14 @@ package ru.sberbank.school.task03.util
 
 import ru.sberbank.school.task02.util.FxResponse
 import ru.sberbank.school.task03.ResponseFormatter
+import ru.sberbank.school.task03.model.ResponseReportModel
+import ru.sberbank.school.task03.model.ResponseReportModel.ReportMiddleBlock
+import ru.sberbank.school.task03.model.ResponseReportModel.ReportResponse
 
 class ResponseFormatterImpl implements ResponseFormatter {
+
+    private final ResponseModelConverter converter = new ResponseModelConverter()
+
     /**
      * Выводит отформатированный по шаблону список ответов.
      *
@@ -13,62 +19,26 @@ class ResponseFormatterImpl implements ResponseFormatter {
     @Override
     String format(List<FxResponse> responses) {
 
-        int maxResponsesCount
-        String maxResponses
+        ResponseReportModel model = converter.convert(responses)
 
-        List<String> symbols = new ArrayList<>()
+        List<String> symbols = model.getModelSymbols()
+        Map<String, ReportMiddleBlock> blocks = model.getModelBlocks()
 
-        responses*.getSymbol().unique().each { symbol -> symbols.add(symbol) }
-
-        String gString = "====== Отчет об изменении котировок для валют ${responses*.getSymbol().unique()}======"
-
+        String gString = "====== Отчет об изменении котировок для валют ${symbols}======"
         for (String symbol : symbols) {
-
-            gString += "\n====== Блок, повторяющийся для каждой валютной пары: ${symbol} ======" +
-                    "\nДанные по инструменту:\n SYMBOL | RESPONSE DATE-TIME | AMOUNT | OPERATION | PRICE | IS NOT FOUND"
-
-            BigDecimal maxAmount
-            BigDecimal allAmount = BigDecimal.ZERO
-            BigDecimal profitableAmount
-            BigDecimal unprofitableAmount
-            int symbolResponseCount
-            double minAmount = Double.POSITIVE_INFINITY
-            double profitablePrice
-            double unprofitablePrice = Double.POSITIVE_INFINITY
-
-            for (FxResponse response : responses) {
-                if (symbol.equals(response.getSymbol())) {
-                    BigDecimal responseAmount = new BigDecimal(response.getAmount())
-                    allAmount += responseAmount
-                    if (maxAmount <= responseAmount) maxAmount = responseAmount
-                    if (minAmount >= responseAmount) minAmount = responseAmount
-                    symbolResponseCount++
-                    if (maxResponsesCount < symbolResponseCount) {
-                        maxResponsesCount = symbolResponseCount
-                        maxResponses = symbol
-                    }
-                    double responsePrice
-                    if (!response.getPrice().isBlank()) {
-                        responsePrice = Double.valueOf(response.getPrice())
-                    }
-                    if (profitablePrice <= responsePrice) {
-                        profitablePrice = responsePrice
-                        profitableAmount = responseAmount
-                    }
-                    if (unprofitablePrice >= responsePrice) {
-                        unprofitablePrice = responsePrice
-                        unprofitableAmount = responseAmount
-                    }
-                    gString += "\n${symbolResponseCount}. ${symbol} | ${response.getDate()} | ${responseAmount}" +
-                            " | ${response.getDirection()} | ${responsePrice} | ${response.isNotFound()}"
-                }
+            ReportMiddleBlock block = blocks.get(symbol)
+            List<ReportResponse> modelResponses = block.getModelResponses()
+            gString += """\n====== Блок, повторяющийся для каждой валютной пары: ${symbol} ======
+Данные по инструменту:\n SYMBOL | RESPONSE DATE-TIME | AMOUNT | OPERATION | PRICE | IS NOT FOUND"""
+            for (ReportResponse response : modelResponses) {
+                gString += """\n${response.number}. ${symbol} | ${response.date} | ${response.amount} | ${response.direction} | ${response.price} | ${response.isNotFound}"""
             }
-            gString += "\nДанные по суммам: мин ${minAmount}/сред ${allAmount / symbolResponseCount}/макс ${maxAmount}" +
-                    "\nСамая выгодная для клиента цена ${profitablePrice} на объеме ${profitableAmount}" +
-                    "\nСамая невыгодная для клиента цена ${unprofitablePrice} на объеме ${unprofitableAmount}"
+            gString += """\nДанные по суммам: мин ${block.minAmount}/сред ${block.avgAmount}/макс ${block.maxAmount}
+Самая выгодная для клиента цена ${block.profitablePrice} на объеме ${block.profitableAmount}
+Самая невыгодная для клиента цена ${block.unprofitablePrice} на объеме ${block.unprofitableAmount}"""
         }
-        gString += "\n====== Результирующая документ строка ======\nВсего запросов сделано: ${responses.size()} " +
-                "\nБольше всего запросов по: ${maxResponses} (${maxResponsesCount})"
+        gString += """\n====== Результирующая документ строка ======\nВсего запросов сделано: ${model.responsesQuantity}
+Больше всего запросов по: ${model.maxResponsesBySymbol} (${model.maxResponsesSymbol})"""
 
         return gString
     }
