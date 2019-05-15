@@ -1,16 +1,16 @@
 package ru.sberbank.school.task02.util;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 import lombok.NonNull;
 import ru.sberbank.school.task02.exception.WrongSymbolException;
 
+import static java.math.RoundingMode.HALF_UP;
 
-public class RequesParser {
 
-    private static final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
+public class RequestParser {
+
+    private static final int SCALE = 8;
 
     public static Symbol getSymbol(@NonNull String symbol) {
 
@@ -23,7 +23,7 @@ public class RequesParser {
         throw new WrongSymbolException("Указана неверная валютна пара!");
     }
 
-    public static ClientOperation getClientOperetion(@NonNull String clientOperetion) {
+    public static ClientOperation getClientOperation(@NonNull String clientOperetion) {
         return ClientOperation.valueOf(clientOperetion);
     }
 
@@ -31,9 +31,8 @@ public class RequesParser {
         return new BigDecimal(amount);
     }
 
-    public static String getDate() {
-        LocalDateTime date = LocalDateTime.now();
-        return date.format(timeFormatter);
+    public static BigDecimal getPrice(@NonNull String priceStr) {
+        return new BigDecimal(priceStr).setScale(SCALE, HALF_UP);
     }
 
 }

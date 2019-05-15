@@ -2,18 +2,14 @@ package ru.sberbank.school.task02;
 
 import java.math.BigDecimal;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import lombok.NonNull;
 
 import ru.sberbank.school.task02.util.*;
 
-import static java.math.RoundingMode.HALF_UP;
-
 public class ClientController implements FxClientController {
-
-    private static final int SCALE = 8;
 
     private ExtendedConverterService conversionService;
 
@@ -25,7 +21,7 @@ public class ClientController implements FxClientController {
 
     @Override
     public List<FxResponse> fetchResult(@NonNull List<FxRequest> requests) {
-        List<FxResponse> responses = new LinkedList<>();
+        List<FxResponse> responses = new ArrayList<>();
         for (FxRequest request : requests) {
             FxResponse response = fetchResult(request);
             responses.add(response);
@@ -36,15 +32,16 @@ public class ClientController implements FxClientController {
     @Override
     public FxResponse fetchResult(@NonNull FxRequest requests) {
 
-        BigDecimal amount = RequesParser.getAmount(requests.getAmount());
-        ClientOperation clientOperation = RequesParser.getClientOperetion(requests.getDirection());
-        Symbol symbol = RequesParser.getSymbol(requests.getSymbol());
+        BigDecimal amount = RequestParser.getAmount(requests.getAmount());
+        ClientOperation clientOperation = RequestParser.getClientOperation(requests.getDirection());
+        Symbol symbol = RequestParser.getSymbol(requests.getSymbol());
 
         BigDecimal price = conversionService.convert(clientOperation, symbol, amount);
-        String priceResponse = String.valueOf(price.setScale(SCALE, HALF_UP));
-        String date = RequesParser.getDate();
+        String priceResponse = String.valueOf(price);
+        String date = CurrentDate.getDate();
 
         return new FxResponse(symbol.getSymbol(), priceResponse,
                 String.valueOf(amount), date, String.valueOf(clientOperation), false);
     }
+
 }
