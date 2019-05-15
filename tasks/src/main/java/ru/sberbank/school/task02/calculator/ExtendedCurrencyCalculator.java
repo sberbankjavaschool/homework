@@ -59,13 +59,18 @@ public class ExtendedCurrencyCalculator extends CurrencyCalculator implements Ex
         if (beneficiary == null) {
             throw new NullPointerException("beneficiary is null!");
         }
+        System.out.println("Get amount " + amount);
         List<QuotePrice> quotePrices = new ArrayList<>();
+        BigDecimal realVolume;
         for (Quote quote: externalQuotesService.getQuotes(symbol)) {
             if (operation == ClientOperation.SELL) {
-                quotePrices.add(new QuotePrice(quote.getVolumeSize().multiply(quote.getBid()),quote.getBid()));
+                realVolume = quote.getVolumeSize().multiply(quote.getBid());
+                quotePrices.add(new QuotePrice(realVolume,quote.getBid()));
             } else {
-                quotePrices.add(new QuotePrice(quote.getVolumeSize().multiply(quote.getOffer()),quote.getOffer()));
+                realVolume = quote.getVolumeSize().multiply(quote.getOffer());
+                quotePrices.add(new QuotePrice(realVolume,quote.getOffer()));
             }
+            System.out.println("Add quote with real volume " + realVolume);
         }
         return extendedOperation(operation, beneficiary, quotePrices, amount);
     }
