@@ -1,0 +1,18 @@
+plugins {
+    id 'groovy'
+    id 'java'
+    id 'checkstyle'
+}
+
+group 'ru.sberbank.school'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.codehaus.groovy:groovy-all:2.5.6'
+
+    implementation project(":tasks")
+
+}
