@@ -45,6 +45,7 @@ public class ExtendedCurrencyCalculator extends CurrencyCalculator implements Ex
         }
         finalQuoteList.sort(comparator);
         if (finalQuoteList.size() > 0) {
+            System.out.println("Return quote " +  finalQuoteList.get(0).getAmountInCurr() + " with price " +  finalQuoteList.get(0).getPrice());
             return Optional.of(finalQuoteList.get(0));
         } else {
             return Optional.empty();
@@ -60,6 +61,8 @@ public class ExtendedCurrencyCalculator extends CurrencyCalculator implements Ex
             throw new NullPointerException("beneficiary is null!");
         }
         System.out.println("Get amount " + amount);
+        System.out.println("Get operation " + operation );
+        System.out.println("Gett benificiary " + beneficiary);
         List<QuotePrice> quotePrices = new ArrayList<>();
         BigDecimal realVolume;
         for (Quote quote: externalQuotesService.getQuotes(symbol)) {
@@ -74,15 +77,5 @@ public class ExtendedCurrencyCalculator extends CurrencyCalculator implements Ex
         }
         return extendedOperation(operation, beneficiary, quotePrices, amount);
     }
-
-    void showQuotes(List<Quote> quotes) {
-        for (Quote quote : quotes) {
-            System.out.println("Get Quote symbol: " + quote.getSymbol()
-                    + " volume: " + quote.getVolume()
-                    + " bid: " + quote.getBid()
-                    + " offer: " + quote.getOffer());
-        }
-    }
-
 
 }
