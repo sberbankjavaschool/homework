@@ -12,16 +12,14 @@ import ru.sberbank.school.task02.util.Symbol;
 public class Converter implements FxConversionService {
     private ExternalQuotesService externalQuotesService;
 
-    public Converter(ExternalQuotesService externalQuotesService) {
-        if (externalQuotesService == null) {
-            throw new FxConversionException("Передайте корректный QuoteService!");
-        }
+    public Converter(@NonNull ExternalQuotesService externalQuotesService) {
         this.externalQuotesService = externalQuotesService;
     }
 
 
     @Override
-    public BigDecimal convert(@NonNull ClientOperation operation, @NonNull Symbol symbol, @NonNull BigDecimal amount) {
+    public BigDecimal convert(@NonNull ClientOperation operation, @NonNull Symbol symbol,
+                              @NonNull BigDecimal amount) {
 
         if (amount.signum() <= 0) {
             throw new IllegalArgumentException("Введите корректное значение объема!");
