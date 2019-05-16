@@ -4,16 +4,11 @@ import lombok.RequiredArgsConstructor;
 import ru.sberbank.school.task02.ExtendedFxConversionService;
 import ru.sberbank.school.task02.FxClientController;
 import ru.sberbank.school.task02.enums.Symbols;
-import ru.sberbank.school.task02.util.Beneficiary;
-import ru.sberbank.school.task02.util.ClientOperation;
-import ru.sberbank.school.task02.util.FxRequest;
-import ru.sberbank.school.task02.util.FxResponse;
+import ru.sberbank.school.task02.util.*;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.time.LocalDateTime;
+import java.util.*;
 
 import static java.math.RoundingMode.HALF_UP;
 
@@ -26,9 +21,18 @@ import static java.math.RoundingMode.HALF_UP;
 public class FxClientControllerImpl implements FxClientController {
 
     private static final int SCALE = 10;
-    private static final Map<String, String> environment = System.getenv();
-    private static final String SBRF_BENEFICIARY = environment.get("SBRF_BENEFICIARY");
-    private static final Beneficiary BENEFICIARY = Beneficiary.valueOf(SBRF_BENEFICIARY);
+    private static String SBRF_BENEFICIARY = System.getenv().get("SBRF_BENEFICIARY");
+    private static Beneficiary BENEFICIARY;
+
+    static {
+        if (SBRF_BENEFICIARY == null) {
+            SBRF_BENEFICIARY = "BANK"; //На случай, если не указана переменная окружения
+        }
+        BENEFICIARY = Beneficiary.valueOf(SBRF_BENEFICIARY);
+        if (BENEFICIARY == null) {
+            throw new IllegalArgumentException("Illegal environment beneficiary " + SBRF_BENEFICIARY);
+        }
+    }
 
     private final ExtendedFxConversionService conversionService;
 
@@ -37,59 +41,48 @@ public class FxClientControllerImpl implements FxClientController {
 
         List<FxResponse> responses = new ArrayList();
 
-        ClientOperation clientOperation;
-        BigDecimal amount;
-
         for (FxRequest request : requests) {
-            clientOperation = ClientOperation.valueOf(request.getDirection());
-            amount = new BigDecimal(request.getAmount());
 
-            for (Symbols symbolsElement : Symbols.values()) {
-                String price = "";
-                boolean notFound = true;
-                boolean requestAndElementSymbolsAreSame = symbolsElement.getKey().equals(request.getSymbol());
+            BigDecimal amount = new BigDecimal(request.getAmount());
+            ClientOperation clientOperation = ClientOperation.valueOf(request.getDirection());
+            String price = "";
+            Symbol symbol = Symbols.get(request.getSymbol());
+            boolean notFound = true;
 
-                if (requestAndElementSymbolsAreSame && !symbolsElement.isCross()) {
-                    BigDecimal convertResult = conversionService.convert(
-                            clientOperation,
-                            symbolsElement.getSymbol(),
-                            amount);
+            if (symbol.isCross()) {
+                Optional<BigDecimal> convertResult = conversionService.convertReversed(
+                        clientOperation,
+                        symbol,
+                        amount,
+                        BENEFICIARY);
 
-                    price = convertResult.setScale(SCALE, HALF_UP).toString();
+                if (convertResult.isPresent()) {
+                    price = convertResult.get().setScale(SCALE, HALF_UP).stripTrailingZeros().toPlainString();
                     notFound = false;
-
-                } else if (requestAndElementSymbolsAreSame && symbolsElement.isCross()) {
-                    Optional<BigDecimal> convertResult = conversionService.convertReversed(
-                            clientOperation,
-                            symbolsElement.getSymbol(),
-                            amount,
-                            BENEFICIARY);
-
-                    if (convertResult.isPresent()) {
-                        price = convertResult.get().setScale(SCALE, HALF_UP).toString();
-                        notFound = false;
-                    }
                 }
-                if (requestAndElementSymbolsAreSame) {
-                    responses.add(FxResponse.builder()
-                            .symbol(request.getSymbol())
-                            .price(price)
-                            .amount(request.getAmount())
-                            .notFound(notFound)
-                            .build());
-                }
+            } else {
+                BigDecimal convertResult = conversionService.convert(
+                        clientOperation,
+                        symbol,
+                        amount);
+
+                price = convertResult.setScale(SCALE, HALF_UP).stripTrailingZeros().toPlainString();
+                notFound = false;
             }
+            responses.add(FxResponse.builder()
+                    .symbol(request.getSymbol())
+                    .price(price)
+                    .amount(request.getAmount())
+                    .date(LocalDateTime.now().toString())
+                    .direction(request.getDirection())
+                    .notFound(notFound)
+                    .build());
         }
         return responses;
     }
 
     @Override
     public FxResponse fetchResult(FxRequest request) {
-
-        List<FxRequest> requests = new ArrayList();
-
-        requests.add(request);
-
-        return fetchResult(requests).get(0);
+        return fetchResult(Collections.singletonList(request)).get(0);
     }
 }

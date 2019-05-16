@@ -6,23 +6,22 @@ import ru.sberbank.school.task02.services.implementation.ServiceFactoryImpl;
 import ru.sberbank.school.task02.util.FxRequest;
 import ru.sberbank.school.task02.util.FxRequestBuilder;
 import ru.sberbank.school.task02.util.FxResponse;
+import ru.sberbank.school.task03.util.ResponseFormatterImpl;
 
 import java.util.List;
 
 /**
- * Created by Gregory Melnikov at 03.05.2019
+ * Клиент для получения расчетных курсов из командной строки (args)
+ * Формат ввода аргументов командной строки: USD/RUB BUY 3359156.48 USD/RUB SELL 87913.92
+ * Created by Gregory Melnikov at 11.05.2019
  */
-public class Main {
-    
+public class FxClient {
+
     public static void main(String[] args) {
 
         FxRequestBuilder requestBuilder = new FxRequestBuilder();
 
         List<FxRequest> requests = requestBuilder.buildRequests(args);
-
-        for (FxRequest request : requests) {
-            System.out.println(request.toString());
-        }
 
         ExternalQuotesService externalQuotesService = new ExternalQuotesServiceImpl();
         ServiceFactory serviceFactory = new ServiceFactoryImpl();
@@ -30,10 +29,15 @@ public class Main {
                 serviceFactory.getExtendedFxConversionService(externalQuotesService);
         FxClientController clientController = new FxClientControllerImpl(conversionService);
 
-        List<FxResponse> responses = clientController.fetchResult(requests);
+        try {
+            List<FxResponse> responses = clientController.fetchResult(requests);
 
-        for (FxResponse response : responses) {
-            System.out.println("response: " + response.toString() + ", price: " + response.getPrice());
+            ResponseFormatterImpl formatter = new ResponseFormatterImpl();
+            System.out.println(formatter.format(responses));
+
+        } catch (RuntimeException e) {
+            System.out.println("Some trouble have arise while conversion");
+            System.err.println(e.getMessage());
         }
     }
 }

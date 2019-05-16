@@ -1,6 +1,6 @@
 package ru.sberbank.school.task02.util;
 
-import ru.sberbank.school.task02.exeption.BuildRequestsNeverCallExeption;
+import ru.sberbank.school.task02.exeption.BuildRequestsNeverCallException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -54,7 +54,7 @@ public class FxRequestBuilder {
                     requests.add(request);
                     break;
                 default:
-                    throw new BuildRequestsNeverCallExeption("Problem in buildRequests method of FxRequestBuilder");
+                    throw new BuildRequestsNeverCallException("Problem in buildRequests method of FxRequestBuilder");
             }
         }
         return requests;
