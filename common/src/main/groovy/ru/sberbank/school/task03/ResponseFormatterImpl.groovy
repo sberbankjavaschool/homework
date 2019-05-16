@@ -1,25 +1,13 @@
 package ru.sberbank.school.task03
 
-
 import ru.sberbank.school.task02.util.ClientOperation
 import ru.sberbank.school.task02.util.FxResponse
 
 class ResponseFormatterImpl implements ResponseFormatter {
 
-    BigDecimal maxPrice
-    BigDecimal minPrice
-    BigDecimal averagePrice
-    BigDecimal profitAmount
-    BigDecimal unprofitAmount
-    int countForSum
-    String maxCountName
-    int maxCount
-    int allCount
-
     @Override
     String format(List<FxResponse> responses) {
         Objects.requireNonNull(responses, "передан null")
-
         String result = "${header(responses)}\n"
         println (result)
         result
@@ -68,69 +56,22 @@ class ResponseFormatterImpl implements ResponseFormatter {
     }
 
     private String report(List<FxResponse> responses) {
-        getValue(responses)
-        def gString = """Максимальная цена: ${maxPrice}\nМинимальная цена: ${minPrice}\n"""
-        gString += "Cредняя цена: ${averagePrice}\n" +
-                "Самая выгодная для клиента цена ${maxPrice} на объеме ${profitAmount}\n" +
-                "Самая невыгодная для клиента цена ${minPrice} на объеме ${unprofitAmount}\n"
+        SolutionFormatter.calculateBodyValue(responses)
+        def gString = """Максимальная цена: ${SolutionFormatter.getMaxPrice()}\n"""
+        gString += "Минимальная цена: ${SolutionFormatter.getMinPrice()}\n" +
+                "Cредняя цена: ${SolutionFormatter.getAveragePrice()}\n" +
+                "Самая выгодная для клиента цена ${SolutionFormatter.getMaxPrice()} " +
+                "на объеме ${SolutionFormatter.getProfitAmount()}\n" +
+                "Самая невыгодная для клиента цена ${SolutionFormatter.getMinPrice()} " +
+                "на объеме ${SolutionFormatter.getUnprofitAmount()}\n"
         gString
     }
 
-    private void getValue(List<FxResponse> responses) {
-        def init = true
-        for (FxResponse response : responses) {
-            BigDecimal tempPrice = new BigDecimal(response.price)
-            BigDecimal tempAmount = new BigDecimal(response.amount)
-            if(init) {
-                maxPrice = tempPrice
-                minPrice = tempPrice
-                averagePrice = tempPrice
-                profitAmount = tempAmount
-                unprofitAmount = tempAmount
-                init = false
-                countForSum = 1
-                continue
-            }
-            if(maxPrice < tempPrice) {
-                maxPrice = tempPrice
-                profitAmount = tempAmount
-            }
-            if(minPrice > tempPrice) {
-                minPrice = tempPrice
-                unprofitAmount = tempAmount
-            }
-            averagePrice += tempPrice
-            countForSum++
-        }
-        averagePrice = averagePrice / countForSum
-    }
-
     private String endInfo(Map<String, List<FxResponse>> map) {
-        getEndValue(map)
-        def string = "Всего запросов сделано: ${allCount} \n" +
-                "Больше всего запросов по: ${maxCountName} (${maxCount})"
+        SolutionFormatter.calculateEndValue(map)
+        def string = "Всего запросов сделано: ${SolutionFormatter.getAllCount()} \n" +
+                "Больше всего запросов по: ${SolutionFormatter.getMaxCountName()}" +
+                "(${SolutionFormatter.getMaxCount()})"
         string
-    }
-
-    private void getEndValue(Map<String, List<FxResponse>> map){
-        maxCountName
-        maxCount
-        allCount
-        def init = true
-        for(String key : map.keySet()) {
-            int tempSize = map.get(key).size()
-            if(init) {
-                maxCountName = key
-                maxCount = tempSize
-                allCount = tempSize
-                init = false
-                continue
-            }
-            if(maxCount < tempSize) {
-                maxCountName = key
-                maxCount = tempSize
-            }
-            allCount += tempSize
-        }
     }
 }
