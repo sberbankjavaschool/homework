@@ -1,6 +1,5 @@
 package ru.sberbank.school.task02;
 
-import ru.sberbank.school.task02.exception.ConverterConfigurationException;
 import ru.sberbank.school.task02.exception.FxConversionException;
 import ru.sberbank.school.task02.util.Beneficiary;
 import ru.sberbank.school.task02.util.ClientOperation;
@@ -10,6 +9,7 @@ import ru.sberbank.school.task02.util.Symbol;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 public class ReverseCalculator implements ExtendedFxConversionService {
@@ -92,8 +92,6 @@ public class ReverseCalculator implements ExtendedFxConversionService {
 
     private void validate(ClientOperation operation, Symbol symbol, BigDecimal amount, Beneficiary beneficiary) {
         calculator.validate(operation, symbol, amount);
-        if (beneficiary == null) {
-            throw new NullPointerException("No beneficiary provided");
-        }
+        Objects.requireNonNull(beneficiary, "No beneficiary provided");
     }
 }

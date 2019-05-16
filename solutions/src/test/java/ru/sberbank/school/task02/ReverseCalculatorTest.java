@@ -64,7 +64,7 @@ public class ReverseCalculatorTest {
         if (optionalOffer.isPresent()) {
             offer = optionalOffer.get();
         }
-        Assertions.assertEquals(BigDecimal.valueOf(0.0011111111).setScale(10, RoundingMode.HALF_UP), offer);
+        Assertions.assertEquals(BigDecimal.valueOf(0.001).setScale(10, RoundingMode.HALF_UP), offer);
     }
 
     @Test
