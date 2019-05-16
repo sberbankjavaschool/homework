@@ -15,17 +15,15 @@ class Formatter implements ResponseFormatter {
 ${getBlock()}
 =====================================
 Всего запросов сделано: ${report.getCountRequests()}
-Больше всего запросов по: ${report.getMaxRequestSymbol()} (${report.getMaxRequestSize()})
+Больше всего запросов по: ${report.getSymbolRequest()} (${report.getMaxCountRequests()})
 """
     }
 
     String getBlock() {
 
-        Iterator<Map.Entry<String, ResponseGroup>> iterator = report.getResponseGroups().entrySet().iterator()
         String block = ""
 
-        while (iterator.hasNext()) {
-            Map.Entry<String, ResponseGroup> entry = iterator.next()
+        for (Map.Entry<String, ResponseGroup> entry in report.getResponseGroups()) {
             ResponseGroup group = entry.getValue()
             block += """
 === Данные по инструменту: ${entry.getKey()} ===
@@ -46,7 +44,7 @@ ${getStatisticsSell(group)}
 
         for (FxResponse r in responseGroup.getResponses()) {
 
-            quote += """| ${r.getDate()} | ${r.getAmount()} | ${r.getDirection()} | ${r.getPrice()} \n"""
+            quote += "| ${r.getDate()} | ${r.getAmount()} | ${r.getDirection()} | ${r.getPrice()} \n"
         }
 
         quote

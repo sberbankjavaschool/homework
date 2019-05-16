@@ -6,8 +6,8 @@ import ru.sberbank.school.task02.util.FxResponse
 class Report {
 
     int countRequests
-    int maxRequestSize
-    String maxRequestSymbol
+    int maxCountRequests
+    String symbolRequest
     Map<String, ResponseGroup> responseGroups
 
     Report(List<FxResponse> responses) {
@@ -16,25 +16,36 @@ class Report {
 
         for (ResponseGroup r in responseGroups.values()) {
 
-            if (maxRequestSize < r.getSize()) {
-                maxRequestSize = r.getSize()
-                maxRequestSymbol = r.getSymbol()
+            if (maxCountRequests < r.getCountRequest()) {
+                maxCountRequests = r.getCountRequest()
+                symbolRequest = r.getSymbol()
             }
         }
     }
 
     private Map<String, ResponseGroup> calcMapResponses(List<FxResponse> responses) {
 
-        Map<String, ResponseGroup> symbols = new HashMap<>()
+        Map<String, List<FxResponse>> symbols = new HashMap<>()
 
         for (FxResponse r in responses) {
-            String symbol = r.getSymbol()
+            String key = r.getSymbol()
 
-            if (!symbols.containsKey(symbol)) {
-                symbols.put(symbol, new ResponseGroup(responses, symbol))
+            if (symbols.containsKey(key)) {
+                symbols.get(key).add(r)
+            } else {
+                List<FxResponse> value =  new ArrayList<FxResponse>()
+                value.add(r)
+                symbols.put(key, value)
             }
         }
-        symbols
+
+        Map<String, ResponseGroup> responseGroups = new HashMap<>()
+
+        for (Map.Entry<String, List<FxResponse>> entry in symbols) {
+            responseGroups.put(entry.getKey(), new ResponseGroup(entry.getValue(), entry.getKey()))
+        }
+
+        responseGroups
 
     }
 

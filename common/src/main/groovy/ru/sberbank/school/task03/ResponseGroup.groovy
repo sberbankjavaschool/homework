@@ -11,7 +11,7 @@ class ResponseGroup {
     String maxAmount
     String mediumAmount
     String minAmount
-    int size
+    int countRequest
     List<FxResponse> responses
     BigDecimal bestBuyPrice
     BigDecimal bestBuyAmount
@@ -23,28 +23,20 @@ class ResponseGroup {
     BigDecimal worstSellAmount
 
 
-    ResponseGroup(List<FxResponse> allResponses, String symbol) {
+    ResponseGroup(List<FxResponse> responses, String symbol) {
         this.symbol = symbol
-
-        responses = new ArrayList<>()
-
-        for (FxResponse r in allResponses) {
-
-            if (r.getSymbol() == symbol)
-                responses.add(r)
-        }
-
-        maxAmount = calcMaxAmount().toString()
-        mediumAmount = calcMediumAmount().toString()
-        minAmount = calcMinAmount().toString()
-        size = responses.size()
+        this.responses = responses
+        countRequest = this.responses.size()
+        calcAmounts()
         calcBuy()
         calcSell()
     }
 
-    BigDecimal calcMaxAmount() {
+    void calcAmounts() {
 
         BigDecimal max = new BigDecimal(responses.get(0).getAmount())
+        BigDecimal min = new BigDecimal(responses.get(0).getAmount())
+        BigDecimal sum = 0
         BigDecimal current
 
         for (FxResponse r in responses) {
@@ -52,39 +44,19 @@ class ResponseGroup {
             if (max < current) {
                 max = current
             }
-        }
-
-        max
-    }
-
-    BigDecimal calcMinAmount() {
-
-        BigDecimal min = new BigDecimal(responses.get(0).getAmount())
-        BigDecimal current
-
-        for (FxResponse r in responses) {
-            current = new BigDecimal(r.getAmount())
             if (min > current) {
                 min = current
             }
-        }
+            sum += new BigDecimal(r.getAmount())
+                    }
 
-        min
+        maxAmount = max.toString()
+        mediumAmount = sum.divide(BigDecimal.valueOf(responses.size()), 2, RoundingMode.HALF_UP).toString()
+        minAmount = min.toString()
     }
 
-    BigDecimal calcMediumAmount() {
 
-        BigDecimal medium = 0
-
-        for (FxResponse r in responses) {
-
-            medium = medium.add(new BigDecimal(r.getAmount()))
-        }
-
-        medium.divide(BigDecimal.valueOf(responses.size()), 2, RoundingMode.HALF_UP)
-    }
-
-    BigDecimal calcBuy() {
+    void calcBuy() {
 
         for (FxResponse r in responses) {
             BigDecimal price = new BigDecimal(r.getPrice())
@@ -102,7 +74,7 @@ class ResponseGroup {
         }
     }
 
-    BigDecimal calcSell() {
+    void calcSell() {
 
         for (FxResponse r in responses) {
             BigDecimal price = new BigDecimal(r.getPrice())
