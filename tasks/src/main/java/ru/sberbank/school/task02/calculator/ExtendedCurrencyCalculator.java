@@ -37,7 +37,7 @@ public class ExtendedCurrencyCalculator extends CurrencyCalculator implements Ex
         BigDecimal priceInCurr;
         List<QuotePrice> finalQuoteList = new ArrayList<>();
         for (QuotePrice quotePrice: quotePrices) {
-            priceInCurr  = BigDecimal.ONE.divide(amountOfRequest, 10, RoundingMode.HALF_UP);
+            priceInCurr  = amountOfRequest.divide(quotePrice.getPrice(), 10, RoundingMode.HALF_UP);
             if (quotePrice.getAmount().compareTo(priceInCurr) > 0
             || quotePrice.getAmount().compareTo(BigDecimal.ZERO) < 0) {
                 finalQuoteList.add(quotePrice);
