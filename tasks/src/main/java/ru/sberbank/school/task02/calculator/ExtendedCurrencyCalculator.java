@@ -28,24 +28,24 @@ public class ExtendedCurrencyCalculator extends CurrencyCalculator implements Ex
         if (!quotePrice.isPresent()) {
             return Optional.empty();
         }
-        return Optional.of(BigDecimal.valueOf(1).divide(quotePrice.get().getPrice(),10, RoundingMode.HALF_UP));
+        return Optional.of(quotePrice.get().getPricePerPiece());
     }
 
     Optional<QuotePrice> findQuote(Comparator<QuotePrice> comparator,
                               List<QuotePrice> quotePrices,
                               BigDecimal amountOfRequest) {
-
+        BigDecimal priceInCurr = BigDecimal.ONE.divide(amountOfRequest, 10, RoundingMode.HALF_UP);
         List<QuotePrice> finalQuoteList = new ArrayList<>();
         for (QuotePrice quotePrice: quotePrices) {
-            if (quotePrice.getAmountInCurr().compareTo(amountOfRequest) > 0
-            || quotePrice.getAmountInCurr().compareTo(BigDecimal.ZERO) < 0) {
+            if (quotePrice.getAmount().compareTo(priceInCurr) > 0
+            || quotePrice.getAmount().compareTo(BigDecimal.ZERO) < 0) {
                 finalQuoteList.add(quotePrice);
-                System.out.println("Amount " + quotePrice.getAmountInCurr() + " price: " + quotePrice.getPrice());
+                System.out.println("add to list quote: " + quotePrice.toString());
             }
         }
         finalQuoteList.sort(comparator);
         if (finalQuoteList.size() > 0) {
-            System.out.println("Return quote " +  finalQuoteList.get(0).getAmountInCurr() + " with price " +  finalQuoteList.get(0).getPrice());
+            System.out.println("Return quote: " + finalQuoteList.get(0).toString());
             return Optional.of(finalQuoteList.get(0));
         } else {
             return Optional.empty();
@@ -63,18 +63,14 @@ public class ExtendedCurrencyCalculator extends CurrencyCalculator implements Ex
         System.out.println("Get amount " + amount);
         System.out.println("Get operation " + operation );
         System.out.println("Gett benificiary " + beneficiary);
+
         List<QuotePrice> quotePrices = new ArrayList<>();
-        BigDecimal realVolume;
         for (Quote quote: externalQuotesService.getQuotes(symbol)) {
-            System.out.println("get quote symbol " + quote.getSymbol().getSymbol());
             if (operation == ClientOperation.SELL) {
-                realVolume = quote.getVolumeSize();//.multiply(quote.getBid());
-                quotePrices.add(new QuotePrice(realVolume,quote.getBid()));
+                quotePrices.add(new QuotePrice(quote.getVolumeSize(),quote.getBid()));
             } else {
-                realVolume = quote.getVolumeSize();//.multiply(quote.getOffer());
-                quotePrices.add(new QuotePrice(realVolume,quote.getOffer()));
+                quotePrices.add(new QuotePrice(quote.getVolumeSize(),quote.getOffer()));
             }
-            System.out.println("Add quote with real volume " + realVolume);
         }
         return extendedOperation(operation, beneficiary, quotePrices, amount);
     }
