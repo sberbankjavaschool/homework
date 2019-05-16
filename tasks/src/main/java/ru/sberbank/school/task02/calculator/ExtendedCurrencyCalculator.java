@@ -34,9 +34,10 @@ public class ExtendedCurrencyCalculator extends CurrencyCalculator implements Ex
     Optional<QuotePrice> findQuote(Comparator<QuotePrice> comparator,
                               List<QuotePrice> quotePrices,
                               BigDecimal amountOfRequest) {
-        BigDecimal priceInCurr = BigDecimal.ONE.divide(amountOfRequest, 10, RoundingMode.HALF_UP);
+        BigDecimal priceInCurr;
         List<QuotePrice> finalQuoteList = new ArrayList<>();
         for (QuotePrice quotePrice: quotePrices) {
+            priceInCurr  = BigDecimal.ONE.divide(amountOfRequest, 10, RoundingMode.HALF_UP);
             if (quotePrice.getAmount().compareTo(priceInCurr) > 0
             || quotePrice.getAmount().compareTo(BigDecimal.ZERO) < 0) {
                 finalQuoteList.add(quotePrice);
