@@ -1,6 +1,6 @@
 package ru.sberbank.school.task02.exception;
 
-public class ConverterConfigurationException extends RuntimeException {
+public class ConverterConfigurationException extends FxConversionException {
 
     public ConverterConfigurationException(String message) {
         super(message);
