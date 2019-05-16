@@ -1,8 +1,8 @@
-package ru.sberbank.school.task02.exception;
+package ru.sberbank.school.task02;
 
 import lombok.NonNull;
-import ru.sberbank.school.task02.ExternalQuotesService;
-import ru.sberbank.school.task02.FxClientController;
+import ru.sberbank.school.task02.exception.FxConversionException;
+import ru.sberbank.school.task02.exception.WrongSymbolException;
 import ru.sberbank.school.task02.util.ClientOperation;
 import ru.sberbank.school.task02.util.FxRequest;
 import ru.sberbank.school.task02.util.FxResponse;
@@ -70,13 +70,11 @@ public class FxClientControllerImpl implements FxClientController {
     }
 
     public static ClientOperation getDirection(@NonNull String direction) {
-        ClientOperation operation = null;
         try {
-            operation = ClientOperation.valueOf(direction.toUpperCase());
+            return ClientOperation.valueOf(direction.toUpperCase());
         } catch (IllegalArgumentException e) {
             throw new FxConversionException("Неизвестная операция");
         }
-        return operation;
     }
 
     public static BigDecimal getAmount(@NonNull String amount) {
