@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import lombok.NonNull;
+import ru.sberbank.school.task02.exception.FxConversionException;
 import ru.sberbank.school.task02.util.ClientOperation;
 import ru.sberbank.school.task02.util.Quote;
 import ru.sberbank.school.task02.util.Symbol;
@@ -19,13 +20,19 @@ public class Converter implements FxConversionService {
     @Override
     public BigDecimal convert(@NonNull ClientOperation operation, @NonNull Symbol symbol, @NonNull BigDecimal amount) {
         if (amount.compareTo(BigDecimal.ZERO) <= 0) {
-            return null;
+            throw new IllegalArgumentException();
+        }
+        if (service == null) {
+            throw new FxConversionException("QuotesService is null");
         }
         List<Quote> quotes = service.getQuotes(symbol);
 
         Quote matchedQuote = getMatchedQuote(quotes, amount);
-
-        return getPrice(operation, matchedQuote);
+        BigDecimal result = getPrice(operation,matchedQuote);
+        if (result == null) {
+            throw new FxConversionException("Matched quote not found");
+        }
+        return result;
     }
 
     private BigDecimal getPrice(ClientOperation operation, Quote matchedQuote) {
@@ -36,7 +43,7 @@ public class Converter implements FxConversionService {
     }
 
     private Quote getMatchedQuote(List<Quote> quotes, BigDecimal amount) {
-        if (quotes.size() <= 0) {
+        if (quotes == null || quotes.size() <= 0) {
             return null;
         }
 
