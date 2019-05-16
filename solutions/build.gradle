@@ -21,7 +21,7 @@ javadoc {
 
 dependencies {
     implementation project(":tasks")
-    implementation project(":common") {
+    implementation (project(":common")){
         exclude module: 'tasks'
     }
 
