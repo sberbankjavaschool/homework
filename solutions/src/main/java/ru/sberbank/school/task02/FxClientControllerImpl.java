@@ -13,9 +13,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Date;
+import java.util.*;
 
 
 public class FxClientControllerImpl implements FxClientController {
@@ -77,13 +75,14 @@ public class FxClientControllerImpl implements FxClientController {
             throw new ConverterConfigurationException("Wrong amount value");
         }
 
+        Calendar date = new GregorianCalendar();
         BigDecimal price = converter.convert(operation, symbol, amount);
         if (price == null) {
             return new FxResponse(request.getSymbol(), "", request.getAmount(), LocalDate.now().toString(),
                     request.getDirection(), true);
         } else {
             return new FxResponse(request.getSymbol(), price.setScale(2, RoundingMode.HALF_UP).toString(),
-                    request.getAmount(), LocalDateTime.now().toString(), request.getDirection(), false);
+                    request.getAmount(), date.getTime().toString(), request.getDirection(), false);
         }
 
     }

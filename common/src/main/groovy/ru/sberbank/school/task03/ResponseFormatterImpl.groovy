@@ -20,34 +20,19 @@ class ResponseFormatterImpl implements ResponseFormatter {
     @Override
     String format(List<FxResponse> responses) {
         if (responses.isEmpty()) {
-            throw new IllegalArgumentException("List of responses is empty")
+            return "List of responses is empty"
         }
-        String formatResponse = createHeader(responses)
-        List<String> symbols = new ArrayList<>();
+        String formatResponse = "Отчет об изменении котировок для валют ${(responses*.getSymbol().unique())}"
         responses*.getSymbol().unique().each {
-            symbol -> symbols.add(symbol)
+            symbol -> formatResponse += createCurPairBlock(symbol, responses)
         }
-        for (String symbol : symbols) {
-            formatResponse += createCurPairBlock(symbol, responses);
-        }
-//        symbols*.each {
-//            symbol -> formatResponse += createCurPairBlock(symbol, responses);
-//        }
         formatResponse += createConclusion()
-        //println(formatResponse)
         return formatResponse
     }
 
-    String createHeader(List<FxResponse> responses) {
-        String currencies = responses*.getSymbol().unique();
-        String result = "Отчет об изменении котировок для валют ${(currencies)}"
-        result
-    }
-
     String createConclusion() {
-        String conclusion = """\nВсего запросов сделано: ${countCommonResponses}
+        """\nВсего запросов сделано: ${countCommonResponses}
 Больше всего запросов по: ${maxcountResponsesCurrency} (${maxcountResponses})"""
-        conclusion
     }
 
     String createCurPairBlock(String symbol, List<FxResponse> responses) {
