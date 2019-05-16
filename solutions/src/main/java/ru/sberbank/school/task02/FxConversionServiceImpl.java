@@ -1,8 +1,8 @@
-package ru.sberbank.school.task02.exception;
+package ru.sberbank.school.task02;
 
 import lombok.NonNull;
-import ru.sberbank.school.task02.ExternalQuotesService;
-import ru.sberbank.school.task02.FxConversionService;
+import ru.sberbank.school.task02.exception.ConverterConfigurationException;
+import ru.sberbank.school.task02.exception.FxConversionException;
 import ru.sberbank.school.task02.util.ClientOperation;
 import ru.sberbank.school.task02.util.Quote;
 import ru.sberbank.school.task02.util.Symbol;
@@ -21,7 +21,7 @@ public class FxConversionServiceImpl implements FxConversionService {
     public BigDecimal convert(@NonNull ClientOperation operation, @NonNull Symbol symbol,
                               @NonNull BigDecimal amount) {
 
-        if (!(amount.compareTo(BigDecimal.ZERO) > 0)) {
+        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("Amount меньше или равно нулю");
         }
 
