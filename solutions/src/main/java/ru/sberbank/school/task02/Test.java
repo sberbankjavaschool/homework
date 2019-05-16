@@ -6,7 +6,7 @@ import ru.sberbank.school.task02.util.Symbol;
 import ru.sberbank.school.task02.util.FxRequest;
 import ru.sberbank.school.task02.util.FxResponse;
 import ru.sberbank.school.task03.ResponseFormatter;
-import ru.sberbank.school.task03.ResponseFormatterImpl;
+//import ru.sberbank.school.task03.ResponseFormatterImpl;
 
 import java.math.BigDecimal;
 import java.util.Optional;
@@ -39,7 +39,7 @@ public class Test {
         FxClientController client = new FxClientControllerImpl(exCalc);
 
         List<FxResponse> responses = client.fetchResult(requests);
-        ResponseFormatter rformatter = new ResponseFormatterImpl();
-        System.out.println(rformatter.format(responses));
+        //ResponseFormatter rformatter = new ResponseFormatterImpl();
+        //System.out.println(rformatter.format(responses));
     }
 }
