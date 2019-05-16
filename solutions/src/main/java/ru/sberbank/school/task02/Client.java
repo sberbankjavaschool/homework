@@ -65,6 +65,8 @@ public class Client implements FxClientController {
 
         if (symbolStr.equalsIgnoreCase("USD/RUB")) {
             return Symbol.USD_RUB;
+        } else if (symbolStr.equalsIgnoreCase("RUB/USD")) {
+            return Symbol.RUB_USD;
         } else {
             throw new WrongSymbolException("Wrong symbol!");
         }
@@ -101,7 +103,7 @@ public class Client implements FxClientController {
 
     private String getDate() {
         Date date = new Date();
-        Format formatter = new SimpleDateFormat("yyyy-MM-dd");
+        Format formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
         return formatter.format(date);
     }
 }
