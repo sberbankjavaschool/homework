@@ -1,0 +1,33 @@
+plugins {
+    id 'groovy'
+    id 'java'
+    id 'checkstyle'
+}
+
+group 'ru.sberbank.school'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+compileJava {
+    options.encoding = 'UTF-8'
+}
+
+javadoc {
+    options.encoding = 'UTF-8'
+}
+
+dependencies {
+    implementation project(":tasks")
+
+    compileOnly 'org.projectlombok:lombok:1.18.6'
+    annotationProcessor 'org.projectlombok:lombok:1.18.6'
+    
+    compile 'org.codehaus.groovy:groovy-all:2.3.11'
+
+    testCompile 'org.projectlombok:lombok:1.18.6'
+    testAnnotationProcessor  'org.projectlombok:lombok:1.18.6'
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
