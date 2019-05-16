@@ -28,9 +28,10 @@ public class ExtendedCurrencyCalc extends CurrencyCalc implements ExtendedFxConv
     public Optional<BigDecimal> convertReversed(ClientOperation operation, Symbol symbol,
                                                 BigDecimal amount, double delta,
                                                 Beneficiary beneficiary) {
-        if (operation == null || symbol == null || amount == null || beneficiary == null) {
-            throw new NullPointerException("Один из переданных аргументов равен null");
-        }
+        Objects.requireNonNull(operation, "Переданный параметр operation не должен быть null");
+        Objects.requireNonNull(symbol, "Переданный параметр symbol не должен быть null");
+        Objects.requireNonNull(amount, "Переданный параметр amount не должен быть null");
+        Objects.requireNonNull(beneficiary, "Переданный параметр beneficiary не должен быть null");
 
         if (amount.compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("Объем должен быть больше 0");
@@ -117,9 +118,15 @@ public class ExtendedCurrencyCalc extends CurrencyCalc implements ExtendedFxConv
         BigDecimal addDelta = getCurrentAmount(amount.add(BigDecimal.valueOf(delta)), quote, operation);
         BigDecimal subDelta = getCurrentAmount(amount.subtract(BigDecimal.valueOf(delta)), quote, operation);
 
-        return (quote.isInfinity() || exactVolume.compareTo(quote.getVolumeSize()) < 0)
-                ? exactVolume : (addDelta.compareTo(quote.getVolumeSize()) < 0) ? addDelta
-                : (subDelta.compareTo(quote.getVolumeSize()) < 0) ? subDelta : null;
+        if (quote.isInfinity() || exactVolume.compareTo(quote.getVolumeSize()) < 0) {
+            return exactVolume;
+        } else if (addDelta.compareTo(quote.getVolumeSize()) < 0) {
+            return addDelta;
+        } else if (subDelta.compareTo(quote.getVolumeSize()) < 0) {
+            return subDelta;
+        } else {
+            return null;
+        }
     }
 
     /**

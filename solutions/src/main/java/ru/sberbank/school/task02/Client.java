@@ -7,7 +7,9 @@ import ru.sberbank.school.task02.exception.WrongSymbolException;
 import ru.sberbank.school.task02.util.*;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.math.MathContext;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class Client implements FxClientController {
@@ -41,11 +43,11 @@ public class Client implements FxClientController {
         ClientOperation operation = getOperation(requests);
 
         Optional<BigDecimal> response = reverseCalc.convertReversed(operation, symbol, amount, beneficiary);
-        boolean notFound = !response.isPresent();
-        String price = notFound ? null : String.valueOf(response.get());
+        String price = response.map(r -> r.round(new MathContext(3)).toString()).orElse(null);
 
-        return new FxResponse(symbol.getSymbol(), price, String.valueOf(amount), LocalDate.now().toString(),
-                operation.toString(), notFound);
+        return new FxResponse(symbol.getSymbol(), price, amount.toString(),
+                LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
+                operation.toString(), !response.isPresent());
 
     }
 
@@ -59,7 +61,7 @@ public class Client implements FxClientController {
 
     private BigDecimal getAmount(FxRequest request) {
         try {
-            return BigDecimal.valueOf(Long.parseLong(request.getAmount()));
+            return new BigDecimal(request.getAmount());
         } catch (NumberFormatException e) {
             throw new ConverterConfigurationException("Введен неверный объем", e);
         }
