@@ -77,15 +77,7 @@ class ResponseFormatterImpl implements ResponseFormatter {
                         nonprofitPrice = curPrice
                         nonprofitAmount = new BigDecimal(response.getAmount())
                     }
-//                } else {
-//                    if (curPrice > profitPrice) {
-//                        profitPrice = curPrice
-//                        profitAmount = new BigDecimal(response.getAmount())
-//                    } else if (curPrice < nonprofitPrice) {
-//                        nonprofitPrice = curPrice
-//                        nonprofitAmount = new BigDecimal(response.getAmount())
-//                    }
-//                }
+
 
                 result += "\n| ${response.getDate()} | ${curAmount} | ${response.getDirection()} | ${curPrice}"
 
