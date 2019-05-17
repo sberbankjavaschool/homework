@@ -12,6 +12,7 @@ public class ExtendedCurrencyCalculatorBuilder implements ServiceFactory {
     }
 
 
+
     @Override
     public ExtendedFxConversionService getExtendedFxConversionService(ExternalQuotesService externalQuotesService) {
         return new ExtendedCurrencyCalculator(externalQuotesService);
