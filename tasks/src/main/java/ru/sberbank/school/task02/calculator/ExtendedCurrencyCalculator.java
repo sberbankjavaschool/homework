@@ -20,8 +20,8 @@ public class ExtendedCurrencyCalculator extends CurrencyCalculator implements Ex
                                                    List<QuotePrice> quotePrices,
                                                    BigDecimal amountOfRequest) {
 
-
-        Optional<QuotePrice> quotePrice = findQuote(new CompareQuotesBenificiary(operation, beneficiary),
+//new CompareQuotesBenificiary(operation, beneficiary)
+        Optional<QuotePrice> quotePrice = findQuote(new CompareQutesExtend(),
                 quotePrices,
                 amountOfRequest);
 

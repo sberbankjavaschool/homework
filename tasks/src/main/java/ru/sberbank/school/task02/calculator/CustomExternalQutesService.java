@@ -19,9 +19,9 @@ public class CustomExternalQutesService implements ExternalQuotesService {
             throw new WrongSymbolException("Cross symbols are not supported!");
         }
         return asList(
-                buildQuote(symbol, BigDecimal.valueOf(1998.7370235101  ), 50, 60),
-                buildQuote(symbol, BigDecimal.valueOf(107757.3401732356  ), 53, 58),
-                buildQuote(symbol, BigDecimal.valueOf(4980509.2934284117 ), 54, 56),
+                buildQuote(symbol, BigDecimal.valueOf(4739.6387275476  ), 50, 60),
+                buildQuote(symbol, BigDecimal.valueOf(164154.6297156020  ), 53, 58),
+                buildQuote(symbol, BigDecimal.valueOf(7478646.7822561432 ), 54, 56),
                 buildQuote(symbol, BigDecimal.valueOf(-1), 49, 62)
            );
     }
