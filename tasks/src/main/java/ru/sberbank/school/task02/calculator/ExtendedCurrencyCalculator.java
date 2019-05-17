@@ -11,8 +11,11 @@ import java.util.*;
 import java.math.RoundingMode;
 
 public class ExtendedCurrencyCalculator extends CurrencyCalculator implements ExtendedFxConversionService {
+    private final ExternalQuotesService externalQuotesService;
+
     public ExtendedCurrencyCalculator(ExternalQuotesService externalQuotesService) {
         super(externalQuotesService);
+        this.externalQuotesService = externalQuotesService;
     }
 
     private Optional<BigDecimal> extendedOperation(ClientOperation operation,
