@@ -21,7 +21,9 @@ javadoc {
 
 dependencies {
     implementation project(":tasks")
-    implementation project(":common")
+    implementation (project(":common")) {
+        exclude group: "ru.sberbank.school", module: 'tasks'
+    }
 
     compileOnly 'org.projectlombok:lombok:1.18.6'
     annotationProcessor 'org.projectlombok:lombok:1.18.6'

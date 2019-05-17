@@ -1,16 +1,13 @@
 package ru.sberbank.school.task02;
 
+import ru.sberbank.school.task02.exception.ConverterConfigurationException;
 import ru.sberbank.school.task02.exception.FxConversionException;
-import ru.sberbank.school.task02.exception.WrongSymbolException;
 import ru.sberbank.school.task02.util.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 import static ru.sberbank.school.task02.FxRequestConverter.*;
 
@@ -33,16 +30,30 @@ public class Client implements FxClientController {
     }
 
     public static void main(String[] args) {
-        ServiceFactory serviceFactory = new ServiceFactoryImpl();
-        ExternalQuotesService externalQuotesService = new ExternalQuotesServiceDemo();
-        FxConversionService fxConversionService = serviceFactory.getFxConversionService(externalQuotesService);
+        try {
+            if (args.length < 3) {
+                throw new ConverterConfigurationException("Not enough input parameters");
+            }
 
-        Client client = new Client(fxConversionService);
-        FxRequest request = getFxRequestFromArgs(args);
-        FxResponse response = client.fetchResult(request);
-        System.out.println(request);
-        System.out.println(client.beneficiary);
-        System.out.println(response);
+            // declaring args from intellij "edit configuration" -> "program arguments" -> "USD/RUB BUY 1000"
+            Map<String, String> params = new HashMap<>();
+            params.put("symbol", args[0]);
+            params.put("direction", args[1]);
+            params.put("amount", args[2]);
+
+            ServiceFactory serviceFactory = new ServiceFactoryImpl();
+            ExternalQuotesService externalQuotesService = new ExternalQuotesServiceDemo();
+            FxConversionService fxConversionService = serviceFactory.getFxConversionService(externalQuotesService);
+
+            Client client = new Client(fxConversionService);
+            FxRequest request = new FxRequest(params.get("symbol"), params.get("direction"), params.get("amount"));
+            FxResponse response = client.fetchResult(request);
+            System.out.println(request);
+            System.out.println(client.beneficiary);
+            System.out.println(response);
+        } catch (IllegalArgumentException | FxConversionException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     @Override
@@ -64,7 +75,7 @@ public class Client implements FxClientController {
                 getSymbol(requests), amount));
 
         String dateTime = LocalDateTime.now().format(DATE_TIME_FORMATTER);
-        boolean isNotFound = findPrice.isPresent() ? true : false;
+        boolean isNotFound = !findPrice.isPresent();
         String foundedPrice = findPrice.isPresent()
                 ? findPrice.get().setScale(2, BigDecimal.ROUND_HALF_UP).toString() : "0";
 
@@ -74,48 +85,6 @@ public class Client implements FxClientController {
                 dateTime,
                 requests.getDirection(),
                 isNotFound);
-
-    }
-
-    private static FxRequest getFxRequestFromArgs(String[] args) {
-        String symbol;
-        String direction;
-        String amount;
-
-        if (args[0].toUpperCase().equals("USD/RUB")) {
-            symbol = "USD/RUB";
-        } else if (args[0].toUpperCase().equals("RUB/USD")) {
-            symbol = "RUB/USD";
-        } else {
-            throw new WrongSymbolException("Wrong input argument.. Symbol is: "
-                    + args[0] + " expected \"USD/RUB\" or \"RUB/USD\"");
-        }
-
-        if (args[1] == null) {
-            throw new NullPointerException("Wrong input argument.. Client operation is: NULL"
-                    + "expected \"BUY\" or \"SELL\"");
-        } else if (args[1].toUpperCase().equals("BUY")) {
-            direction = "BUY";
-        } else if (args[1].equals("SELL")) {
-            direction = "SELL";
-        } else {
-            throw new FxConversionException("Wrong input of Client operation.. operation is: "
-                    + args[1] + " expected \"BUY\" or \"SELL\"");
-        }
-
-        if (args[2] == null) {
-            throw new NullPointerException("Wrong input argument.. amount of money for operation"
-                    + " is: NULL  expected some number");
-        } else {
-            try {
-                amount = new BigDecimal(args[2]).toString();
-            } catch (NumberFormatException e) {
-                throw  new IllegalArgumentException("Wrong input amount of money: "
-                        + args[1] + " expected some number");
-            }
-        }
-
-        return new FxRequest(symbol, direction, amount);
     }
 
     private static Beneficiary getBenificiary() {
