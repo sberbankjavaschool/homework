@@ -12,7 +12,7 @@ import java.util.List;
 import lombok.NonNull;
 
 public class CurrencyCalculator implements FxConversionService {
-    private final ExternalQuotesService externalQuotesService;
+    final ExternalQuotesService externalQuotesService;
 
     public CurrencyCalculator(ExternalQuotesService externalQuotesService) {
         this.externalQuotesService = externalQuotesService;
