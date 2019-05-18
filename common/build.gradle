@@ -1,0 +1,25 @@
+plugins {
+    id 'groovy'
+    id 'java'
+    id 'checkstyle'
+}
+
+group 'ru.sberbank.school'
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+compileJava {
+    options.encoding = 'UTF-8'
+}
+
+javadoc {
+    options.encoding = 'UTF-8'
+}
+
+dependencies {
+    implementation project(":tasks")
+    implementation 'org.codehaus.groovy:groovy-all:2.5.6'
+}
