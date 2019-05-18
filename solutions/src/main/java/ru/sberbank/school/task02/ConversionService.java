@@ -19,17 +19,18 @@ public class ConversionService implements FxConversionService {
     @Override
     public BigDecimal convert(ClientOperation operation, Symbol symbol, BigDecimal amount) {
         try {
-            if(operation == null || symbol == null || amount.compareTo(BigDecimal.ZERO) < 0 || amount == null)
+            if (operation == null || symbol == null || amount.compareTo(BigDecimal.ZERO) < 0 || amount == null) {
                 throw new IllegalArgumentException();
+            }
         }
-        catch (IllegalArgumentException ex){
+        catch (IllegalArgumentException ex) {
             //System.out.println("incorrect data entered");
             return null;
         }
-        if(amount.compareTo(BigDecimal.ZERO) == 0)
+        if (amount.compareTo(BigDecimal.ZERO) == 0) {
             return BigDecimal.ZERO;
+        }
         Quote quote = getQuote(symbol, amount);
-
         return getPrice(operation, quote);
     }
 
@@ -43,34 +44,37 @@ public class ConversionService implements FxConversionService {
         Quote infQuote = null;
         int i;
         for (i = 0; i < quotes.size(); i++) {
-            if(quotes.get(i).isInfinity()) {
+            if (quotes.get(i).isInfinity()) {
                 infQuote = quotes.get(i);
                 continue;
             }
-            if (amount.compareTo(quotes.get(i).getVolumeSize()) > 0) {
+            if (amount.compareTo(quotes.get(i).getVolumeSize()) >= 0) {
                 continue;
             } else {
                 nearQuote = quotes.get(i);
+                i++;
                 break;
             }
         }
         for (int j = i; j < quotes.size(); j++) {
-            if(quotes.get(j).isInfinity()) {
+            if (quotes.get(j).isInfinity()) {
                 infQuote = quotes.get(j);
                 continue;
             }
             if (amount.compareTo(quotes.get(j).getVolumeSize()) >= 0) {
                 continue;
             } else {
-                if(nearQuote.getVolume().getVolume().compareTo(quotes.get(j).getVolumeSize()) > 0){
+                if (nearQuote.getVolumeSize().compareTo(quotes.get(j).getVolumeSize()) > 0) {
                     nearQuote = quotes.get(j);
                 }
             }
         }
-        if(nearQuote == null)
+        if (nearQuote == null) {
             return infQuote;
-        else
+        }
+        else {
             return nearQuote;
+        }
     }
 
     private BigDecimal getPrice(ClientOperation operation, Quote quote){
@@ -79,7 +83,8 @@ public class ConversionService implements FxConversionService {
                 return quote.getOffer();
             case SELL:
                 return quote.getBid();
+            default:
+                return null;
         }
-        return null;
     }
 }
