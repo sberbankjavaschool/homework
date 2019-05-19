@@ -56,8 +56,8 @@ public class FxConversionServiceImpl implements FxConversionService {
             }
         }
 
-            if (traceVolume == list.size())
-                upperVolume = BigDecimal.valueOf(-1);
+        if (traceVolume == list.size())
+            upperVolume = BigDecimal.valueOf(-1);
 
         return upperVolume;
     }
