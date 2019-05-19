@@ -34,7 +34,9 @@ public class FxConversionServiceImpl implements ExtendedFxConversionService {
     }
 
     @Override
-    public BigDecimal convert(@NonNull ClientOperation operation, Symbol symbol, BigDecimal amount) {
+    public BigDecimal convert(@NonNull ClientOperation operation,
+                              @NonNull Symbol symbol,
+                              @NonNull BigDecimal amount) {
         if (amount.equals(BigDecimal.ZERO)) {
             throw new IllegalArgumentException("Amount is equal to ZERO");
         }
@@ -76,9 +78,9 @@ public class FxConversionServiceImpl implements ExtendedFxConversionService {
      */
     @Override
     public Optional<BigDecimal> convertReversed(@NonNull ClientOperation operation,
-                                         Symbol symbol,
-                                         BigDecimal amount,
-                                         Beneficiary beneficiary) {
+                                         @NonNull Symbol symbol,
+                                         @NonNull BigDecimal amount,
+                                         @NonNull Beneficiary beneficiary) {
         if (amount.compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("Wrong amount");
         }

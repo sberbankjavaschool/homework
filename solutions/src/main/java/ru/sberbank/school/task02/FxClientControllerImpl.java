@@ -42,42 +42,13 @@ public class FxClientControllerImpl implements FxClientController {
 
     @Override
     public FxResponse fetchResult(@NonNull FxRequest request) {
-        ClientOperation operation;
-        Symbol symbol;
-        BigDecimal amount;
+        if (request.toString().equals("")) {
+            throw new IllegalArgumentException("Request is empty");
+        }
 
-        operation = FxRequestCheck.getOperation(request);
-        symbol = FxRequestCheck.getSymbol(request);
-        amount = FxRequestCheck.getAmount(request);
-//        if (request.getDirection() == null) {
-//            throw new ConverterConfigurationException("Operation is null");
-//        } else if (FxRequestCheck.getOperation(request).equals(ClientOperation.BUY)) {
-//            operation = ClientOperation.BUY;
-//        } else if (FxRequestCheck.getOperation(request).equals(ClientOperation.SELL)) {
-//            operation = ClientOperation.SELL;
-//        } else {
-//            throw new ConverterConfigurationException("Wrong operation");
-//        }
-//
-//        if (request.getSymbol() == null) {
-//            throw new ConverterConfigurationException("Symbol is null");
-//        } else if (FxRequestCheck.getSymbol(request).equals(Symbol.USD_RUB)) {
-//            symbol = Symbol.USD_RUB;
-//        } else if (FxRequestCheck.getSymbol(request).equals(Symbol.RUB_USD)) {
-//            symbol = Symbol.RUB_USD;
-//        } else {
-//            throw new WrongSymbolException("Wrong symbol");
-//        }
-//
-//        if (request.getAmount() == null) {
-//            throw new ConverterConfigurationException("Amount is null");
-//        }
-//        try {
-//            amount = BigDecimal.valueOf(Double.valueOf(request.getAmount()));
-//        } catch (NumberFormatException ex) {
-//            throw new ConverterConfigurationException("Wrong amount value");
-//        }
-
+        ClientOperation operation = FxRequestCheck.getOperation(request);
+        Symbol symbol = FxRequestCheck.getSymbol(request);
+        BigDecimal amount = FxRequestCheck.getAmount(request);
         Calendar date = new GregorianCalendar();
         BigDecimal price = converter.convert(operation, symbol, amount);
         if (price == null) {
