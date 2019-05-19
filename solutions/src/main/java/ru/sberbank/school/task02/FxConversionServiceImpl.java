@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public class FxConversionServiceImpl implements FxConversionService {
-    private ExternalQuotesService externalQuotesService;
+    protected ExternalQuotesService externalQuotesService;
 
     public FxConversionServiceImpl(@NonNull ExternalQuotesService externalQuotesService) {
         this.externalQuotesService = externalQuotesService;
