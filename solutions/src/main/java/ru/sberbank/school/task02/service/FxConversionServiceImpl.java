@@ -37,6 +37,7 @@ public class FxConversionServiceImpl implements FxConversionService {
     }
 
     private BigDecimal getUpperVolume(Symbol symbol, BigDecimal amount){
+
         BigDecimal max = BigDecimal.ZERO;
         List<Quote> list = externalQuotesService.getQuotes(symbol);
 
