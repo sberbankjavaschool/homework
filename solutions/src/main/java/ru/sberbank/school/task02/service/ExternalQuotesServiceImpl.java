@@ -24,7 +24,7 @@ public class ExternalQuotesServiceImpl implements ExternalQuotesService {
                 buildQuote(symbol, 1000, 6),
                 buildQuote(symbol, 10_000, 5),
                 buildQuote(symbol, 400, 4),
-                buildQuote(symbol, 1_000_000, 6),
+                buildQuote(symbol, 1_000_001, 6),
                 buildQuote(symbol, 700, 8)
         );
     }
