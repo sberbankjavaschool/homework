@@ -26,7 +26,7 @@ public class FxClientControllerImpl implements FxClientController {
         }
         FxRequest request = new FxRequest(args[0], args[1], args[2]);
 //    public static void main(String[] args) {
-//        FxRequest request = new FxRequest("usd/rub", "buy", "1000");
+//        FxRequest request = new FxRequest("usd/rub", "buy","1000");
         ServiceFactory factory = new ServiceFactoryImpl();
         FxConversionService exCalc = factory.getFxConversionService(new ExternalQuotesServiceImpl());
         FxClientController controller = new FxClientControllerImpl(exCalc);
