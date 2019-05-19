@@ -88,41 +88,19 @@ public class FxConversionServiceImpl implements ExtendedFxConversionService {
         if (amount.compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("Wrong amount");
         }
-        List<Quote> rightQuotes = createRightQuotes(exQuotes.getQuotes(symbol), amount, symbol, operation);
+        List<Quote> rightQuotes = createRightQuotes(exQuotes.getQuotes(symbol), amount, operation);
         if (rightQuotes.isEmpty()) {
             return Optional.empty();
         }
-        BigDecimal revCur = operation == ClientOperation.BUY ?
-                rightQuotes.iterator().next().getOffer() : rightQuotes.iterator().next().getBid();
+        BigDecimal revCur = operation == ClientOperation.BUY
+                ? rightQuotes.iterator().next().getOffer() : rightQuotes.iterator().next().getBid();
         if (rightQuotes.size() > 1) {
-            revCur = BeneficiaryDepend(beneficiary, rightQuotes, revCur, operation);
+            revCur = beneficiaryDepend(beneficiary, rightQuotes, revCur, operation);
         }
         return Optional.ofNullable(BigDecimal.ONE.divide(revCur,10,RoundingMode.HALF_UP));
     }
 
-    protected BigDecimal BeneficiaryDepend(Beneficiary beneficiary, List<Quote> quotes,
-                                           BigDecimal price, ClientOperation operation) {
-        for (Quote q : quotes) {
-            BigDecimal curPrice = operation == ClientOperation.BUY ? q.getOffer() : q.getBid();
-
-            if (curPrice.compareTo(price) > 0) {
-                if (beneficiary == Beneficiary.BANK && operation == ClientOperation.BUY
-                        || beneficiary == Beneficiary.CLIENT && operation == ClientOperation.SELL) {
-                    price = curPrice;
-                }
-            } else {
-                if (beneficiary == Beneficiary.BANK && operation == ClientOperation.SELL
-                        || beneficiary == Beneficiary.CLIENT && operation == ClientOperation.BUY) {
-                    price = curPrice;
-                }
-            }
-        }
-
-        return price;
-    }
-
-    protected List<Quote> createRightQuotes(List<Quote> quotes, BigDecimal amount,
-                                            Symbol symbol, ClientOperation operation) {
+    protected List<Quote> createRightQuotes(List<Quote> quotes, BigDecimal amount, ClientOperation operation) {
         List<Quote> rightQuotes = new ArrayList<>();
         for (Quote q : quotes) {
             BigDecimal curCur = operation == ClientOperation.BUY ? q.getOffer() : q.getBid();
@@ -136,6 +114,27 @@ public class FxConversionServiceImpl implements ExtendedFxConversionService {
         }
         return rightQuotes;
     }
+
+
+    protected BigDecimal beneficiaryDepend(Beneficiary beneficiary, List<Quote> quotes,
+                                           BigDecimal price, ClientOperation operation) {
+        for (Quote q : quotes) {
+            BigDecimal curPrice = operation == ClientOperation.BUY ? q.getOffer() : q.getBid();
+            if (curPrice.compareTo(price) > 0) {
+                if (beneficiary == Beneficiary.BANK && operation == ClientOperation.BUY
+                        || beneficiary == Beneficiary.CLIENT && operation == ClientOperation.SELL) {
+                    price = curPrice;
+                }
+            } else {
+                if (beneficiary == Beneficiary.BANK && operation == ClientOperation.SELL
+                        || beneficiary == Beneficiary.CLIENT && operation == ClientOperation.BUY) {
+                    price = curPrice;
+                }
+            }
+        }
+        return price;
+    }
+
 
 }
 

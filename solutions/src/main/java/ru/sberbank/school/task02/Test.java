@@ -23,8 +23,8 @@ public class Test {
         System.out.println(offer);
 
         ExtendedFxConversionService exCalc2 = factory.getExtendedFxConversionService(quotesService);
-        Optional<BigDecimal> revOffer = exCalc2.convertReversed(ClientOperation.SELL,
-                Symbol.USD_RUB, BigDecimal.valueOf(85_000), Beneficiary.CLIENT);
+        Optional<BigDecimal> revOffer = exCalc2.convertReversed(ClientOperation.BUY,
+                Symbol.USD_RUB, BigDecimal.valueOf(288844.0066), Beneficiary.CLIENT);
         System.out.println(revOffer);
 
 //        List<FxRequest> requests = new ArrayList<>();
