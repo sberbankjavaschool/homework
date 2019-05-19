@@ -51,7 +51,9 @@ public class ExtendedConverter extends Converter implements ExtendedFxConversion
 
     }
 
-    private BigDecimal choicePriceByBeneficiary(List<Quote> quotes, Beneficiary beneficiary, ClientOperation operation) {
+    private BigDecimal choicePriceByBeneficiary(List<Quote> quotes,
+                                                Beneficiary beneficiary,
+                                                ClientOperation operation) {
         BigDecimal priceResult = getPrice(operation, quotes.get(0));
 
         if (quotes.size() == 1) {
