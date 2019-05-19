@@ -14,8 +14,8 @@ public class Main {
 
 
         System.out.println(serviceFactory
-                        .getFxConversionService(
-                                new ExternalQuotesServiceImpl())
-                        .convert(ClientOperation.BUY, Symbol.USD_RUB, BigDecimal.valueOf(1000000002)));
+                            .getFxConversionService(
+                                    new ExternalQuotesServiceImpl())
+                            .convert(ClientOperation.BUY, Symbol.USD_RUB, BigDecimal.valueOf(1000000002)));
     }
 }
