@@ -12,7 +12,6 @@ import ru.sberbank.school.task02.exception.ConverterConfigurationException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.*;
 
 
@@ -21,12 +20,13 @@ public class FxClientControllerImpl implements FxClientController {
     private FxConversionService converter;
 
     public static void main(@NonNull String[] args) {
-    //public static void main(String[] args) {
-        // FxRequest request = new FxRequest("usd/rub", "buy", "1000");
+
         if (args.length != 3) {
             throw new ConverterConfigurationException("Wrong arguments amount");
         }
         FxRequest request = new FxRequest(args[0], args[1], args[2]);
+//    public static void main(String[] args) {
+//        FxRequest request = new FxRequest("usd/rub", "buy", "1000");
         ServiceFactory factory = new ServiceFactoryImpl();
         FxConversionService exCalc = factory.getFxConversionService(new ExternalQuotesServiceImpl());
         FxClientController controller = new FxClientControllerImpl(exCalc);
@@ -46,34 +46,37 @@ public class FxClientControllerImpl implements FxClientController {
         Symbol symbol;
         BigDecimal amount;
 
-        if (request.getDirection() == null) {
-            throw new ConverterConfigurationException("Operation is null");
-        } else if (FxRequestCheck.getOperation(request).equals(ClientOperation.BUY)) {
-            operation = ClientOperation.BUY;
-        } else if (FxRequestCheck.getOperation(request).equals(ClientOperation.SELL)) {
-            operation = ClientOperation.SELL;
-        } else {
-            throw new ConverterConfigurationException("Wrong operation");
-        }
-
-        if (request.getSymbol() == null) {
-            throw new ConverterConfigurationException("Symbol is null");
-        } else if (FxRequestCheck.getSymbol(request).equals(Symbol.USD_RUB)) {
-            symbol = Symbol.USD_RUB;
-        } else if (FxRequestCheck.getSymbol(request).equals(Symbol.RUB_USD)) {
-            symbol = Symbol.RUB_USD;
-        } else {
-            throw new WrongSymbolException("Wrong symbol");
-        }
-
-        if (request.getAmount() == null) {
-            throw new ConverterConfigurationException("Amount is null");
-        }
-        try {
-            amount = BigDecimal.valueOf(Double.valueOf(request.getAmount()));
-        } catch (NumberFormatException ex) {
-            throw new ConverterConfigurationException("Wrong amount value");
-        }
+        operation = FxRequestCheck.getOperation(request);
+        symbol = FxRequestCheck.getSymbol(request);
+        amount = FxRequestCheck.getAmount(request);
+//        if (request.getDirection() == null) {
+//            throw new ConverterConfigurationException("Operation is null");
+//        } else if (FxRequestCheck.getOperation(request).equals(ClientOperation.BUY)) {
+//            operation = ClientOperation.BUY;
+//        } else if (FxRequestCheck.getOperation(request).equals(ClientOperation.SELL)) {
+//            operation = ClientOperation.SELL;
+//        } else {
+//            throw new ConverterConfigurationException("Wrong operation");
+//        }
+//
+//        if (request.getSymbol() == null) {
+//            throw new ConverterConfigurationException("Symbol is null");
+//        } else if (FxRequestCheck.getSymbol(request).equals(Symbol.USD_RUB)) {
+//            symbol = Symbol.USD_RUB;
+//        } else if (FxRequestCheck.getSymbol(request).equals(Symbol.RUB_USD)) {
+//            symbol = Symbol.RUB_USD;
+//        } else {
+//            throw new WrongSymbolException("Wrong symbol");
+//        }
+//
+//        if (request.getAmount() == null) {
+//            throw new ConverterConfigurationException("Amount is null");
+//        }
+//        try {
+//            amount = BigDecimal.valueOf(Double.valueOf(request.getAmount()));
+//        } catch (NumberFormatException ex) {
+//            throw new ConverterConfigurationException("Wrong amount value");
+//        }
 
         Calendar date = new GregorianCalendar();
         BigDecimal price = converter.convert(operation, symbol, amount);
