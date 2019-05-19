@@ -22,9 +22,12 @@ public class ExternalQuotesServiceImpl implements ExternalQuotesService {
         List<Quote> quotes = asList(
                 buildQuote(symbol, 100, 10),
                 buildQuote(symbol, 500, 8),
+                buildQuote(symbol, 100, 12),
                 buildQuote(symbol, 1000, 6),
                 buildQuote(symbol, 10_000, 5),
                 buildQuote(symbol, 100_000, 4),
+                buildQuote(symbol, 1_000, 4),
+                buildQuote(symbol, 100_000, 3),
                 buildQuote(symbol, 1_000_000, 6),
                 buildQuote(symbol, -1, 8)
         );

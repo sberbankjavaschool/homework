@@ -20,25 +20,26 @@ public class Test {
         ExternalQuotesService quotesService = new ExternalQuotesServiceImpl();
         FxConversionService exCalc = factory.getFxConversionService(quotesService);
         BigDecimal offer = exCalc.convert(ClientOperation.BUY, Symbol.USD_RUB, BigDecimal.valueOf(104.7559849936236));
+        System.out.println(offer);
 
         ExtendedFxConversionService exCalc2 = factory.getExtendedFxConversionService(quotesService);
         Optional<BigDecimal> revOffer = exCalc2.convertReversed(ClientOperation.SELL,
-                Symbol.USD_RUB, BigDecimal.valueOf(1000), Beneficiary.BANK);
+                Symbol.USD_RUB, BigDecimal.valueOf(85_000), Beneficiary.CLIENT);
         System.out.println(revOffer);
 
-        List<FxRequest> requests = new ArrayList<>();
-        requests.add(new FxRequest(Symbol.USD_RUB.getSymbol(), ClientOperation.BUY.name(),
-                new BigDecimal(345_000_000).toString()));
-        requests.add(new FxRequest(Symbol.USD_RUB.getSymbol(), ClientOperation.SELL.name(),
-                new BigDecimal(91_000).toString()));
-        requests.add(new FxRequest(Symbol.USD_RUB.getSymbol(), ClientOperation.BUY.name(),
-                new BigDecimal(1_000).toString()));
-        requests.add(new FxRequest(Symbol.USD_RUB.getSymbol(), ClientOperation.SELL.name(),
-                new BigDecimal(500).toString()));
-
-        FxClientController client = new FxClientControllerImpl(exCalc);
-
-        List<FxResponse> responses = client.fetchResult(requests);
+//        List<FxRequest> requests = new ArrayList<>();
+//        requests.add(new FxRequest(Symbol.USD_RUB.getSymbol(), ClientOperation.BUY.name(),
+//                new BigDecimal(345_000_000).toString()));
+//        requests.add(new FxRequest(Symbol.USD_RUB.getSymbol(), ClientOperation.SELL.name(),
+//                new BigDecimal(91_000).toString()));
+//        requests.add(new FxRequest(Symbol.USD_RUB.getSymbol(), ClientOperation.BUY.name(),
+//                new BigDecimal(1_000).toString()));
+//        requests.add(new FxRequest(Symbol.USD_RUB.getSymbol(), ClientOperation.SELL.name(),
+//                new BigDecimal(500).toString()));
+//
+//        FxClientController client = new FxClientControllerImpl(exCalc);
+//
+//        List<FxResponse> responses = client.fetchResult(requests);
         //ResponseFormatter rformatter = new ResponseFormatterImpl();
         //System.out.println(rformatter.format(responses));
     }

@@ -1,10 +1,10 @@
 package ru.sberbank.school.task02;
 
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
 import java.util.Optional;
+import java.util.ArrayList;
 
 import lombok.NonNull;
 import ru.sberbank.school.task02.util.Beneficiary;
@@ -45,10 +45,18 @@ public class FxConversionServiceImpl implements ExtendedFxConversionService {
         if (quotes == null || quotes.isEmpty()) {
             throw new FxConversionException("No quotes found");
         }
+        Quote exRate = findRightQuote(quotes, amount);
+        if (exRate == null || exRate.getOffer() == null || exRate.getBid() == null) {
+            throw new FxConversionException("no rates for this amount");
+        }
+        return (operation == ClientOperation.BUY ? exRate.getOffer() : exRate.getBid());
+
+    }
+
+    protected Quote findRightQuote(List<Quote> quotes, BigDecimal amount) {
         Quote exRate = null;
 
         for (Quote q : quotes) {
-
             if (exRate == null && q.isInfinity()) {
                 exRate = q;
             } else if (amount.compareTo(q.getVolumeSize()) < 0) {
@@ -57,12 +65,7 @@ public class FxConversionServiceImpl implements ExtendedFxConversionService {
                 }
             }
         }
-
-        if (exRate == null || exRate.getOffer() == null || exRate.getBid() == null) {
-            throw new FxConversionException("no rates for this amount");
-        }
-        return (operation == ClientOperation.BUY ? exRate.getOffer() : exRate.getBid());
-
+        return exRate;
     }
 
 
@@ -76,24 +79,62 @@ public class FxConversionServiceImpl implements ExtendedFxConversionService {
      * @param beneficiary В чью пользу осуществляется округление
      * @return Цена для указанного объема
      */
+
     @Override
     public Optional<BigDecimal> convertReversed(@NonNull ClientOperation operation,
-                                         @NonNull Symbol symbol,
-                                         @NonNull BigDecimal amount,
-                                         @NonNull Beneficiary beneficiary) {
+                                                @NonNull Symbol symbol,
+                                                @NonNull BigDecimal amount,
+                                                @NonNull Beneficiary beneficiary) {
         if (amount.compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("Wrong amount");
         }
+        List<Quote> rightQuotes = createRightQuotes(exQuotes.getQuotes(symbol), amount, symbol, operation);
+        if (rightQuotes.isEmpty()) {
+            return Optional.empty();
+        }
+        BigDecimal revCur = operation == ClientOperation.BUY ?
+                rightQuotes.iterator().next().getOffer() : rightQuotes.iterator().next().getBid();
+        if (rightQuotes.size() > 1) {
+            revCur = BeneficiaryDepend(beneficiary, rightQuotes, revCur, operation);
+        }
+        return Optional.ofNullable(BigDecimal.ONE.divide(revCur,10,RoundingMode.HALF_UP));
+    }
 
-        ClientOperation revertedOperation = operation == ClientOperation.BUY ? ClientOperation.SELL
-                : ClientOperation.BUY;
-        BigDecimal rightCur = convert(revertedOperation, symbol, amount);
-        BigDecimal rightAmount = amount.divide(rightCur, 10, RoundingMode.HALF_UP);
-        BigDecimal revCur = convert(revertedOperation, symbol, rightAmount);
+    protected BigDecimal BeneficiaryDepend(Beneficiary beneficiary, List<Quote> quotes,
+                                           BigDecimal price, ClientOperation operation) {
+        for (Quote q : quotes) {
+            BigDecimal curPrice = operation == ClientOperation.BUY ? q.getOffer() : q.getBid();
 
-        BigDecimal price = BigDecimal.ONE.divide(revCur, 10, RoundingMode.HALF_UP);
-        return Optional.ofNullable(price);
+            if (curPrice.compareTo(price) > 0) {
+                if (beneficiary == Beneficiary.BANK && operation == ClientOperation.BUY
+                        || beneficiary == Beneficiary.CLIENT && operation == ClientOperation.SELL) {
+                    price = curPrice;
+                }
+            } else {
+                if (beneficiary == Beneficiary.BANK && operation == ClientOperation.SELL
+                        || beneficiary == Beneficiary.CLIENT && operation == ClientOperation.BUY) {
+                    price = curPrice;
+                }
+            }
+        }
 
+        return price;
+    }
+
+    protected List<Quote> createRightQuotes(List<Quote> quotes, BigDecimal amount,
+                                            Symbol symbol, ClientOperation operation) {
+        List<Quote> rightQuotes = new ArrayList<>();
+        for (Quote q : quotes) {
+            BigDecimal curCur = operation == ClientOperation.BUY ? q.getOffer() : q.getBid();
+            BigDecimal curAmount = amount.divide(curCur, 10, RoundingMode.HALF_UP);
+            if ( q.getVolumeSize().compareTo(curAmount) > 0) {
+                Quote rightQuote = findRightQuote(quotes, curAmount);
+                if (q.getVolumeSize().compareTo(rightQuote.getVolumeSize()) == 0) {
+                    rightQuotes.add(q);
+                }
+            }
+        }
+        return rightQuotes;
     }
 
 }
