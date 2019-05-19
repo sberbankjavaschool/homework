@@ -52,7 +52,7 @@ public class ExtendedCurrencyCalc extends CurrencyCalculator implements Extended
     @Override
     public Optional<BigDecimal> convertReversed(ClientOperation operation, Symbol symbol, BigDecimal amount,
                                                 double delta, Beneficiary beneficiary) {
-        throw new UnsupportedOperationException("Not implemented yet:(");
+        throw new UnsupportedOperationException("Hasn't implemented yet");
     }
 
     private BigDecimal getAmount(ClientOperation operation, BigDecimal amount, Quote quote) {
