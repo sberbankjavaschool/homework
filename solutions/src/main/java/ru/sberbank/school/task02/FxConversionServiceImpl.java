@@ -37,8 +37,8 @@ public class FxConversionServiceImpl implements ExtendedFxConversionService {
     public BigDecimal convert(@NonNull ClientOperation operation,
                               @NonNull Symbol symbol,
                               @NonNull BigDecimal amount) {
-        if (amount.equals(BigDecimal.ZERO)) {
-            throw new IllegalArgumentException("Amount is equal to ZERO");
+        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Amount is equal or less ZERO");
         }
 
         List<Quote> quotes = exQuotes.getQuotes(symbol);

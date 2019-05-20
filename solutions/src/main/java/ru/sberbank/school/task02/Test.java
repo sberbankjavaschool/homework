@@ -19,12 +19,12 @@ public class Test {
         ServiceFactory factory = new ServiceFactoryImpl();
         ExternalQuotesService quotesService = new ExternalQuotesServiceImpl();
         FxConversionService exCalc = factory.getFxConversionService(quotesService);
-        BigDecimal offer = exCalc.convert(ClientOperation.BUY, Symbol.USD_RUB, BigDecimal.valueOf(104.7559849936236));
+        BigDecimal offer = exCalc.convert(ClientOperation.BUY, Symbol.USD_RUB, BigDecimal.valueOf(0));
         System.out.println(offer);
 
         ExtendedFxConversionService exCalc2 = factory.getExtendedFxConversionService(quotesService);
-        Optional<BigDecimal> revOffer = exCalc2.convertReversed(ClientOperation.BUY,
-                Symbol.USD_RUB, BigDecimal.valueOf(288844.0066), Beneficiary.CLIENT);
+        Optional<BigDecimal> revOffer = exCalc2.convertReversed(ClientOperation.SELL,
+                Symbol.USD_RUB, BigDecimal.valueOf(87699.4429), Beneficiary.CLIENT);
         System.out.println(revOffer);
 
 //        List<FxRequest> requests = new ArrayList<>();
