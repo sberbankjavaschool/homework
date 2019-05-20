@@ -5,12 +5,11 @@ import ru.sberbank.school.task02.exception.FxConversionException;
 import ru.sberbank.school.task02.util.ClientOperation;
 import ru.sberbank.school.task02.util.Quote;
 import ru.sberbank.school.task02.util.Symbol;
-
 import java.math.BigDecimal;
 import java.util.List;
 
 public class FxConversionServiceImpl implements FxConversionService {
-    private ExternalQuotesService externalQuotesService;
+    protected ExternalQuotesService externalQuotesService;
 
     public FxConversionServiceImpl(@NonNull ExternalQuotesService externalQuotesService) {
         this.externalQuotesService = externalQuotesService;
