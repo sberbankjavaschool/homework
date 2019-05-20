@@ -38,7 +38,7 @@ public class FxConversionServiceImpl implements ExtendedFxConversionService {
                               @NonNull Symbol symbol,
                               @NonNull BigDecimal amount) {
         if (amount.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new IllegalArgumentException("Amount is equal or less ZERO");
+            throw new IllegalArgumentException("Amount has to be more ZERO");
         }
 
         List<Quote> quotes = exQuotes.getQuotes(symbol);
@@ -105,7 +105,7 @@ public class FxConversionServiceImpl implements ExtendedFxConversionService {
         for (Quote q : quotes) {
             BigDecimal curCur = operation == ClientOperation.BUY ? q.getOffer() : q.getBid();
             BigDecimal curAmount = amount.divide(curCur, 10, RoundingMode.HALF_UP);
-            if ( q.getVolumeSize().compareTo(curAmount) > 0) {
+            if (q.isInfinity() || q.getVolumeSize().compareTo(curAmount) > 0) {
                 Quote rightQuote = findRightQuote(quotes, curAmount);
                 if (q.getVolumeSize().compareTo(rightQuote.getVolumeSize()) == 0) {
                     rightQuotes.add(q);
@@ -113,6 +113,7 @@ public class FxConversionServiceImpl implements ExtendedFxConversionService {
             }
         }
         return rightQuotes;
+
     }
 
 
