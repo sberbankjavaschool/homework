@@ -32,8 +32,6 @@ public class Test {
 //                new BigDecimal(345_000_000).toString()));
 //        requests.add(new FxRequest(Symbol.USD_RUB.getSymbol(), ClientOperation.SELL.name(),
 //                new BigDecimal(91_000).toString()));
-//        requests.add(new FxRequest(Symbol.USD_RUB.getSymbol(), ClientOperation.BUY.name(),
-//                new BigDecimal(1_000).toString()));
 //        requests.add(new FxRequest(Symbol.USD_RUB.getSymbol(), ClientOperation.SELL.name(),
 //                new BigDecimal(500).toString()));
 //
