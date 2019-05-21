@@ -36,22 +36,18 @@ public class FxClientControllerImpl implements FxClientController {
         ClientOperation operation = FxRequestConverter.getDirection(request);
         Symbol symbol = FxRequestConverter.getSymbol(request);
         BigDecimal amount = FxRequestConverter.getAmount(request);
+        BigDecimal price = null;
         try {
-            BigDecimal answer = fxConversionService.convert(operation, symbol, amount);
-            return new FxResponse(symbol.getSymbol(),
-                    answer.setScale(2,BigDecimal.ROUND_HALF_UP).toString(),
-                    amount.setScale(2,BigDecimal.ROUND_HALF_UP).toString(),
-                    LocalDateTime.now().format(dateTimeFormatter),
-                    operation.toString(),
-                    false);
+            price = fxConversionService.convert(operation, symbol, amount);
         } catch (FxConversionException e) {
+            //Log exception
+        } finally {
             return new FxResponse(symbol.getSymbol(),
-                    null,
+                    price != null ? price.setScale(2, BigDecimal.ROUND_HALF_UP).toString() : null,
                     amount.setScale(2, BigDecimal.ROUND_HALF_UP).toString(),
                     LocalDateTime.now().format(dateTimeFormatter),
                     operation.toString(),
-                    true);
+                    price == null);
         }
     }
 }
-
