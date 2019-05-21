@@ -2,8 +2,7 @@ package ru.sberbank.school.task08.state;
 
 import java.util.List;
 
-// no setters, only getter.
-public class MapState<T extends InstantiatableEntity> implements InstantiatableMapState<T> {
+public class MapState<T extends InstantiatableEntity> implements Savable<T> {
     private final String name;
     private final List<T> gameObjects;
 
@@ -17,9 +16,8 @@ public class MapState<T extends InstantiatableEntity> implements InstantiatableM
         this.gameObjects = gameObjects;
     }
 
-    @Override
-    public InstantiatableMapState<T> getInstance(List<T> entities) {
-        return new MapState<>(name, entities);
+    public String getName() {
+        return name;
     }
 
     public List<T> getGameObjects() {
