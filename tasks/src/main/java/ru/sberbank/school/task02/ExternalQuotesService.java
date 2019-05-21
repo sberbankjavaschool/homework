@@ -1,9 +1,9 @@
 package ru.sberbank.school.task02;
 
-import java.util.List;
-
 import ru.sberbank.school.task02.util.Quote;
 import ru.sberbank.school.task02.util.Symbol;
+
+import java.util.List;
 
 /**
  * Поставщик данных о котировках. О его имплементации ничего не известно.
