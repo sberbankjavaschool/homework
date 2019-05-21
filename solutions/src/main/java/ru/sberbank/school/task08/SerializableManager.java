@@ -31,15 +31,16 @@ public class SerializableManager extends SaveGameManager {
     }
 
     @Override
-    public InstantiatableEntity createInstantiatableEntity(InstantiatableEntity.Type type,
-                                                           InstantiatableEntity.Status status,
-                                                           long hitPoints) {
+    public InstantiatableEntity createEntity(InstantiatableEntity.Type type,
+                                             InstantiatableEntity.Status status,
+                                             long hitPoints) {
         return new GameObject(type, status, hitPoints);
     }
 
     @Override
-    public <T extends InstantiatableEntity> InstantiatableMapState<T> createInstantiableMapState(String name,
-                                                                                                 List<T> entities) {
+    public <T extends InstantiatableEntity> Savable<T> createSavable(String name,
+                                                                     List<T> entities) {
         return new MapState<>(name, entities);
     }
+
 }

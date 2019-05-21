@@ -2,7 +2,7 @@ package ru.sberbank.school.task08.state;
 
 import java.util.List;
 
-public class MapState<T extends InstantiatableEntity> implements InstantiatableMapState<T> {
+public class MapState<T extends InstantiatableEntity> implements Savable<T> {
     private final String name;
     private final List<T> gameObjects;
 

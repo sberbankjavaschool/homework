@@ -1,10 +1,8 @@
 package ru.sberbank.school.task08;
 
 import com.google.common.collect.ImmutableSet;
-import lombok.Getter;
 import lombok.NonNull;
 import ru.sberbank.school.task08.state.InstantiatableEntity;
-import ru.sberbank.school.task08.state.InstantiatableMapState;
 import ru.sberbank.school.task08.state.Savable;
 
 import java.util.List;
@@ -14,8 +12,6 @@ import java.util.TreeSet;
 
 public abstract class SaveGameManager {
     final String filesDirectory;
-    @Getter
-    final SaveState state = new SaveState();
 
     /**
      * Класс-наследник должен иметь конструктор эквивалентный этому.
@@ -40,18 +36,25 @@ public abstract class SaveGameManager {
      */
     public abstract void saveGame(String filename, Savable gameState) throws SaveGameException;
 
+    /**
+     * Читает из файла.
+     *
+     * @param filename имя файла
+     * @return загруженное состояние
+     */
     public abstract Savable loadGame(String filename) throws SaveGameException;
 
-    public abstract InstantiatableEntity createInstantiatableEntity(InstantiatableEntity.Type type,
-                                                                    InstantiatableEntity.Status status,
-                                                                    long hitPoints);
+    public abstract InstantiatableEntity createEntity(InstantiatableEntity.Type type,
+                                                      InstantiatableEntity.Status status,
+                                                      long hitPoints);
 
-    public abstract <T extends InstantiatableEntity> InstantiatableMapState<T> createInstantiableMapState(String name,
-                                                                                                          List<T> entities);
+    public abstract <T extends InstantiatableEntity> Savable<T> createSavable(String name,
+                                                                              List<T> entities);
 
     /**
      * Хранит состояние файлов-сохранений.
      */
+    @Deprecated
     static class SaveState {
         private String lastSaveGameFilename;
         private SortedSet<String> allSaveFiles = new TreeSet<>();
