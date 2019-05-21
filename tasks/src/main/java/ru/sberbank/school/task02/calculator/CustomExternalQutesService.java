@@ -19,18 +19,18 @@ public class CustomExternalQutesService implements ExternalQuotesService {
             throw new WrongSymbolException("Cross symbols are not supported!");
         }
         return asList(
-                buildQuote(symbol, -1, 4),
-                buildQuote(symbol, 5000, 8),
-                buildQuote(symbol, 100, 10)
+                buildQuote(symbol, 16, 52, 57),
+                buildQuote(symbol, 15, 53, 61),
+                buildQuote(symbol, 17, 49,56 )
         );
     }
 
-    private Quote buildQuote(Symbol symbol, int volume, int spread) {
+    private Quote buildQuote(Symbol symbol, int volume, int bid, int offer) {
         return Quote.builder()
                 .symbol(symbol)
                 .volume(Volume.from(volume))
-                .bid(BigDecimal.valueOf(80 - spread / 2))
-                .offer(BigDecimal.valueOf(80 + spread / 2))
+                .bid(BigDecimal.valueOf(bid))
+                .offer(BigDecimal.valueOf(offer))
                 .build();
     }
 }

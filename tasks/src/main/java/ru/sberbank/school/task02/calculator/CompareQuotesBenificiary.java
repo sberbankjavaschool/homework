@@ -2,7 +2,6 @@ package ru.sberbank.school.task02.calculator;
 
 import ru.sberbank.school.task02.util.Beneficiary;
 import ru.sberbank.school.task02.util.ClientOperation;
-import ru.sberbank.school.task02.util.Quote;
 
 import java.util.Comparator;
 

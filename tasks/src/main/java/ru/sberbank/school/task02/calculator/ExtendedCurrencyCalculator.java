@@ -8,7 +8,6 @@ import ru.sberbank.school.task02.util.Quote;
 import ru.sberbank.school.task02.util.Symbol;
 import java.math.BigDecimal;
 import java.util.*;
-import java.math.RoundingMode;
 
 public class ExtendedCurrencyCalculator extends CurrencyCalculator implements ExtendedFxConversionService {
     private final ExternalQuotesService externalQuotesService;
@@ -23,10 +22,9 @@ public class ExtendedCurrencyCalculator extends CurrencyCalculator implements Ex
                                                    List<QuotePrice> quotePrices,
                                                    BigDecimal amountOfRequest) {
 
-//new CompareQuotesBenificiary(operation, beneficiary)
         Optional<QuotePrice> quotePrice = findQuote(new CompareQutesExtend(),
                 quotePrices,
-                amountOfRequest);
+                amountOfRequest, new CompareQuotesBenificiary(operation, beneficiary));
 
         if (!quotePrice.isPresent()) {
             return Optional.empty();
@@ -34,21 +32,24 @@ public class ExtendedCurrencyCalculator extends CurrencyCalculator implements Ex
         return Optional.of(quotePrice.get().getPricePerPiece());
     }
 
-    Optional<QuotePrice> findQuote(Comparator<QuotePrice> comparator,
+    Optional<QuotePrice> findQuote(Comparator<QuotePrice> compareByAmount,
                               List<QuotePrice> quotePrices,
-                              BigDecimal amountOfRequest) {
-        BigDecimal priceInCurr;
+                              BigDecimal amountOfRequest,
+                              Comparator<QuotePrice> compareByBenificiary) {
+
         List<QuotePrice> finalQuoteList = new ArrayList<>();
+        quotePrices.sort(compareByAmount);
+        BigDecimal lowerLimit = BigDecimal.ZERO;
+
         for (QuotePrice quotePrice: quotePrices) {
-            priceInCurr  = amountOfRequest.divide(quotePrice.getPrice(), 10, RoundingMode.HALF_UP);
-            if (quotePrice.getAmount().compareTo(priceInCurr) > 0
-            || quotePrice.getAmount().compareTo(BigDecimal.ZERO) < 0) {
-                finalQuoteList.add(quotePrice);
-                System.out.println("add to list quote: " + quotePrice.toString());
+            quotePrice.setLowerLimit(lowerLimit);
+            if (quotePrice.checkQuoteInMyScope(amountOfRequest)) {
+               finalQuoteList.add(quotePrice);
             }
+            lowerLimit = quotePrice.getUpperLimit();
         }
-        finalQuoteList.sort(comparator);
         if (finalQuoteList.size() > 0) {
+            finalQuoteList.sort(compareByBenificiary);
             System.out.println("Return quote: " + finalQuoteList.get(0).toString());
             return Optional.of(finalQuoteList.get(0));
         } else {
@@ -64,10 +65,7 @@ public class ExtendedCurrencyCalculator extends CurrencyCalculator implements Ex
         if (beneficiary == null) {
             throw new NullPointerException("beneficiary is null!");
         }
-        System.out.println("Get amount " + amount);
-        System.out.println("Get operation " + operation );
-        System.out.println("Gett benificiary " + beneficiary);
-
+        printTask(amount, operation, beneficiary);
         List<QuotePrice> quotePrices = new ArrayList<>();
         for (Quote quote: externalQuotesService.getQuotes(symbol)) {
             if (operation == ClientOperation.SELL) {
@@ -77,6 +75,12 @@ public class ExtendedCurrencyCalculator extends CurrencyCalculator implements Ex
             }
         }
         return extendedOperation(operation, beneficiary, quotePrices, amount);
+    }
+
+    public void printTask(BigDecimal amount, ClientOperation operation, Beneficiary beneficiary) {
+        System.out.println("Get amount " + amount);
+        System.out.println("Get operation " + operation );
+        System.out.println("Gett benificiary " + beneficiary);
     }
 
 }
