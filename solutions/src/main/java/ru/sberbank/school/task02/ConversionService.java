@@ -22,8 +22,7 @@ public class ConversionService implements FxConversionService {
             if (operation == null || symbol == null || amount.compareTo(BigDecimal.ZERO) < 0 || amount == null) {
                 throw new IllegalArgumentException();
             }
-        }
-        catch (IllegalArgumentException ex) {
+        } catch (IllegalArgumentException ex) {
             //System.out.println("incorrect data entered");
             return null;
         }
@@ -64,21 +63,20 @@ public class ConversionService implements FxConversionService {
             if (amount.compareTo(quotes.get(j).getVolumeSize()) >= 0) {
                 continue;
             } else {
-                if (nearQuote.getVolumeSize().compareTo(quotes.get(j).getVolumeSize()) > 0){
+                if (nearQuote.getVolumeSize().compareTo(quotes.get(j).getVolumeSize()) > 0) {
                     nearQuote = quotes.get(j);
                 }
             }
         }
         if (nearQuote == null) {
             return infQuote;
-        }
-        else {
+        } else {
             return nearQuote;
         }
     }
 
-    private BigDecimal getPrice(ClientOperation operation, Quote quote){
-        switch (operation){
+    private BigDecimal getPrice(ClientOperation operation, Quote quote) {
+        switch (operation) {
             case BUY:
                 return quote.getOffer();
             case SELL:
