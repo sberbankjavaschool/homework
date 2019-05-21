@@ -1,14 +1,11 @@
 package ru.sberbank.school.task02;
 
 import org.junit.Test;
-import ru.sberbank.school.task02.util.Beneficiary;
 import ru.sberbank.school.task02.util.ClientOperation;
 import ru.sberbank.school.task02.util.ExternalQuotesServiceDemo;
 import ru.sberbank.school.task02.util.Symbol;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
-import java.util.Optional;
 
 import static org.junit.Assert.*;
 
