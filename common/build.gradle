@@ -1,12 +1,10 @@
 plugins {
-    id 'groovy'
-    id 'java'
-    id 'checkstyle'
+    id 'groovy' apply true
+    id 'java' apply true
+    id 'checkstyle' apply true
 }
 
 group 'ru.sberbank.school'
-version '0.1.8'
-
 sourceCompatibility = 1.8
 
 repositories {
@@ -25,10 +23,4 @@ dependencies {
     implementation project(":tasks")
 
     implementation 'org.codehaus.groovy:groovy-all:2.5.6'
-
-    compileOnly 'org.projectlombok:lombok:1.18.6'
-    annotationProcessor 'org.projectlombok:lombok:1.18.6'
-
-    testCompile 'org.projectlombok:lombok:1.18.6'
-    testAnnotationProcessor  'org.projectlombok:lombok:1.18.6'
 }
