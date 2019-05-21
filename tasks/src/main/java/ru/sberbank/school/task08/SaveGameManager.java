@@ -4,9 +4,9 @@ import com.google.common.collect.ImmutableSet;
 import lombok.Getter;
 import lombok.NonNull;
 import ru.sberbank.school.task08.state.InstantiatableEntity;
-import ru.sberbank.school.task08.state.InstantiatableMapState;
 import ru.sberbank.school.task08.state.Savable;
 
+import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -39,11 +39,20 @@ public abstract class SaveGameManager {
      */
     public abstract void saveGame(String filename, Savable gameState) throws SaveGameException;
 
+    /**
+     * Читает из файла.
+     *
+     * @param filename имя файла
+     * @return загруженное состояние
+     */
     public abstract Savable loadGame(String filename) throws SaveGameException;
 
-    public abstract Class<? extends InstantiatableEntity> getInstantiatableEntityClass();
+    public abstract InstantiatableEntity createEntity(InstantiatableEntity.Type type,
+                                                      InstantiatableEntity.Status status,
+                                                      long hitPoints);
 
-    public abstract Class<? extends InstantiatableMapState> getInstantiatableMapStateClass();
+    public abstract <T extends InstantiatableEntity> Savable<T> createSavable(String name,
+                                                                              List<T> entities);
 
     /**
      * Хранит состояние файлов-сохранений.

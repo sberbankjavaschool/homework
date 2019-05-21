@@ -2,7 +2,7 @@ package ru.sberbank.school.task08.state;
 
 import java.util.List;
 
-public class MapState<T extends InstantiatableEntity> implements InstantiatableMapState<T> {
+public class MapState<T extends InstantiatableEntity> implements Savable<T> {
     private final String name;
     private final List<T> gameObjects;
 
@@ -14,11 +14,6 @@ public class MapState<T extends InstantiatableEntity> implements InstantiatableM
     public MapState(String name, List<T> gameObjects) {
         this.name = name;
         this.gameObjects = gameObjects;
-    }
-
-    @Override
-    public InstantiatableMapState<T> getInstance(List<T> entities) {
-        return new MapState<>(name, entities);
     }
 
     public String getName() {
