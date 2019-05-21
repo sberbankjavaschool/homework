@@ -35,7 +35,7 @@ public class ExtendedCurrencyCalculator extends CurrencyCalculator implements Ex
     Optional<QuotePrice> findQuote(Comparator<QuotePrice> compareByAmount,
                               List<QuotePrice> quotePrices,
                               BigDecimal amountOfRequest,
-                              Comparator<QuotePrice> compareByBenificiary) {
+                              Comparator<QuotePrice> compareByBeneficiary) {
 
         List<QuotePrice> finalQuoteList = new ArrayList<>();
         quotePrices.sort(compareByAmount);
@@ -49,7 +49,7 @@ public class ExtendedCurrencyCalculator extends CurrencyCalculator implements Ex
             lowerLimit = quotePrice.getUpperLimit();
         }
         if (finalQuoteList.size() > 0) {
-            finalQuoteList.sort(compareByBenificiary);
+            finalQuoteList.sort(compareByBeneficiary);
             System.out.println("Return quote: " + finalQuoteList.get(0).toString());
             return Optional.of(finalQuoteList.get(0));
         } else {
@@ -77,7 +77,7 @@ public class ExtendedCurrencyCalculator extends CurrencyCalculator implements Ex
         return extendedOperation(operation, beneficiary, quotePrices, amount);
     }
 
-    public void printTask(BigDecimal amount, ClientOperation operation, Beneficiary beneficiary) {
+    private void printTask(BigDecimal amount, ClientOperation operation, Beneficiary beneficiary) {
         System.out.println("Get amount " + amount);
         System.out.println("Get operation " + operation );
         System.out.println("Gett benificiary " + beneficiary);
