@@ -1,7 +1,6 @@
 package ru.sberbank.school.task08;
 
 import com.google.common.collect.ImmutableSet;
-import lombok.Getter;
 import lombok.NonNull;
 import ru.sberbank.school.task08.state.InstantiatableEntity;
 import ru.sberbank.school.task08.state.Savable;
@@ -13,8 +12,6 @@ import java.util.TreeSet;
 
 public abstract class SaveGameManager {
     final String filesDirectory;
-    @Getter
-    final SaveState state = new SaveState();
 
     /**
      * Класс-наследник должен иметь конструктор эквивалентный этому.
@@ -57,6 +54,7 @@ public abstract class SaveGameManager {
     /**
      * Хранит состояние файлов-сохранений.
      */
+    @Deprecated
     static class SaveState {
         private String lastSaveGameFilename;
         private SortedSet<String> allSaveFiles = new TreeSet<>();
