@@ -36,7 +36,7 @@ public class FxConversionServiceImpl implements FxConversionService {
         return BigDecimal.ZERO;
     }
 
-    private BigDecimal getUpperVolume(Symbol symbol, BigDecimal amount){
+    private BigDecimal getUpperVolume(Symbol symbol, BigDecimal amount) {
 
         BigDecimal max = BigDecimal.ZERO;
         List<Quote> list = externalQuotesService.getQuotes(symbol);
@@ -45,8 +45,8 @@ public class FxConversionServiceImpl implements FxConversionService {
             max = quote.getVolumeSize().max(max);
         }
 
-            BigDecimal upperVolume = max;
-            int traceVolume = 0;
+        BigDecimal upperVolume = max;
+        int traceVolume = 0;
 
         for (Quote quote : list) {
             if (quote.getVolumeSize().compareTo(amount) == 1) {
@@ -56,8 +56,9 @@ public class FxConversionServiceImpl implements FxConversionService {
             }
         }
 
-        if (traceVolume == list.size())
+        if (traceVolume == list.size()) {
             upperVolume = BigDecimal.valueOf(-1);
+        }
 
         return upperVolume;
     }
