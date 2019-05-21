@@ -26,9 +26,9 @@ public class Calculator implements FxConversionService {
      * @param symbol    Инструмент (USD/RUB: USD - базовая валюта, RUB - котиремая валюта)
      * @param amount    Объем
      * @return Цена для указанного объема
-     * @throws NullPointerException if any input parameter is null
-     * @throws IllegalArgumentException if amount <= 0
-     * @throws EmptyQuoteException if no qoutes or quotes for specified amount
+     * @throws NullPointerException если один из параметров null
+     * @throws IllegalArgumentException если amount <= 0
+     * @throws EmptyQuoteException если нет котировок или amount не попало ни в один из диапазонов
      */
     @Override
     public BigDecimal convert(ClientOperation operation, Symbol symbol, BigDecimal amount) {

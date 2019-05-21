@@ -7,7 +7,6 @@ import ru.sberbank.school.task02.util.ExternalQuotesServiceDemo;
 import ru.sberbank.school.task02.util.Symbol;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.Optional;
 
