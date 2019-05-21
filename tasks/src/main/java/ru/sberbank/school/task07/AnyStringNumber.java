@@ -7,6 +7,6 @@ package ru.sberbank.school.task07;
 public interface AnyStringNumber<T> {
 
     //описание в голове интерфейса
-    T findSortedDifferentWords(Integer... numbers);
+    T findStringsByNumbers(Integer... numbers);
 
 }
