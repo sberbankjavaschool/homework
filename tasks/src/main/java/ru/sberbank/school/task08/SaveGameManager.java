@@ -41,8 +41,16 @@ public abstract class SaveGameManager {
 
     public abstract Savable loadGame(String filename) throws SaveGameException;
 
+    /**
+     * Возвращайте ваш класс-наследник InstantiatableEntity.
+     * Может меняться от реализации к реализации.
+     */
     public abstract Class<? extends InstantiatableEntity> getInstantiatableEntityClass();
 
+    /**
+     * Возвращайте ваш класс-наследник InstantiatableMapState.
+     * Может меняться от реализации к реализации.
+     */
     public abstract Class<? extends InstantiatableMapState> getInstantiatableMapStateClass();
 
     /**
