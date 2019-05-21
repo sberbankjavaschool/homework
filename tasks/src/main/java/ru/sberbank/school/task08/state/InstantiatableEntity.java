@@ -1,13 +1,8 @@
 package ru.sberbank.school.task08.state;
 
-import lombok.Value;
+public interface InstantiatableEntity {
 
-import java.io.Serializable;
-
-@Value
-public class GameObject implements Serializable {
-    private Type type;
-    private Status status;
+    InstantiatableEntity getInstance(Type type, Status status, long hitPoints);
 
     enum Type {
         BUILDING,

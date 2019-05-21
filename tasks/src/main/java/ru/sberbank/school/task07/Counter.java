@@ -3,7 +3,7 @@ package ru.sberbank.school.task07;
 
 /**
  * Считатель различных слов в файле.
- *
+ * <p>
  * Задание: Подсчитайте количество различных слов в файле.
  */
 public interface Counter {
