@@ -12,7 +12,7 @@ pipeline {
     }
     agent any
     stages {
-        stage('Gradle Clean') {
+        stage('Gradle Clean on Start') {
             steps {
                 script {
                     try {
