@@ -1,20 +1,16 @@
 package ru.sberbank.school.task08;
 
 import lombok.NonNull;
-import ru.sberbank.school.task08.state.Savable;
-import ru.sberbank.school.task08.state.SolutionSavable;
+import ru.sberbank.school.task08.state.*;
 import ru.sberbank.school.util.Solution;
 
 @Solution(8)
 public class SerializableManager extends SaveGameManager {
-
+    /**
+     * Конструктор не меняйте.
+     */
     public SerializableManager(@NonNull String filesDirectoryPath) {
         super(filesDirectoryPath);
-    }
-
-    @Override
-    public Class<? extends Savable> getGameStateClass() {
-        return SolutionSavable.class;
     }
 
     @Override
@@ -30,5 +26,15 @@ public class SerializableManager extends SaveGameManager {
     @Override
     public Savable loadGame(String filename) throws SaveGameException {
         throw new UnsupportedOperationException("Implement me!");
+    }
+
+    @Override
+    public Class<? extends InstantiatableEntity> getInstantiatableEntityClass() {
+        return GameObject.class;
+    }
+
+    @Override
+    public Class<? extends InstantiatableMapState> getInstantiatableMapStateClass() {
+        return MapState.class;
     }
 }
