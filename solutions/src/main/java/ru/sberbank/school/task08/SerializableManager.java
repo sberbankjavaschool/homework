@@ -4,6 +4,8 @@ import lombok.NonNull;
 import ru.sberbank.school.task08.state.*;
 import ru.sberbank.school.util.Solution;
 
+import java.util.List;
+
 @Solution(8)
 public class SerializableManager extends SaveGameManager {
     /**
@@ -29,12 +31,15 @@ public class SerializableManager extends SaveGameManager {
     }
 
     @Override
-    public Class<? extends InstantiatableEntity> getInstantiatableEntityClass() {
-        return GameObject.class;
+    public InstantiatableEntity createInstantiatableEntity(InstantiatableEntity.Type type,
+                                                           InstantiatableEntity.Status status,
+                                                           long hitPoints) {
+        return new GameObject(type, status, hitPoints);
     }
 
     @Override
-    public Class<? extends InstantiatableMapState> getInstantiatableMapStateClass() {
-        return MapState.class;
+    public <T extends InstantiatableEntity> InstantiatableMapState<T> createInstantiableMapState(String name,
+                                                                                                 List<T> entities) {
+        return new MapState<>(name, entities);
     }
 }

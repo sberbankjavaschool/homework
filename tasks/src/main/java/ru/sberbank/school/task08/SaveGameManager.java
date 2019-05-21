@@ -7,6 +7,7 @@ import ru.sberbank.school.task08.state.InstantiatableEntity;
 import ru.sberbank.school.task08.state.InstantiatableMapState;
 import ru.sberbank.school.task08.state.Savable;
 
+import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -41,17 +42,12 @@ public abstract class SaveGameManager {
 
     public abstract Savable loadGame(String filename) throws SaveGameException;
 
-    /**
-     * Возвращайте ваш класс-наследник InstantiatableEntity.
-     * Может меняться от реализации к реализации.
-     */
-    public abstract Class<? extends InstantiatableEntity> getInstantiatableEntityClass();
+    public abstract InstantiatableEntity createInstantiatableEntity(InstantiatableEntity.Type type,
+                                                                    InstantiatableEntity.Status status,
+                                                                    long hitPoints);
 
-    /**
-     * Возвращайте ваш класс-наследник InstantiatableMapState.
-     * Может меняться от реализации к реализации.
-     */
-    public abstract Class<? extends InstantiatableMapState> getInstantiatableMapStateClass();
+    public abstract <T extends InstantiatableEntity> InstantiatableMapState<T> createInstantiableMapState(String name,
+                                                                                                          List<T> entities);
 
     /**
      * Хранит состояние файлов-сохранений.
