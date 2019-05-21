@@ -16,11 +16,6 @@ public class MapState<T extends InstantiatableEntity> implements InstantiatableM
         this.gameObjects = gameObjects;
     }
 
-    @Override
-    public InstantiatableMapState<T> getInstance(List<T> entities) {
-        return new MapState<>(name, entities);
-    }
-
     public String getName() {
         return name;
     }

@@ -13,11 +13,6 @@ public class GameObject implements InstantiatableEntity {
         this.hitPoints = hitPoints;
     }
 
-    @Override
-    public InstantiatableEntity getInstance(Type type, Status status, long hitPoints) {
-        return new GameObject(type, status, hitPoints);
-    }
-
     public Type getType() {
         return this.type;
     }
