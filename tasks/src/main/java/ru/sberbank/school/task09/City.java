@@ -1,4 +1,4 @@
-package ru.sberbank.school.task09.common;
+package ru.sberbank.school.task09;
 
 import java.io.Serializable;
 import java.time.LocalDate;

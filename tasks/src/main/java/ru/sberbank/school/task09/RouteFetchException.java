@@ -1,4 +1,4 @@
-package ru.sberbank.school.task09.common;
+package ru.sberbank.school.task09;
 
 /**
  * Исключение на случай, если что-то пойдет не так с извлечением закешированного маршрута.

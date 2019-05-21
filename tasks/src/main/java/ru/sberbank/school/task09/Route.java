@@ -1,4 +1,4 @@
-package ru.sberbank.school.task09.common;
+package ru.sberbank.school.task09;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -36,7 +36,9 @@ public class Route<C extends City> {
     @Override
     public String toString() {
         return "Route: { " +
-                String.join(" -> ", cities.stream().map(City::getCityName).collect(Collectors.toList()))
+                cities.stream()
+                        .map(City::getCityName)
+                        .collect(Collectors.joining(" -> "))
                 + " }";
     }
 }

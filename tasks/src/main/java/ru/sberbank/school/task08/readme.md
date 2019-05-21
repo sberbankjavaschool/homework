@@ -1,6 +1,6 @@
 # Java Serialization
 
-### Задание №7: Сериализуем джавой.
+### Задание 8: Сериализуем джавой.
 
 Реализовать 2 варианта SaveGameManager:
 - Serialazable

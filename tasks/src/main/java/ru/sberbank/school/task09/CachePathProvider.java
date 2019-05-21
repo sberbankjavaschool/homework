@@ -1,4 +1,4 @@
-package ru.sberbank.school.task09.common;
+package ru.sberbank.school.task09;
 
 public interface CachePathProvider {
     /**

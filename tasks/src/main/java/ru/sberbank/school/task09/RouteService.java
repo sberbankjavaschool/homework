@@ -1,24 +1,23 @@
-package ru.sberbank.school.task09.common;
+package ru.sberbank.school.task09;
 
 import java.security.SecureRandom;
 import java.time.LocalDate;
 import java.util.*;
 
+import static java.util.Arrays.asList;
+
 public abstract class RouteService<C extends City, T extends Route> {
-    private final Set<String> cities = new HashSet<>(Arrays.asList("Saint-Petersburg", "Moscow", "Chelyabinsk", "Berlin",
-            "Sverdlovsk", "Murmansk", "Vladimir", "London", "Kiev", "Minsk", "Astana", "Vladivostok", "Novosibirsk"));
+    private final Set<String> cities = new HashSet<>(asList(
+            "Saint-Petersburg", "Moscow", "Chelyabinsk", "Berlin",
+            "Sverdlovsk", "Murmansk", "Vladimir", "London", "Kiev",
+            "San-Francisco", "Palo Alto", "New-York", "Rome",
+            "Minsk", "Astana", "Vladivostok", "Novosibirsk"));
     protected CachePathProvider pathProvider;
     private int idCounter = 0;
     private SecureRandom rand = new SecureRandom();
-    private boolean devMode;
 
-    public RouteService(CachePathProvider pathProvider, boolean devMode) {
+    public RouteService(CachePathProvider pathProvider) {
         this.pathProvider = pathProvider;
-        this.devMode = devMode;
-    }
-
-    public boolean isDevMode() {
-        return devMode;
     }
 
     /*
@@ -40,9 +39,6 @@ public abstract class RouteService<C extends City, T extends Route> {
         generated.forEach(c -> addRandomCities(c, generated));
 
         generated.sort(getFirstToLastComparator(from, to));
-        if (!devMode) {
-            sleep();
-        }
 
         return createRoute(generated);
     }
@@ -56,17 +52,6 @@ public abstract class RouteService<C extends City, T extends Route> {
             }
             return 0;
         };
-    }
-
-    /**
-     * Имитирует задержку
-     */
-    private void sleep() {
-        try {
-            Thread.sleep(2000 + rand.nextInt(1000));
-        } catch (InterruptedException ignore) {
-            ignore.printStackTrace();
-        }
     }
 
     private void addRandomCities(C city, List<C> source) {
