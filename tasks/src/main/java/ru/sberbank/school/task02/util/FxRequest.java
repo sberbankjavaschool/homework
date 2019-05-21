@@ -1,11 +1,11 @@
 package ru.sberbank.school.task02.util;
 
-import java.io.Serializable;
-
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
+
+import java.io.Serializable;
 
 @AllArgsConstructor
 @Getter

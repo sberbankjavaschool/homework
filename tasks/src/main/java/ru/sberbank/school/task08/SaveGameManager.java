@@ -3,6 +3,8 @@ package ru.sberbank.school.task08;
 import com.google.common.collect.ImmutableSet;
 import lombok.Getter;
 import lombok.NonNull;
+import ru.sberbank.school.task08.state.InstantiatableEntity;
+import ru.sberbank.school.task08.state.InstantiatableMapState;
 import ru.sberbank.school.task08.state.Savable;
 
 import java.util.Set;
@@ -23,13 +25,6 @@ public abstract class SaveGameManager {
         this.filesDirectory = filesDirectoryPath;
     }
 
-
-    /**
-     *
-     * @return
-     */
-    public abstract Class<? extends Savable> getGameStateClass();
-
     /**
      * Инициализацию класса можете осуществить в этом методе.
      * Он гарантированно будет вызван перед вызовом других методов класса.
@@ -39,12 +34,24 @@ public abstract class SaveGameManager {
     /**
      * Сохраняет в файл.
      *
-     * @param filename
-     * @param gameState
+     * @param filename  имя файла
+     * @param gameState состояние, которое нужно сохранить
      */
     public abstract void saveGame(String filename, Savable gameState) throws SaveGameException;
 
     public abstract Savable loadGame(String filename) throws SaveGameException;
+
+    /**
+     * Возвращайте ваш класс-наследник InstantiatableEntity.
+     * Может меняться от реализации к реализации.
+     */
+    public abstract Class<? extends InstantiatableEntity> getInstantiatableEntityClass();
+
+    /**
+     * Возвращайте ваш класс-наследник InstantiatableMapState.
+     * Может меняться от реализации к реализации.
+     */
+    public abstract Class<? extends InstantiatableMapState> getInstantiatableMapStateClass();
 
     /**
      * Хранит состояние файлов-сохранений.
