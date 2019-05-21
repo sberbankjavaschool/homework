@@ -15,7 +15,7 @@ public interface CollectionsServiceFactory {
 
     AnyStringNumber getAnyStringNumber(FileParser fileParser);
 
-    DifferentWords getDifferentNumber(FileParser fileParser);
+    DifferentWords getDifferentWords(FileParser fileParser);
 
     <E> ReverseOrderIterator<E> getReversOrderIterator(FileParser fileParser);
 
