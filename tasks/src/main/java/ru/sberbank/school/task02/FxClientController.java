@@ -1,9 +1,9 @@
 package ru.sberbank.school.task02;
 
-import java.util.List;
-
 import ru.sberbank.school.task02.util.FxRequest;
 import ru.sberbank.school.task02.util.FxResponse;
+
+import java.util.List;
 
 public interface FxClientController {
 

@@ -18,7 +18,7 @@ pipeline {
                     try {
                         sh './gradlew clean'
                     } catch (Throwable ex) {
-                        ex.printStackTrace()
+                        //ex.printStackTrace()
                         pullRequest.comment('Проект какой-то кривой! Запусти локальную сборку "gradle build"')
                         error('Clean task Failed')
                     }
@@ -86,7 +86,7 @@ pipeline {
                     try {
                         sh './gradlew clearSherlock build -x test'
                     } catch (Throwable ex) {
-                        ex.printStackTrace()
+                        //ex.printStackTrace()
                         pullRequest.comment("Проект не собирается. Попробуй собрать локально. " +
                                 "Если и после этого не понятно, зови препода.")
                         error('Build Failed')

@@ -25,8 +25,9 @@ public abstract class SaveGameManager {
 
 
     /**
+     * Возвращает класс, которым оперирует менеджер. Например: return MySavable.class;
      *
-     * @return
+     * @return класс сущности сохранения
      */
     public abstract Class<? extends Savable> getGameStateClass();
 
@@ -39,8 +40,8 @@ public abstract class SaveGameManager {
     /**
      * Сохраняет в файл.
      *
-     * @param filename
-     * @param gameState
+     * @param filename  имя файла
+     * @param gameState состояние, которое нужно сохранить
      */
     public abstract void saveGame(String filename, Savable gameState) throws SaveGameException;
 
