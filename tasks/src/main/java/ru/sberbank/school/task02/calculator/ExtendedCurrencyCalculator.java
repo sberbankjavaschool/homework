@@ -24,7 +24,7 @@ public class ExtendedCurrencyCalculator extends CurrencyCalculator implements Ex
 
         Optional<QuotePrice> quotePrice = findQuote(new CompareQutesExtend(),
                 quotePrices,
-                amountOfRequest, new CompareQuotesBenificiary(operation, beneficiary));
+                amountOfRequest, new CompareQuotesBeneficiary(operation, beneficiary));
 
         if (!quotePrice.isPresent()) {
             return Optional.empty();
@@ -58,7 +58,10 @@ public class ExtendedCurrencyCalculator extends CurrencyCalculator implements Ex
     }
 
     @Override
-    public Optional<BigDecimal> convertReversed(ClientOperation operation, Symbol symbol, BigDecimal amount, Beneficiary beneficiary) {
+    public Optional<BigDecimal> convertReversed(ClientOperation operation,
+                                                Symbol symbol,
+                                                BigDecimal amount,
+                                                Beneficiary beneficiary) {
         if (operation == null) {
             throw new NullPointerException("operation is null!");
         }

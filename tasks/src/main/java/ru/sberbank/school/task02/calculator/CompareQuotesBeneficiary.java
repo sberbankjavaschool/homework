@@ -5,11 +5,11 @@ import ru.sberbank.school.task02.util.ClientOperation;
 
 import java.util.Comparator;
 
-public class CompareQuotesBenificiary implements Comparator<QuotePrice> {
+public class CompareQuotesBeneficiary implements Comparator<QuotePrice> {
     private Beneficiary beneficiary;
     private ClientOperation operation;
 
-    public CompareQuotesBenificiary (ClientOperation operation, Beneficiary beneficiary) {
+    public CompareQuotesBeneficiary(ClientOperation operation, Beneficiary beneficiary) {
         this.beneficiary = beneficiary;
         this.operation = operation;
     }
@@ -23,8 +23,8 @@ public class CompareQuotesBenificiary implements Comparator<QuotePrice> {
         }
         //Ищем меньшую цену покупки банком//bid
         //Ищем меньшую цену продажи банком//offer
-        if ((beneficiary == Beneficiary.BANK && operation == ClientOperation.SELL) ||
-                (beneficiary == Beneficiary.CLIENT && operation == ClientOperation.BUY) ) {
+        if ((beneficiary == Beneficiary.BANK && operation == ClientOperation.SELL)
+                || (beneficiary == Beneficiary.CLIENT && operation == ClientOperation.BUY) ) {
             return  quote1.getPrice().compareTo(quote2.getPrice());
         }
         return 0;
