@@ -12,6 +12,19 @@ pipeline {
     }
     agent any
     stages {
+        stage('Gradle Clean on Start') {
+            steps {
+                script {
+                    try {
+                        sh './gradlew clean'
+                    } catch (Throwable ex) {
+                        ex.printStackTrace()
+                        pullRequest.comment('Проект какой-то кривой! Запусти локальную сборку "gradle build"')
+                        error('Clean task Failed')
+                    }
+                }
+            }
+        }
         stage('Branch check') {
             when { expression { env.CHANGE_ID } }
             steps {
@@ -74,6 +87,9 @@ pipeline {
                         sh './gradlew clearSherlock build -x test'
                     } catch (Throwable ex) {
                         ex.printStackTrace()
+                        pullRequest.comment("Проект не собирается. Попробуй собрать локально. " +
+                                "Если и после этого не понятно, зови препода.")
+                        error('Build Failed')
                     }
                 }
             }
@@ -99,10 +115,12 @@ pipeline {
                                 maxNumberOfViolations                 : 99999,
                                 keepOldComments                       : false,
 
-                                commentTemplate                       : """{{violation.message}}""",
+                                commentTemplate                       : "{{violation.message}}",
 
                                 violationConfigs                      : [
-                                        [pattern: '.*/reports/checkstyle/.*\\.xml$', parser: 'CHECKSTYLE', reporter: 'Checkstyle']
+                                        [pattern : '.*/reports/checkstyle/.*\\.xml$',
+                                         parser  : 'CHECKSTYLE',
+                                         reporter: 'Checkstyle']
                                 ]
                         ]
                 ])
