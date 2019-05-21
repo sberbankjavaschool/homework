@@ -26,7 +26,6 @@ public class Test {
         Optional<BigDecimal> revOffer = exCalc2.convertReversed(ClientOperation.SELL,
                 Symbol.USD_RUB, BigDecimal.valueOf(6_350_000), Beneficiary.CLIENT);
         System.out.println(revOffer);
-
 //        List<FxRequest> requests = new ArrayList<>();
 //        requests.add(new FxRequest(Symbol.USD_RUB.getSymbol(), ClientOperation.BUY.name(),
 //                new BigDecimal(345_000_000).toString()));
