@@ -1,9 +1,9 @@
 package ru.sberbank.school.task02;
 
-import java.math.BigDecimal;
-
 import ru.sberbank.school.task02.util.ClientOperation;
 import ru.sberbank.school.task02.util.Symbol;
+
+import java.math.BigDecimal;
 
 public interface FxConversionService {
     /**

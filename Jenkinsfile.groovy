@@ -6,16 +6,36 @@ def githubUser = "sberbankjavaschool"
 def githubRepo = "homework"
 def watsonHello = "Привет, это Ватсон!"
 def sherlockFailed = false
+
+def gitInstruction = """Универсальный способ исправить проблемы с гитом:
+1. Сделать checkout ветки source из общего репозитория в новую локальную ветку,
+2. Сделать pull из своей ветки общего репо в локальную ветку, созданную на шаге 1.
+3. Сделать pull из своей ветки в форке, при этом обязательно выбрать "squash commit".
+4. Сделать force-push в ветку в своём форке"""
 pipeline {
     triggers {
         issueCommentTrigger('START-TEST')
     }
     agent any
     stages {
+        stage('Gradle Clean on Start') {
+            steps {
+                script {
+                    try {
+                        sh './gradlew clean'
+                    } catch (Throwable ex) {
+                        //ex.printStackTrace()
+                        pullRequest.comment('Проект какой-то кривой! Запусти локальную сборку "gradle build"')
+                        error('Clean task Failed')
+                    }
+                }
+            }
+        }
         stage('Branch check') {
             when { expression { env.CHANGE_ID } }
             steps {
                 script {
+                    def errorString = null
                     print "${pullRequest.headRef} ${pullRequest.base}"
                     if (pullRequest.base == 'source') {
                         def comment = pullRequest.comment("ПР в ветку Source запрещен! " +
@@ -27,42 +47,43 @@ pipeline {
                         removeLabel('WRONG BRANCH')
                     }
                     try {
-                        try {
-                        sh "./gradlew --stacktrace tryToPushToForkRepo " +
-                                "-PsourceBranch='${pullRequest.headRef}' " +
-                                "-PforkRepo='https://github.com/${CHANGE_AUTHOR}/homework.git'"
-                        } catch (err) {
-                            pullRequest.comment("Не смог автоматически запушить в твой форк."
-                                    + " Добавь jenkins-java-school-2019 в коллабораторы и скинь ссылку в общий чат.\n" +
-                                    "Если это уже было сделано, значит автоматический пуш невозможен. Делай руками.")
-                        }
+                        //try {
+                        //    sh "./gradlew --stacktrace tryToPushToForkRepo " +
+                        //            "-PsourceBranch='${pullRequest.headRef}' " +
+                        //            "-PforkRepo='https://github.com/${CHANGE_AUTHOR}/homework.git'"
+                        //} catch (err) {
+                        //    pullRequest.comment("Не смог автоматически запушить в твой форк."
+                        //            + " Добавь jenkins-java-school-2019 в коллабораторы и скинь ссылку в общий чат.\n" +
+                        //            "Если это уже было сделано, значит автоматический пуш невозможен. Делай руками.")
+                        //}
                         sh "./gradlew --stacktrace checkIfSourceBranchPulled " +
                                 "-PsourceBranch='${pullRequest.headRef}' " +
                                 "-PforkRepo='https://github.com/${CHANGE_AUTHOR}/homework.git'"
                         removeLabel('REBASE NEEDED')
-                    } catch (err) {
-                        pullRequest.comment("Ошибка при сверке веток," +
-                                " попробуй сделать Pull из ветки source с Rebase " +
-                                "в свою ветку в своём форке.")
+                    } catch (ignore) {
+                        pullRequest.comment("Что произошло? \n" +
+                                "Последний коммит из ветки source не был найден в ветке форка.\n" +
+                                "Что делать? \n" +
+                                "Сделать pull с ребейзом из ветки source в форк.")
+                        pullRequest.comment(gitInstruction)
                         println "Do a barrel roll!"
                         pullRequest.addLabel('REBASE NEEDED')
-                        error('Rebase Failed')
+                        errorString = 'Rebase Failed'
                     }
-                }
-            }
-        }
-        stage('Rebase if needed') {
-            when { expression { env.CHANGE_ID } }
-            steps {
-                script {
                     try {
                         sh "./gradlew --stacktrace forceRebase " +
                                 "-PtargetBranch='${pullRequest.base}'"
-                    } catch (err) {
-                        pullRequest.comment("Ошибка при попытке сделать auto-rebase " +
-                                "в твою ветку в общем репозитории. " +
-                                "Видимо ты мержил, вместо ребейза. Сам ты не справишься, зови препода.")
-                        error('Rebase To Target Failed')
+                        removeLabel('HELP ME')
+                    } catch (ignore) {
+                        pullRequest.comment("Что произошло? \n" +
+                                "Скрипт не может сделать автоматический ребейз в твою ветку этоо репозитория.\n" +
+                                "Что делать? \n" +
+                                "Надо фиксить руками - обратись к преподавателям.")
+                        pullRequest.addLabel('HELP ME')
+                        errorString = 'Rebase To Target Failed'
+                    }
+                    if (errorString != null) {
+                        error(errorString)
                     }
                 }
             }
@@ -73,7 +94,10 @@ pipeline {
                     try {
                         sh './gradlew clearSherlock build -x test'
                     } catch (Throwable ex) {
-                        ex.printStackTrace()
+                        //ex.printStackTrace()
+                        pullRequest.comment("Проект не собирается. Попробуй собрать локально. " +
+                                "Если и после этого не понятно, зови препода.")
+                        error('Build Failed')
                     }
                 }
             }
@@ -99,10 +123,12 @@ pipeline {
                                 maxNumberOfViolations                 : 99999,
                                 keepOldComments                       : false,
 
-                                commentTemplate                       : """{{violation.message}}""",
+                                commentTemplate                       : "{{violation.message}}",
 
                                 violationConfigs                      : [
-                                        [pattern: '.*/reports/checkstyle/.*\\.xml$', parser: 'CHECKSTYLE', reporter: 'Checkstyle']
+                                        [pattern : '.*/reports/checkstyle/.*\\.xml$',
+                                         parser  : 'CHECKSTYLE',
+                                         reporter: 'Checkstyle']
                                 ]
                         ]
                 ])
@@ -139,7 +165,9 @@ pipeline {
                                         sourceFolderPath: "./watson/build/reports/tests/test",)])
                 script {
                     for (comment in pullRequest.comments) {
-                        if (comment.body.startsWith('START-TEST')) {
+                        if (comment.body.startsWith('START-TEST')
+                                || comment.body == gitInstruction
+                                || comment.body.startsWith("Что произошло?")) {
                             echo "Author: ${comment.user}, Comment: ${comment.body}"
                             pullRequest.deleteComment(comment.id)
                         }
@@ -147,11 +175,13 @@ pipeline {
                     def statusMsg, status
                     if (sherlockFailed) {
                         status = 'failure'
-                        pullRequest.labels = ['FAILED']
+                        pullRequest.addLabel('FAILED')
+                        removeLabel('OK')
                         statusMsg = 'Дела плохи, тесты не проходят! Поразбирайся ещё!'
                     } else {
                         status = 'success'
-                        pullRequest.labels = ['OK']
+                        removeLabel('FAILED')
+                        pullRequest.addLabel('OK')
                         statusMsg = 'Похоже, что всё чисто. Проверь все тесты и зови преподователя. '
                     }
                     def uri = "https://ulmc.ru/reports/${env.CHANGE_ID}/"

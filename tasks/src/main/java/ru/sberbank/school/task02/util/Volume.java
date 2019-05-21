@@ -1,9 +1,9 @@
 package ru.sberbank.school.task02.util;
 
-import java.math.BigDecimal;
-
 import lombok.Getter;
 import lombok.NonNull;
+
+import java.math.BigDecimal;
 
 @Getter
 public class Volume {
