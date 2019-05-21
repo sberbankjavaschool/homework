@@ -31,7 +31,6 @@ public class CustomExternalQutesService implements ExternalQuotesService {
                 .volume(Volume.from(volume))
                 .bid(BigDecimal.valueOf(bid))
                 .offer(BigDecimal.valueOf(offer))
-
                 .build();
     }
 }
