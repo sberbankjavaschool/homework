@@ -20,6 +20,7 @@ javadoc {
 }
 
 dependencies {
+    implementation project(":common")
     implementation project(":tasks")
     implementation project(":common")
 
