@@ -31,11 +31,11 @@ public class QuotePrice {
         return  "Price " + price + " amount " + amount + " PricePerPiece: " + getPricePerPiece();
     }
 
-    private boolean moreThenLowerLimit (BigDecimal amount) {
+    private boolean moreThenLowerLimit(BigDecimal amount) {
         return amount.compareTo(lowerLimit) > 0;
     }
 
-    private boolean lessThenUpperLimit (BigDecimal amount) {
+    private boolean lessThenUpperLimit(BigDecimal amount) {
         return amount.compareTo(getUpperLimit()) < 0
                 || getUpperLimit().compareTo(BigDecimal.ZERO) < 0;
     }
