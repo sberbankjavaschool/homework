@@ -11,7 +11,9 @@ public enum SchoolTask {
     FX_CALC_02_03("Вал. Калькулятор ч.3", 4),
     FX_CALC_03_01("Форматтер", 5),
     GENERICS_06("Generics", 6),
-    COLLECTIONS_07("Коллекции", 7);
+    COLLECTIONS_07("Коллекции", 7),
+    SERIALIZATION_BASE("Базовая сериализация", 8),
+    SERIALIZATION_ADVANCED("Продвинутая сериализация", 9);
 
     private final String name;
     private final int code;

@@ -1,10 +1,11 @@
 package ru.sberbank.school.task07;
 
+import java.io.FileNotFoundException;
 import java.util.List;
 
 /**
  * Интерфейс парсера файла.
- *
+ * <p>
  * Задание: Реализовать интерфейс FileParser, который должен уметь считывать строки с файла и
  * записывать их в List.
  */
@@ -16,6 +17,6 @@ public interface FileParser {
      * @param pathToFile - путь до файла. Может быть как относительным так и абсолютным путем.
      * @return список все строк файла
      */
-    List<String> parse(String pathToFile);
+    List<String> parse(String pathToFile) throws FileNotFoundException;
 
 }

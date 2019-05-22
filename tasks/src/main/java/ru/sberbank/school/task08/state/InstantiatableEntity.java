@@ -1,13 +1,6 @@
 package ru.sberbank.school.task08.state;
 
-import lombok.Value;
-
-import java.io.Serializable;
-
-@Value
-public class GameObject implements Serializable {
-    private Type type;
-    private Status status;
+public interface InstantiatableEntity {
 
     enum Type {
         BUILDING,
