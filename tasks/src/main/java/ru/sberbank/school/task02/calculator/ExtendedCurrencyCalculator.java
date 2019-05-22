@@ -68,6 +68,12 @@ public class ExtendedCurrencyCalculator extends CurrencyCalculator implements Ex
         if (beneficiary == null) {
             throw new NullPointerException("beneficiary is null!");
         }
+        if (symbol == null) {
+            throw new NullPointerException("Symbol is null");
+        }
+        if (amount == null) {
+            throw new NullPointerException("Amount is null");
+        }
         printTask(amount, operation, beneficiary);
         List<QuotePrice> quotePrices = new ArrayList<>();
         for (Quote quote: externalQuotesService.getQuotes(symbol)) {
