@@ -1,11 +1,11 @@
 package ru.sberbank.school.task02.util;
 
-import java.io.Serializable;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+
+import java.io.Serializable;
 
 @Getter
 @Builder
@@ -29,7 +29,7 @@ public class FxResponse implements Serializable {
      */
     private final String date;
     /**
-     * Направление (тип) операции - покупка/продажа
+     * Направление (тип) операции - покупка/продажа.
      */
     private final String direction;
     private final boolean notFound;
