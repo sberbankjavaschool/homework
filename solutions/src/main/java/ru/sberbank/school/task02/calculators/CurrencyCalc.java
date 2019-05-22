@@ -10,6 +10,7 @@ import ru.sberbank.school.task02.util.Symbol;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 
 @Getter
 public class CurrencyCalc implements FxConversionService {
@@ -26,9 +27,9 @@ public class CurrencyCalc implements FxConversionService {
     @Override
     public BigDecimal convert(ClientOperation operation,
                               Symbol symbol, BigDecimal amount) {
-        if (operation == null || symbol == null || amount == null) {
-            throw new NullPointerException("Один из переданных аргументов равен null");
-        }
+        Objects.requireNonNull(operation, "Переданный параметр operation не должен быть null");
+        Objects.requireNonNull(symbol, "Переданный параметр symbol не должен быть null");
+        Objects.requireNonNull(amount, "Переданный параметр amount не должен быть null");
 
         if (BigDecimal.ZERO.compareTo(amount) >= 0) {
             throw new IllegalArgumentException("Объем должен быть больше 0");

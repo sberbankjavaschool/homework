@@ -2,7 +2,7 @@ package ru.sberbank.school.task02;
 
 import ru.sberbank.school.task02.exception.FxConversionException;
 import ru.sberbank.school.task02.util.*;
-import ru.sberbank.school.task03.Formatter;
+//import ru.sberbank.school.task03.Formatter;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -22,8 +22,8 @@ public class TestClient {
                     new BigDecimal(99_000).toString()));
 
             List<FxResponse> responses = client.fetchResult(requests);
-            Formatter formatter = new Formatter();
-            System.out.println(formatter.format(responses));
+//            Formatter formatter = new Formatter();
+//            System.out.println(formatter.format(responses));
 //            if (!response.isNotFound()) {
 //                System.out.println(response.toString());
 //            }
