@@ -21,7 +21,7 @@ javadoc {
 
 dependencies {
     implementation project(":tasks")
-//    implementation project(":common")
+    implementation project(":common")
 
     compileOnly 'org.projectlombok:lombok:1.18.6'
     annotationProcessor 'org.projectlombok:lombok:1.18.6'
