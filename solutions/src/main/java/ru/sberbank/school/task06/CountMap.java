@@ -32,7 +32,7 @@ public interface CountMap<T> {
      * @param o элемент
      * @return количество вхождений эелемента
      */
-    int getCount(Player o);
+    int getCount(T o);
 
     //Удаляет элемент и контейнера и возвращает количество его добавлений(до удаления)
 
@@ -42,7 +42,7 @@ public interface CountMap<T> {
      * @param o элемент
      * @return количество добавлений элемента(до удаления)
      */
-    int remove(Player o);
+    int remove(T o);
 
     /**
      * Получение количества разных элементов.
@@ -57,7 +57,7 @@ public interface CountMap<T> {
      *
      * @param source коллекция - источник
      */
-    void addAll(CountMap<T> source);
+    void addAll(CountMap<? extends T> source);
 
     //Вернуть java.util.Map. ключ - добавленный элемент, значение - количество его добавлений
 
@@ -73,5 +73,5 @@ public interface CountMap<T> {
     /**
      * Тот же контракт, что и у toMap(), но результат записать в destination.
      */
-    void toMap(Map<T, Integer> destination);
+    void toMap(Map<? super T, Integer> destination);
 }

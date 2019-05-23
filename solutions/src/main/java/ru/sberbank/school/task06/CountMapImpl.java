@@ -77,9 +77,8 @@ public class CountMapImpl implements CountMap<Player> {
      *
      * @param source коллекция - источник
      */
-    public void addAll(CountMap<Player> source) {
-        Map<Player, Integer> pMap = source.toMap();
-        for (Player p : pMap.keySet()) {
+    public void addAll(CountMap<? extends Player> source) {
+        for (Player p : source.toMap().keySet()) {
             this.add(p);
         }
 
@@ -98,6 +97,9 @@ public class CountMapImpl implements CountMap<Player> {
         for (Player p : playersMap.keySet()) {
             pMap.put(p, playersMap.get(p));
         }
+//        for (Map.Entry<Player, Integer> entry : pMap.entrySet()) {
+//            pMap.put(entry.getKey(), playersMap.get(entry.getKey()));
+//        }
         return pMap;
     }
 
@@ -106,8 +108,10 @@ public class CountMapImpl implements CountMap<Player> {
      * Тот же контракт, что и у toMap(), но результат записать в destination.
      */
 
-    public void toMap(Map<Player, Integer> destination) {
-        destination = this.toMap();
+    public void toMap(Map<? super Player, Integer> destination) {
+        for (Player p : playersMap.keySet()) {
+            destination.put(p, playersMap.get(p));
+        }
     }
 }
 

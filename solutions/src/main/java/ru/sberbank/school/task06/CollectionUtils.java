@@ -3,6 +3,7 @@ package ru.sberbank.school.task06;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Iterator;
 
 public class CollectionUtils<T> {
 
@@ -44,9 +45,7 @@ public class CollectionUtils<T> {
      * @return сокращенный список
      */
     public static <T> List<T> limit(List<T> source, int size) {
-        if(source.size() == 0) {
-            return newArrayList();
-        } else if (source.size() < size) {
+        if(source.size() == 0 || source.size() < size) {
             return source;
         }
         return source.subList(0, size);
@@ -69,8 +68,14 @@ public class CollectionUtils<T> {
      * @param removeFrom коллекция, из которой удалять элементы
      * @param toRemove   коллекция, в которой лежат элементы для удаления из коллекции removeFrom
      */
-    public static <T> void removeAll(List<? super T> removeFrom, List<T> toRemove) {                               //???
-        removeFrom.removeAll(toRemove);
+    public static <T> void removeAll(List<? super T> removeFrom, List<? extends T> toRemove) {                               //???
+        Iterator iterator = toRemove.iterator();
+        while (iterator.hasNext()) {
+            Object element = iterator.next();
+            if (removeFrom.contains(element)) {
+                iterator.remove();
+            }
+        }
     }
 
     /**
@@ -80,7 +85,7 @@ public class CollectionUtils<T> {
      * @param c2 вторая коллекция
      * @return true, если все элементы коллекции c2 содержатся в c1
      */
-    public static <T> boolean containsAll(List<? extends T> c1, List<? extends T> c2) {
+    public static <T> boolean containsAll(List<?> c1, List<?> c2) {
         return c1.containsAll(c2);
     }
 
@@ -91,8 +96,8 @@ public class CollectionUtils<T> {
      * @param c2 вторая коллекция
      * @return true, если хотя бы 1 элемент коллекции c2 содержатся в c1
      */
-    public static <T> boolean containsAny(List<? extends T> c1, List<? extends T> c2) {
-        for (T element : c2) {
+    public static <T> boolean containsAny(List<?> c1, List<?> c2) {
+        for (Object element : c2) {
             if (c1.contains(element)) {
                 return true;
             }
@@ -115,26 +120,30 @@ public class CollectionUtils<T> {
          for (T element : list) {
              if (element.compareTo(min) >= 0 && element.compareTo(max) <= 0) {
                  if (!newlist.isEmpty()) {
-                     int index = 0;
-                     if (element.compareTo(newlist.get(newlist.size()-1))<0) {
-                         for (T element1 : newlist) {
-                             if (element.compareTo(element1) <= 0) {
-                                 index = newlist.indexOf(element1);
-                                 break;
-                             }
-                         }
-                         newlist.add(index, element);
-                     } else {
-                         newlist.add(element);
+                     int index = newlist.size();
+                     if (element.compareTo(newlist.get(index-1))<0) {
+                         index = findIndex(newlist, element);
                      }
+                     newlist.add(index, element);
                  }  else {
                      newlist.add(element);
                  }
              }
          }
-
          return newlist;
     }
+
+    private static <T extends Comparable<? super T>> int findIndex(List<T> newlist, T element) {
+        int index = 0;
+        for (T element1 : newlist) {
+            if (element.compareTo(element1) <= 0) {
+                index = newlist.indexOf(element1);
+                break;
+            }
+        }
+        return index;
+    }
+
 
     /**
      * Создание коллекции, содержащей элементы из входной коллекции в диапазоне от min до max (не
