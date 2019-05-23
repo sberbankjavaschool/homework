@@ -7,6 +7,6 @@ package ru.sberbank.school.task07;
 public interface AnyStringNumber<T> {
 
     //описание в голове интерфейса
-    T findStringsByNumbers(Integer... numbers);
+    T findStringsByNumbers(String pathToFile, Integer... numbers);
 
 }

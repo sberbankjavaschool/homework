@@ -1,12 +1,8 @@
 package ru.sberbank.school.task08.state;
 
-import java.io.Serializable;
+public interface Savable {
 
-public interface Savable extends Serializable {
+    InstantiatableMapState getMapState();
 
-    Score getScore();
-
-    void setScore(Score score);
-
-
+    <T extends InstantiatableMapState> void setMapState(T mapState);
 }

@@ -1,10 +1,10 @@
 package ru.sberbank.school.task02.util;
 
-import java.math.BigDecimal;
-import java.util.List;
-
 import ru.sberbank.school.task02.ExternalQuotesService;
 import ru.sberbank.school.task02.exception.WrongSymbolException;
+
+import java.math.BigDecimal;
+import java.util.List;
 
 import static java.util.Arrays.asList;
 

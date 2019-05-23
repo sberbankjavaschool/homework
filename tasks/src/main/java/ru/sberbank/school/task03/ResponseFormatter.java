@@ -1,8 +1,8 @@
 package ru.sberbank.school.task03;
 
-import java.util.List;
-
 import ru.sberbank.school.task02.util.FxResponse;
+
+import java.util.List;
 
 public interface ResponseFormatter {
     /**
