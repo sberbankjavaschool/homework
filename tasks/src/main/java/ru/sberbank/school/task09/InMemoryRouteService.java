@@ -11,16 +11,15 @@ import java.util.UUID;
 public class InMemoryRouteService extends RouteService<City, Route<City>> {
     private HashMap<String, Route<City>> routeHashMap = new HashMap<>();
 
-    public InMemoryRouteService(CachePathProvider cachePathProvider) {
-        super(cachePathProvider);
+    public InMemoryRouteService() {
+
     }
 
-    @Override
     public Route<City> getRoute(String from, String to) {
         String key = from + "_" + to;
         Route<City> route = routeHashMap.get(key);
         if (route == null) {
-            route = super.getRoute(from, to);
+            route = super.getRouteInner(from, to);
             routeHashMap.put(key, route);
         }
         return route;
