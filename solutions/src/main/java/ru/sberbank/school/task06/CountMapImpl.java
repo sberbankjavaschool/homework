@@ -1,40 +1,47 @@
 package ru.sberbank.school.task06;
 
+import java.util.HashMap;
 import java.util.Map;
 
-public class CountMapImpl implements CountMap {
-    @Override
-    public void add(Object o) {
+public class CountMapImpl implements CountMap<String> {
 
+    private Map<String, Integer> map = new HashMap<>();
+
+    @Override
+    public void add(String key) {
+       map.put(key, map.getOrDefault(key, 0));
     }
 
     @Override
-    public int getCount(Object o) {
-        return 0;
+    public int getCount(String key) {
+        return map.getOrDefault(key, 0);
     }
 
     @Override
-    public int remove(Object o) {
-        return 0;
+    public int remove(String key) {
+        Integer value = map.remove(key);
+        return value == null ? 0 : value;
     }
 
     @Override
     public int size() {
-        return 0;
+        return map.size();
     }
 
     @Override
-    public void addAll(CountMap source) {
-
+    public void addAll(CountMap<? extends String> source) {
+        for (String key : source.toMap().keySet()) {
+            add(key);
+        }
     }
 
     @Override
-    public Map toMap() {
-        return null;
+    public Map<String, Integer> toMap() {
+        return new HashMap<>(map);
     }
 
     @Override
-    public void toMap(Map destination) {
-
+    public void toMap(Map<? super String, Integer> destination) {
+        destination.putAll(map);
     }
 }

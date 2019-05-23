@@ -1,7 +1,7 @@
 package ru.sberbank.school.task06;
 
-import java.util.Comparator;
-import java.util.List;
+import java.lang.reflect.Array;
+import java.util.*;
 
 public class CollectionUtils {
 
@@ -11,8 +11,8 @@ public class CollectionUtils {
      * @param source      источник
      * @param destination потребитель
      */
-    public static void addAll(List source, List destination) {
-        throw new UnsupportedOperationException();
+    public static <T> void addAll(List<? extends T> source, List<? super T> destination) {
+        destination.addAll(source);
     }
 
     /**
@@ -20,8 +20,8 @@ public class CollectionUtils {
      *
      * @return пустой ArrayList
      */
-    public static List newArrayList() {
-        throw new UnsupportedOperationException();
+    public static <T> List<T> newArrayList() {
+        return new ArrayList<>();
     }
 
     /**
@@ -31,8 +31,8 @@ public class CollectionUtils {
      * @param o      элемент
      * @return индекс элемента
      */
-    public static int indexOf(List source, Object o) {
-        throw new UnsupportedOperationException();
+    public static <T> int indexOf(List<? extends T> source, T o) {
+        return source.indexOf(o);
     }
 
     /**
@@ -42,8 +42,8 @@ public class CollectionUtils {
      * @param size   необходимое число элементов
      * @return сокращенный список
      */
-    public static List limit(List source, int size) {
-        throw new UnsupportedOperationException();
+    public static <T> List<T> limit(List<T> source, int size) {
+        return source.size() > size ? source.subList(0, size) : source;
     }
 
     /**
@@ -52,8 +52,8 @@ public class CollectionUtils {
      * @param dest коллекция, в которую необходимо вставить элемент
      * @param o    элемент
      */
-    public static void add(List dest, Object o) {
-        throw new UnsupportedOperationException();
+    public static <T> void add(List<? super T> dest, T o) {
+        dest.add(o);
     }
 
 
@@ -63,8 +63,8 @@ public class CollectionUtils {
      * @param removeFrom коллекция, из которой удалять элементы
      * @param toRemove   коллекция, в которой лежат элементы для удаления из коллекции removeFrom
      */
-    public static void removeAll(List removeFrom, List toRemove) {
-        throw new UnsupportedOperationException();
+    public static <T> void removeAll(List<? super T> removeFrom, List<? extends T> toRemove) {
+        removeFrom.removeAll(toRemove);
     }
 
     /**
@@ -74,8 +74,8 @@ public class CollectionUtils {
      * @param c2 вторая коллекция
      * @return true, если все элементы коллекции c2 содержатся в c1
      */
-    public static boolean containsAll(List c1, List c2) {
-        throw new UnsupportedOperationException();
+    public static<T> boolean containsAll(List<? extends T> c1, List<T> c2) {
+        return c1.containsAll(c2);
     }
 
     /**
@@ -85,8 +85,8 @@ public class CollectionUtils {
      * @param c2 вторая коллекция
      * @return true, если хотя бы 1 элемент коллекции c2 содержатся в c1
      */
-    public static boolean containsAny(List c1, List c2) {
-        throw new UnsupportedOperationException();
+    public static <T> boolean containsAny(List<? extends T> c1, List<? extends T> c2) {
+        return !Collections.disjoint(c1, c2);
     }
 
     /**
@@ -99,8 +99,15 @@ public class CollectionUtils {
      * @param max  максимальнео значение
      * @return отфильрованный по минимальному и максимальному значению список
      */
-    public static List range(List list, Object min, Object max) {
-        throw new UnsupportedOperationException();
+    public static <T extends Comparable<? super T>> List<T> range(List<? extends T> list, T min, T max) {
+        List<T> newList = new ArrayList<>();
+        for (T e : list) {
+            if (e.compareTo(min) >= 0 && e.compareTo(max) <= 0) {
+                newList.add(e);
+            }
+        }
+        Collections.sort(newList);
+        return newList;
     }
 
     /**
@@ -113,8 +120,15 @@ public class CollectionUtils {
      * @param max  максимальнео значение
      * @return отфильрованный по минимальному и максимальному значению список
      */
-    public static List range(List list, Object min, Object max, Comparator comparator) {
-        throw new UnsupportedOperationException();
+    public static <T> List<T> range(List<? extends T> list, T min, T max, Comparator<? super T> comparator) {
+        List<T> newList = new ArrayList<>();
+        for (T e : list) {
+            if (comparator.compare(e, min) >= 0 && comparator.compare(e, max) <= 0) {
+                newList.add(e);
+            }
+        }
+        Collections.sort(newList, comparator);
+        return newList;
     }
 
 }

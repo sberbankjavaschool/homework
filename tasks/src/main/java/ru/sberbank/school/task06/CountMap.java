@@ -18,13 +18,13 @@ import java.util.Map;
  * <p>
  * ==> map{"Some word" : 2}
  */
-public interface CountMap {
+public interface CountMap<T> {
     /**
      * Добавление элепмента в контейнер.
      *
      * @param o элемент для добавления
      */
-    void add(Object o);
+    void add(T o);
 
     /**
      * Получение количества вхождений данного элемента.
@@ -32,7 +32,7 @@ public interface CountMap {
      * @param o элемент
      * @return количество вхождений эелемента
      */
-    int getCount(Object o);
+    int getCount(T o);
 
     //Удаляет элемент и контейнера и возвращает количество его добавлений(до удаления)
 
@@ -42,7 +42,7 @@ public interface CountMap {
      * @param o элемент
      * @return количество добавлений элемента(до удаления)
      */
-    int remove(Object o);
+    int remove(T o);
 
     /**
      * Получение количества разных элементов.
@@ -57,7 +57,7 @@ public interface CountMap {
      *
      * @param source коллекция - источник
      */
-    void addAll(CountMap source);
+    void addAll(CountMap<? extends T> source);
 
     //Вернуть java.util.Map. ключ - добавленный элемент, значение - количество его добавлений
 
@@ -67,11 +67,11 @@ public interface CountMap {
      *
      * @return контейнер java.util.Map
      */
-    Map toMap();
+    Map<T, Integer> toMap();
 
 
     /**
      * Тот же контракт, что и у toMap(), но результат записать в destination.
      */
-    void toMap(Map destination);
+    void toMap(Map<? super T, Integer> destination);
 }
