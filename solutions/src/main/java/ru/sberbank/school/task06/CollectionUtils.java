@@ -74,7 +74,7 @@ public class CollectionUtils {
      * @param c2 вторая коллекция
      * @return true, если все элементы коллекции c2 содержатся в c1
      */
-    public static<T> boolean containsAll(List<? extends T> c1, List<T> c2) {
+    public static <T> boolean containsAll(List<? extends T> c1, List<T> c2) {
         return c1.containsAll(c2);
     }
 
