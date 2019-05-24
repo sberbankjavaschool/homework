@@ -1,18 +1,17 @@
 package ru.sberbank.school.task08;
 
 import com.google.common.collect.ImmutableSet;
-import lombok.Getter;
 import lombok.NonNull;
+import ru.sberbank.school.task08.state.InstantiatableEntity;
 import ru.sberbank.school.task08.state.Savable;
 
+import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
 public abstract class SaveGameManager {
     final String filesDirectory;
-    @Getter
-    final SaveState state = new SaveState();
 
     /**
      * Класс-наследник должен иметь конструктор эквивалентный этому.
@@ -22,14 +21,6 @@ public abstract class SaveGameManager {
     public SaveGameManager(@NonNull String filesDirectoryPath) {
         this.filesDirectory = filesDirectoryPath;
     }
-
-
-    /**
-     * Возвращает класс, которым оперирует менеджер. Например: return MySavable.class;
-     *
-     * @return класс сущности сохранения
-     */
-    public abstract Class<? extends Savable> getGameStateClass();
 
     /**
      * Инициализацию класса можете осуществить в этом методе.
@@ -45,11 +36,25 @@ public abstract class SaveGameManager {
      */
     public abstract void saveGame(String filename, Savable gameState) throws SaveGameException;
 
+    /**
+     * Читает из файла.
+     *
+     * @param filename имя файла
+     * @return загруженное состояние
+     */
     public abstract Savable loadGame(String filename) throws SaveGameException;
+
+    public abstract InstantiatableEntity createEntity(InstantiatableEntity.Type type,
+                                                      InstantiatableEntity.Status status,
+                                                      long hitPoints);
+
+    public abstract <T extends InstantiatableEntity> Savable<T> createSavable(String name,
+                                                                              List<T> entities);
 
     /**
      * Хранит состояние файлов-сохранений.
      */
+    @Deprecated
     static class SaveState {
         private String lastSaveGameFilename;
         private SortedSet<String> allSaveFiles = new TreeSet<>();
