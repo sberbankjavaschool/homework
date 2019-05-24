@@ -56,7 +56,7 @@ task forceRebase {
 
         grgit.fetch()
         grgit.pull(remote: "origin", branch: targetBranch, rebase: true)
-        grgit.pull(remote: "origin", branch: 'source', rebase: true)
+        grgit.pull(remote: "origin", branch: 'source', rebase: false)
         println "pulled from source"
 
         grgit.push(remote: "origin", refsOrSpecs: ["+refs/heads/${targetBranch}:${targetBranch}"])
