@@ -25,7 +25,14 @@ dependencies {
         exclude module: 'tasks'
     }
 
-    compileOnly 'org.projectlombok:lombok:1.18.6'
+    implementation 'com.esotericsoftware:kryo:5.0.0-RC4'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.9.9'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.9.9'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.9.9'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatypes-collections:2.9.9'
+
+
+            compileOnly 'org.projectlombok:lombok:1.18.6'
     annotationProcessor 'org.projectlombok:lombok:1.18.6'
 
     implementation 'commons-cli:commons-cli:1.4'
