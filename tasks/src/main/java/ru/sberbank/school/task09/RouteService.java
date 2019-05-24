@@ -12,13 +12,18 @@ public abstract class RouteService<C extends City, T extends Route> {
             "Sverdlovsk", "Murmansk", "Vladimir", "London", "Kiev",
             "San-Francisco", "Palo Alto", "New-York", "Rome",
             "Minsk", "Astana", "Vladivostok", "Novosibirsk"));
-    protected CachePathProvider pathProvider;
+    protected String path;
     private int idCounter = 0;
     private SecureRandom rand = new SecureRandom();
 
-    public RouteService(CachePathProvider pathProvider) {
-        this.pathProvider = pathProvider;
+    public RouteService(String path) {
+        this.path = path;
     }
+
+    public RouteService() {
+    }
+
+    public abstract T getRoute(String from, String to);
 
     /*
      * Медленный, неэффективный, и, возможно, расположенный в другой стране / на другой планете, сервис.
@@ -28,7 +33,7 @@ public abstract class RouteService<C extends City, T extends Route> {
      * @param to Название города назначения
      * @return Готовый маршрут
      */
-    public T getRoute(String from, String to) {
+    T getRouteInner(String from, String to) {
         checkNames(from, to);
         List<String> names = new ArrayList<>(cities);
         Collections.shuffle(names);

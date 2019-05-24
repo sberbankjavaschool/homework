@@ -1,5 +1,7 @@
 package ru.sberbank.school.task07;
 
+import java.util.List;
+
 /**
  * Фабрика по инициализации объектов для задач по коллекциям.
  */
@@ -17,7 +19,7 @@ public interface CollectionsServiceFactory {
 
     DifferentWords getDifferentWords(FileParser fileParser);
 
-    <E> ReverseOrderIterator<E> getReversOrderIterator(FileParser fileParser);
+    <E> ReverseOrderIterator<E> getReversOrderIterator(List<E> elements);
 
     WordFrequency getWordFrequency(FileParser fileParser);
 }
