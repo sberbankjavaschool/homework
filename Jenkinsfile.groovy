@@ -36,6 +36,7 @@ pipeline {
             steps {
                 script {
                     def errorString = null
+                    def fixNeeded = false
                     print "${pullRequest.headRef} ${pullRequest.base}"
                     if (pullRequest.base == 'source') {
                         def comment = pullRequest.comment("ПР в ветку Source запрещен! " +
@@ -46,6 +47,8 @@ pipeline {
                     } else {
                         removeLabel('WRONG BRANCH')
                     }
+
+
                     try {
                         //try {
                         //    sh "./gradlew --stacktrace tryToPushToForkRepo " +
@@ -70,6 +73,7 @@ pipeline {
                         pullRequest.addLabel('REBASE NEEDED')
                         errorString = 'Rebase Failed'
                     }
+
                     try {
                         sh "./gradlew --stacktrace forceRebase " +
                                 "-PtargetBranch='${pullRequest.base}'"
@@ -78,9 +82,30 @@ pipeline {
                         pullRequest.comment("Что произошло? \n" +
                                 "Скрипт не может сделать автоматический ребейз в твою ветку этоо репозитория.\n" +
                                 "Что делать? \n" +
-                                "Надо фиксить руками - обратись к преподавателям.")
+                                "Я попробую сделать это автоматически. Если у меня не получится - обратись к преподавателям.")
                         pullRequest.addLabel('HELP ME')
                         errorString = 'Rebase To Target Failed'
+                        fixNeeded = true
+                    }
+
+                    if (!fixNeeded) {
+                        for (comment in pullRequest.comments) {
+                            String body = comment.body
+                            println body
+                            if (body.contains('FIX-GIT')) {
+                                println 'We are here'
+                                fixNeeded = true
+                                pullRequest.deleteComment(comment.id)
+                            }
+                            break
+                        }
+                    }
+                    if (fixNeeded) {
+                        sh "./gradlew --stacktrace fixGit " +
+                                "-PsourceBranch='${pullRequest.headRef}' " +
+                                "-PforkRepo='https://github.com/${CHANGE_AUTHOR}/homework.git'"
+                        pullRequest.comment("Починил твою ветку. Не благодари.")
+                        removeLabel('HELP ME')
                     }
                     if (errorString != null) {
                         error(errorString)
