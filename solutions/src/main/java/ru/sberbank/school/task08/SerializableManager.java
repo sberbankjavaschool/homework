@@ -34,7 +34,7 @@ public class SerializableManager extends SaveGameManager {
     public InstantiatableEntity createEntity(InstantiatableEntity.Type type,
                                              InstantiatableEntity.Status status,
                                              long hitPoints) {
-        return new GameObject(type, status, hitPoints);
+        return new GameObject(type, status, hitPoints); //WUT
     }
 
     @Override
