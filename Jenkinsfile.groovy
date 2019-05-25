@@ -91,9 +91,7 @@ pipeline {
                         }
                     }
                     if (fixNeeded) {
-                        sh "./gradlew --stacktrace fixGit " +
-                                "-PsourceBranch='${pullRequest.headRef}' " +
-                                "-PforkRepo='https://github.com/${CHANGE_AUTHOR}/homework.git'"
+                        sh "./gradlew --stacktrace fixGit -PtargetBranch='${pullRequest.base}' "
                         pullRequest.comment("Починил твою ветку. Не благодари.")
                         removeLabel('HELP ME')
                     }
