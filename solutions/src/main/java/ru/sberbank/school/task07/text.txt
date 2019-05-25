@@ -1,0 +1,23 @@
+Given a
+string,
+str="
+The moon
+is our
+natural
+satellite,
+i.e. it
+rotates
+around
+the
+Earth!" I
+want to
+extract
+the words
+and store
+them in an
+array.
+The expected
+array
+elements
+would be
+this. this

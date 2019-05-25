@@ -9,7 +9,7 @@ public class CountMapImpl implements CountMap<String> {
 
     @Override
     public void add(String key) {
-        map.put(key, map.getOrDefault(key, 0));
+        map.merge(key, 1, Integer::sum);
     }
 
     @Override
