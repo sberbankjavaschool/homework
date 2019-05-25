@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public class FxConversionServiceImpl implements FxConversionService {
-    private ExternalQuotesService externalQuotesService;
+    protected ExternalQuotesService externalQuotesService;
 
     public FxConversionServiceImpl(@NonNull ExternalQuotesService externalQuotesService) {
         this.externalQuotesService = externalQuotesService;
@@ -27,6 +27,14 @@ public class FxConversionServiceImpl implements FxConversionService {
         if (quoteList == null || quoteList.isEmpty()) {
             throw new FxConversionException("Отсутстуют котировки на заданную валютную пару");
         }
+        Quote targetQuote = findQuote(quoteList, amount);
+        if (targetQuote == null) {
+            throw new FxConversionException("Нет подходящего диапазона котировок");
+        }
+        return ClientOperation.BUY == operation ? targetQuote.getOffer() : targetQuote.getBid();
+    }
+
+    protected Quote findQuote(List<Quote> quoteList, BigDecimal amount) {
         Quote targetQuote = null;
         for (Quote currentQuote : quoteList) {
             if (targetQuote == null && currentQuote.isInfinity()) {
@@ -39,9 +47,6 @@ public class FxConversionServiceImpl implements FxConversionService {
                 }
             }
         }
-        if (targetQuote == null) {
-            throw new FxConversionException("Нет подходящего диапазона котировок");
-        }
-        return ClientOperation.BUY == operation ? targetQuote.getOffer() : targetQuote.getBid();
+        return targetQuote;
     }
 }
