@@ -31,11 +31,14 @@ public class GameObject implements InstantiatableEntity {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof GameObject)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof GameObject)) {
+            return false;
+        }
         GameObject that = (GameObject) o;
-        return type == that.type &&
-                status == that.status;
+        return type == that.type && status == that.status;
     }
 
     @Override
