@@ -1,5 +1,6 @@
 package ru.sberbank.school.task02;
 
+import ru.sberbank.school.task02.exception.ConverterConfigurationException;
 import ru.sberbank.school.task02.exception.FxConversionException;
 import ru.sberbank.school.task02.util.ClientOperation;
 import ru.sberbank.school.task02.util.Quote;
@@ -19,16 +20,16 @@ public class CurrencyCalc implements FxConversionService {
     @Override
     public BigDecimal convert(ClientOperation operation, Symbol symbol, BigDecimal amount) {
         if (operation == null) {
-            throw new NullPointerException("operation missing");
+            throw new ConverterConfigurationException("operation missing");
         }
         if (amount == null) {
-            throw new NullPointerException("amount missing");
+            throw new ConverterConfigurationException("amount missing");
         }
         if (symbol == null) {
-            throw new NullPointerException("symbol missing");
+            throw new ConverterConfigurationException("symbol missing");
         }
         if (amount.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new IllegalArgumentException("amount should be positive");
+            throw new ConverterConfigurationException("amount should be positive");
         }
 
         List<Quote> quotesList = quotes.getQuotes(symbol);
@@ -56,6 +57,10 @@ public class CurrencyCalc implements FxConversionService {
             }
         }
 
-        return pickedQuote == null ? quoteList.get(0) : pickedQuote;
+        if (pickedQuote == null) {
+            throw new FxConversionException("no matching quote");
+        }
+
+        return pickedQuote;
     }
 }

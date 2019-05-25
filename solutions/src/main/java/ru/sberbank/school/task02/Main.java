@@ -1,21 +1,22 @@
 package ru.sberbank.school.task02;
 
-import ru.sberbank.school.task02.util.ClientOperation;
-import ru.sberbank.school.task02.util.ExternalQuotesServiceDemo;
-import ru.sberbank.school.task02.util.Symbol;
 
-import java.math.BigDecimal;
+import ru.sberbank.school.task02.util.ExternalQuotesServiceDemo;
+import ru.sberbank.school.task02.util.FxRequest;
+import ru.sberbank.school.task02.util.FxResponse;
 
 public class Main {
     public static void main(String[] args) {
 
-        CurrencyCalcFactory factory = new CurrencyCalcFactory();
+        ExternalQuotesService quotes = new ExternalQuotesServiceDemo();
+        ServiceFactory factory = new CurrencyCalcFactory();
+        FxConversionService calculator = factory.getFxConversionService(quotes);
+        ClientController client = new ClientController(calculator);
 
-        FxConversionService calculator =
-                factory.getFxConversionService(new ExternalQuotesServiceDemo());
 
-        BigDecimal price = calculator.convert(ClientOperation.BUY,
-                Symbol.USD_RUB, BigDecimal.valueOf(1000));
-        System.out.println(price);
+        FxRequest request = client.makeRequest(args);
+        FxResponse response = client.fetchResult(request);
+
+        System.out.println(response);
     }
 }
