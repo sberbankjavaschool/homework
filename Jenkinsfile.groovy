@@ -50,28 +50,19 @@ pipeline {
 
 
                     try {
-                        //try {
-                        //    sh "./gradlew --stacktrace tryToPushToForkRepo " +
-                        //            "-PsourceBranch='${pullRequest.headRef}' " +
-                        //            "-PforkRepo='https://github.com/${CHANGE_AUTHOR}/homework.git'"
-                        //} catch (err) {
-                        //    pullRequest.comment("Не смог автоматически запушить в твой форк."
-                        //            + " Добавь jenkins-java-school-2019 в коллабораторы и скинь ссылку в общий чат.\n" +
-                        //            "Если это уже было сделано, значит автоматический пуш невозможен. Делай руками.")
-                        //}
                         sh "./gradlew --stacktrace checkIfSourceBranchPulled " +
                                 "-PsourceBranch='${pullRequest.headRef}' " +
                                 "-PforkRepo='https://github.com/${CHANGE_AUTHOR}/homework.git'"
                         removeLabel('REBASE NEEDED')
                     } catch (ignore) {
                         pullRequest.comment("Что произошло? \n" +
-                                "Последний коммит из ветки source не был найден в ветке форка.\n" +
+                                "Последний коммит из ветки source не был найден в ветке форка. " +
+                                "Скрипты и задания могут быть неактуальными!\n" +
                                 "Что делать? \n" +
                                 "Сделать pull с ребейзом из ветки source в форк.")
                         pullRequest.comment(gitInstruction)
                         println "Do a barrel roll!"
                         pullRequest.addLabel('REBASE NEEDED')
-                        errorString = 'Rebase Failed'
                     }
 
                     try {
@@ -80,11 +71,10 @@ pipeline {
                         removeLabel('HELP ME')
                     } catch (ignore) {
                         pullRequest.comment("Что произошло? \n" +
-                                "Скрипт не может сделать автоматический ребейз в твою ветку этоо репозитория.\n" +
+                                "Скрипт не может сделать автоматический ребейз в твою ветку этого репозитория.\n" +
                                 "Что делать? \n" +
                                 "Я попробую сделать это автоматически. Если у меня не получится - обратись к преподавателям.")
                         pullRequest.addLabel('HELP ME')
-                        errorString = 'Rebase To Target Failed'
                         fixNeeded = true
                     }
 
@@ -106,9 +96,6 @@ pipeline {
                                 "-PforkRepo='https://github.com/${CHANGE_AUTHOR}/homework.git'"
                         pullRequest.comment("Починил твою ветку. Не благодари.")
                         removeLabel('HELP ME')
-                    }
-                    if (errorString != null) {
-                        error(errorString)
                     }
                 }
             }
