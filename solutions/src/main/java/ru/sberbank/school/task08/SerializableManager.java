@@ -38,8 +38,7 @@ public class SerializableManager extends SaveGameManager {
     }
 
     @Override
-    public <T extends InstantiatableEntity> Savable<T> createSavable(String name,
-                                                                     List<T> entities) {
+    public Savable createSavable(String name, List entities) {
         return new MapState<>(name, entities);
     }
 
