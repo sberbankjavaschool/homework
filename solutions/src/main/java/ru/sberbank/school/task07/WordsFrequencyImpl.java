@@ -19,9 +19,9 @@ public class WordsFrequencyImpl implements WordFrequency<Map<String, Integer>> {
 
         Map<String, Integer> map = new HashMap<>();
 
-        parser.parse(pathToFile).
-            forEach(s -> SentenceParser.parse(s).
-                forEach(w -> map.merge(w, 1, Integer::sum)));
+        parser.parse(pathToFile)
+                .forEach(s -> SentenceParser.parse(s)
+                .forEach(w -> map.merge(w, 1, Integer::sum)));
 
         return map;
     }

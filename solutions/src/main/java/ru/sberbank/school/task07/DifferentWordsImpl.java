@@ -15,8 +15,8 @@ public class DifferentWordsImpl implements DifferentWords<Set<String>> {
 
     @Override
     public Set<String> findSortedDifferentWords(String pathToFile) throws FileNotFoundException {
-        Set<String> set = new TreeSet<>((o1, o2) -> o1.length() == o2.length() ?
-            o1.compareTo(o2) : o1.length() - o2.length());
+        Set<String> set = new TreeSet<>((o1, o2) -> o1.length() == o2.length()
+                ? o1.compareTo(o2) : o1.length() - o2.length());
 
         for (String l : parser.parse(pathToFile)) {
             set.addAll(SentenceParser.parse(l));
