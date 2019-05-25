@@ -10,6 +10,8 @@ import ru.sberbank.school.task02.util.Symbol;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
+
 
 public class CurrencyCalculator implements FxConversionService {
     private ExternalQuotesService externalQuotesService;
@@ -20,10 +22,10 @@ public class CurrencyCalculator implements FxConversionService {
 
     @Override
     public BigDecimal convert(ClientOperation operation, Symbol symbol, BigDecimal amount) {
-        if (operation == null || symbol == null || amount == null) {
-            throw new NullPointerException("Arguments can't be null:\n" + "Operation: " + operation + "\n"
-                    + "Symbol: " + symbol + "\n" + "Amount: " + amount);
-        }
+        Objects.requireNonNull(operation, "Operation can't be null");
+        Objects.requireNonNull(symbol, "Symbol can't be null");
+        Objects.requireNonNull(amount, "Amount can't be null");
+
         if (amount.compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("Amount can't be zero or less, current " + amount);
         }
@@ -51,12 +53,11 @@ public class CurrencyCalculator implements FxConversionService {
     }
 
     protected Quote chooseQuote(BigDecimal amount, Quote quote1, Quote quote2) {
-        if (amount == null) {
-            throw new NullPointerException("Amount can't be null");
-        }
-        if (quote2 == null) {
-            throw new NullPointerException("Amount can't be null");
-        }
+
+        Objects.requireNonNull(amount, "Amount can't be null");
+        Objects.requireNonNull(quote2, "Quote2 can't be null");
+
+
         if (amount.compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("Amount can't be zero or less, current " + amount);
         }
