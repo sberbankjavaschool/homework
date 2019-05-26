@@ -1,10 +1,7 @@
 package ru.sberbank.school.task07;
 
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Задание: Подсчитайте сколько раз каждое слово встречается в файле. В качестве T выберите наиболее
@@ -21,7 +18,9 @@ public class WordsFrequencyImpl implements WordFrequency {
         Map<String, Integer> wordsFrequencyMap = new HashMap<>();
         List<String> wordsFromFile = fileParser.parse(pathToFile);
         for (String word : wordsFromFile) {
-            wordsFrequencyMap.put(word, wordsFrequencyMap.getOrDefault(word, 0) + 1);
+            for (String s : Arrays.asList(word.toLowerCase().trim().split("\\s"))) {
+                wordsFrequencyMap.put(s, wordsFrequencyMap.getOrDefault(word, 0) + 1);
+            }
         }
         return wordsFrequencyMap;
     }
