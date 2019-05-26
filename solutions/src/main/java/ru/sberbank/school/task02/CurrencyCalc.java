@@ -1,5 +1,6 @@
 package ru.sberbank.school.task02;
 
+import ru.sberbank.school.task02.exception.ConverterConfigurationException;
 import ru.sberbank.school.task02.exception.FxConversionException;
 import ru.sberbank.school.task02.util.ClientOperation;
 import ru.sberbank.school.task02.util.Quote;
@@ -32,7 +33,7 @@ public class CurrencyCalc implements FxConversionService {
         }
 
         List<Quote> quotesList = quotes.getQuotes(symbol);
-        if (quotesList.isEmpty()) {
+        if (quotesList == null || quotesList.isEmpty()) {
             throw new FxConversionException("quotes unavailable");
         }
 
@@ -56,6 +57,10 @@ public class CurrencyCalc implements FxConversionService {
             }
         }
 
-        return pickedQuote == null ? quoteList.get(0) : pickedQuote;
+        if (pickedQuote == null) {
+            throw new FxConversionException("no matching quote");
+        }
+
+        return pickedQuote;
     }
 }
