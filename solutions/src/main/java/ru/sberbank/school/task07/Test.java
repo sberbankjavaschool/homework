@@ -37,7 +37,6 @@ public class Test {
             System.out.println(stringsByNumbers);
             System.out.println("====================AS");
 
-
         } catch (FileNotFoundException ex) {
             System.out.println("File not found");
         }
