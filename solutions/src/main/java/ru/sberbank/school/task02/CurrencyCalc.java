@@ -20,16 +20,16 @@ public class CurrencyCalc implements FxConversionService {
     @Override
     public BigDecimal convert(ClientOperation operation, Symbol symbol, BigDecimal amount) {
         if (operation == null) {
-            throw new ConverterConfigurationException("operation missing");
+            throw new NullPointerException("operation missing");
         }
         if (amount == null) {
-            throw new ConverterConfigurationException("amount missing");
+            throw new NullPointerException("amount missing");
         }
         if (symbol == null) {
-            throw new ConverterConfigurationException("symbol missing");
+            throw new NullPointerException("symbol missing");
         }
         if (amount.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new ConverterConfigurationException("amount should be positive");
+            throw new IllegalArgumentException("amount should be positive");
         }
 
         List<Quote> quotesList = quotes.getQuotes(symbol);
