@@ -19,7 +19,7 @@ class Template {
     private static String header(Set<String> symbols) {
 
         symbols.each { symbol ->
-            """==== Отчет об изменении котировок для валют ${symbol} ====\n"""
+            "==== Отчет об изменении котировок для валют ${symbol} ====\n"
         }
     }
 
@@ -28,9 +28,9 @@ class Template {
         StringBuilder body = new StringBuilder()
         requestList.each { request ->
 
-            body << """====== Данные по инструменту: ${request.symbol} ======\n"""
-            body << responseBlock(request.volumeRequestInfoList)
-            body << """Данные по суммам:
+            body <<"""====== Данные по инструменту: ${request.symbol} ======\n
+${responseBlock(request.volumeRequestInfoList)} 
+Данные по суммам:
 \tmin: \taverage: \tmax:
 \t${request.min} \t${request.average} \t${request.max}
 Самая выгодная для клиента цена покупки ${request.bestBuyingPrice} на объеме ${request.bestBuyingAmount}
@@ -53,7 +53,7 @@ class Template {
 
         StringBuilder block = new StringBuilder()
         quoteList.each { quote ->
-            block << """${quote.date} | ${quote.amount} | ${quote.direction} | ${quote.price} \n"""
+            block << "${quote.date} | ${quote.amount} | ${quote.direction} | ${quote.price} \n"
         }
 
         block

@@ -48,8 +48,8 @@ public class ClientController implements FxClientController {
             symbol = checkSymbol(requests.getSymbol());
             direction = checkDirection(requests.getDirection());
             amount = checkDecimal(requests.getAmount());
-        } catch (NullPointerException npe) {
-            throw new ConverterConfigurationException("one or more arguments missing");
+        } catch (ConverterConfigurationException | NullPointerException cce) {
+            throw new ConverterConfigurationException(cce.getMessage());
         }
 
         try {
@@ -86,21 +86,19 @@ public class ClientController implements FxClientController {
 
         try {
 
-            Options options = new Options();
-
-            options.addRequiredOption("s", "symbol", true, "Currency symbol");
-            options.addRequiredOption("d", "direction", true, "Desired operation");
-            options.addRequiredOption("a", "amount", true, "Desired amount");
-
-            Map<String, String> parsedArgs = new ArgumentParser(options).parseArgs(args);
+            Map<String, String> parsedArgs = new ArgumentParser(provideOptions()).parseArgs(args);
 
             return new FxRequest(parsedArgs.get("s"), parsedArgs.get("d"), parsedArgs.get("a"));
-        } catch (NullPointerException npe) {
-            throw new ConverterConfigurationException("one or more arguments missing");
+        } catch (NullPointerException | ConverterConfigurationException e) {
+            throw new ConverterConfigurationException(e.getMessage());
         }
     }
 
     private String checkSymbol(String symbol) {
+
+        if (symbol == null) {
+            throw new NullPointerException("symbol parameter missing");
+        }
 
         symbol = symbol.replace("/", "_");
 
@@ -109,27 +107,35 @@ public class ClientController implements FxClientController {
         } else if (symbol.equalsIgnoreCase("USD_RUB")) {
             return "USD_RUB";
         } else {
-            throw new WrongSymbolException("invalid symbol");
+            throw new WrongSymbolException("invalid symbol: specify currency (USD/RUB, RUB/USD, etc.)");
         }
     }
 
     private String checkDirection(String direction) {
+
+        if (direction == null) {
+            throw new NullPointerException("operation parameter missing");
+        }
 
         if (direction.equalsIgnoreCase("BUY")) {
             return "BUY";
         } else if (direction.equalsIgnoreCase("SELL")) {
             return "SELL";
         } else {
-            throw new ConverterConfigurationException("invalid operation");
+            throw new ConverterConfigurationException("invalid operation: choose 'BUY' or 'SELL'");
         }
     }
 
     private String checkDecimal(String value) {
 
+        if (value == null) {
+            throw new NullPointerException("amount parameter missing");
+        }
+
         try {
             return new BigDecimal(value).setScale(2, BigDecimal.ROUND_HALF_UP).toString();
         } catch (NumberFormatException nfe) {
-            throw new ConverterConfigurationException("incorrect value");
+            throw new ConverterConfigurationException("incorrect value: should be positive decimal");
         }
     }
 
@@ -139,5 +145,16 @@ public class ClientController implements FxClientController {
 
     private ClientOperation getDirection(String direction) {
         return direction.equals("SELL") ? ClientOperation.SELL : ClientOperation.BUY;
+    }
+
+    public Options provideOptions() {
+
+        Options o = new Options();
+
+        o.addOption("s", "symbol", true, "Currency symbol");
+        o.addRequiredOption("d", "direction", true, "Desired operation");
+        o.addRequiredOption("a", "amount", true, "Desired amount");
+
+        return o;
     }
 }
