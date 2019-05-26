@@ -55,5 +55,8 @@ public class Calculator implements FxConversionService {
         Objects.requireNonNull(operation, "No operation provided");
         Objects.requireNonNull(symbol, "No symbol provided");
         Objects.requireNonNull(amount, "No amount provided");
+        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Wrong amount");
+        }
     }
 }
