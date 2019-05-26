@@ -71,4 +71,17 @@ class JacksonManagerTest {
         mapState = jacksonManager.createSavable("Госпиталь", objects);
     }
 
+    @Test
+    @DisplayName("Проверка на эквивалентность и неиндетичность объектов при null списке")
+    void nullListObjects() throws SaveGameException {
+        mapState = jacksonManager.createSavable("Пустой список", null);
+        jacksonManager.saveGame(fileName, mapState);
+        MapState<GameObject> otherMapState = jacksonManager.loadGame(fileName);
+
+        Assertions.assertNotSame(mapState, otherMapState);
+        Assertions.assertEquals(mapState, otherMapState);
+
+        mapState = jacksonManager.createSavable("Госпиталь", objects);
+    }
+
 }

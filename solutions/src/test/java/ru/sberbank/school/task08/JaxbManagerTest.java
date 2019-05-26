@@ -68,4 +68,17 @@ class JaxbManagerTest {
 
         mapState = jaxbManager.createSavable("Госпиталь", objects);
     }
+
+    @Test
+    @DisplayName("Проверка на эквивалентность и неиндетичность объектов при null списке")
+    void nullListObjects() throws SaveGameException {
+        mapState = jaxbManager.createSavable("Пустой список", null);
+        jaxbManager.saveGame(fileName, mapState);
+        JaxbMapState<GameObject> otherMapState = jaxbManager.loadGame(fileName);
+
+        Assertions.assertNotSame(mapState, otherMapState);
+        Assertions.assertEquals(mapState, otherMapState);
+
+        mapState = jaxbManager.createSavable("Госпиталь", objects);
+    }
 }

@@ -74,4 +74,17 @@ class SerializableManagerTest {
 
         mapState = serializableManager.createSavable("Госпиталь", objects);
     }
+
+    @Test
+    @DisplayName("Проверка на эквивалентность и неиндетичность объектов при null списке")
+    void nullListObjects() throws SaveGameException {
+        mapState = serializableManager.createSavable("Пустой список", null);
+        serializableManager.saveGame(fileName, mapState);
+        MapState<GameObject> otherMapState = serializableManager.loadGame(fileName);
+
+        Assertions.assertNotSame(mapState, otherMapState);
+        Assertions.assertEquals(mapState, otherMapState);
+
+        mapState = serializableManager.createSavable("Госпиталь", objects);
+    }
 }
