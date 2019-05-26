@@ -1,9 +1,6 @@
 package ru.sberbank.school.task08.state;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.sun.xml.internal.txw2.annotation.XmlElement;
-
-import javax.xml.bind.annotation.XmlElements;
 import java.io.Serializable;
 import java.util.List;
 
