@@ -106,7 +106,7 @@ class ReverseCalculatorTest {
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
             calculator.convertReversed(ClientOperation.BUY, Symbol.USD_RUB, BigDecimal.ZERO, Beneficiary.CLIENT);
         }, "Wrong amount");
-}
+    }
 
     @Test
     void convertReversedNegativeAmountThrowsIAe() {
