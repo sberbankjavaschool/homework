@@ -17,6 +17,7 @@ public class FxConversionServiceImpl implements FxConversionService {
     FxConversionServiceImpl(ExternalQuotesService externalQuotesService) {
         this.externalQuotesService = externalQuotesService;
     }
+
     protected List<Quote> list;
 
     @Override

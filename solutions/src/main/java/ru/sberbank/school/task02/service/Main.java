@@ -16,7 +16,10 @@ public class Main {
         System.out.println(
                 serviceFactory
                         .getExtendedFxConversionService(new ExternalQuotesServiceImpl())
-                        .convertReversed(ClientOperation.SELL, Symbol.USD_RUB, BigDecimal.valueOf(77700), Beneficiary.CLIENT));
+                        .convertReversed(ClientOperation.SELL,
+                                Symbol.USD_RUB,
+                                BigDecimal.valueOf(31000),
+                                Beneficiary.CLIENT));
 
 //        System.out.println(
 //                serviceFactory
