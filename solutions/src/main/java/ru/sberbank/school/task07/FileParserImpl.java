@@ -16,7 +16,6 @@ public class FileParserImpl implements FileParser {
      */
     public List<String> parse(String pathToFile) {
         List<String> fromFile = new ArrayList<>();
-        //long ntime = System.nanoTime();
         try (Stream<String> lines = Files.lines(Paths.get(pathToFile))) {
             lines.forEach(s -> fromFile.add(s.toLowerCase()));
         } catch (IOException ex) {
