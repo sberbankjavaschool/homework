@@ -1,7 +1,10 @@
 package ru.sberbank.school.task08;
 
 import lombok.NonNull;
-import ru.sberbank.school.task08.state.*;
+import ru.sberbank.school.task08.state.GameObject;
+import ru.sberbank.school.task08.state.InstantiatableEntity;
+import ru.sberbank.school.task08.state.MapState;
+import ru.sberbank.school.task08.state.Savable;
 import ru.sberbank.school.util.Solution;
 
 import java.io.*;
@@ -9,13 +12,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Solution(8)
-public class SerializableManager extends SaveGameManager {
-    /**
-     * Конструктор не меняйте.
-     */
+public class KryoManager extends SaveGameManager {
     private int numberOfFile = 0;
 
-    public SerializableManager(@NonNull String filesDirectoryPath) {
+    public KryoManager(@NonNull String filesDirectoryPath) {
         super(filesDirectoryPath);
     }
 
@@ -40,7 +40,7 @@ public class SerializableManager extends SaveGameManager {
 
     @Override
     public void saveGame(String filename, Savable gameState) throws SaveGameException {
-        try (FileOutputStream fos = new FileOutputStream(filesDirectory+File.separator+filename);
+        try (FileOutputStream fos = new FileOutputStream(filename);
              ObjectOutputStream out = new ObjectOutputStream(fos))
         {
             out.writeObject(gameState);
@@ -51,7 +51,7 @@ public class SerializableManager extends SaveGameManager {
 
     @Override
     public Savable loadGame(String filename) throws SaveGameException {
-        try (FileInputStream fis = new FileInputStream(filesDirectory+File.separator+filename);
+        try (FileInputStream fis = new FileInputStream(filename);
              ObjectInputStream in = new ObjectInputStream(fis)) {
             return (Savable) in.readObject();
         } catch (IOException | ClassNotFoundException ex) {
@@ -68,9 +68,9 @@ public class SerializableManager extends SaveGameManager {
     }
 
     @Override
-    public <GameObject extends InstantiatableEntity> Savable<GameObject> createSavable(String name,
-                                                                     List<GameObject> entities) {
-        return new MapState<GameObject>(name, entities);
+    public <T extends InstantiatableEntity> Savable<T> createSavable(String name,
+                                                                     List<T> entities) {
+        return new MapState<>(name, entities);
     }
 
     public static void main(String[] args) {
@@ -78,5 +78,4 @@ public class SerializableManager extends SaveGameManager {
                 = new SerializableManager("C:\\Users\\Anastasia\\Desktop\\Java\\serialize");
         serializableManager.initialize();
     }
-
 }
