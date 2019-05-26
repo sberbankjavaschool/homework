@@ -17,8 +17,7 @@ public class ReverseOrderImpl implements ReverseOrder {
     }
 
     public List<String> getReverseOrderedStrings(String pathToFile) throws FileNotFoundException {
-        List<String> reversedList = new ArrayList<>();
-        reversedList = fileParser.parse(pathToFile);
+        List<String> reversedList = fileParser.parse(pathToFile);
         Collections.reverse(reversedList);
         return reversedList;
     }

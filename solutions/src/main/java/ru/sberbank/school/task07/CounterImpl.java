@@ -1,10 +1,7 @@
 package ru.sberbank.school.task07;
 
 import java.io.FileNotFoundException;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Stream;
 import java.nio.file.*;
 import java.io.IOException;
@@ -24,10 +21,8 @@ public class CounterImpl implements Counter {
 
     public int count(String pathToFile) throws FileNotFoundException {
         List<String> words = fileParser.parse(pathToFile);
-        Map<String, Integer> wordsMap = new HashMap<>();
-        for (String word : words) {
-            wordsMap.put(word, wordsMap.getOrDefault(word, 0) + 1);
-        }
+        HashSet<String> wordsMap = new HashSet<>();
+        wordsMap.addAll(words);
         return wordsMap.size();
     }
 }
