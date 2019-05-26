@@ -19,6 +19,9 @@ public class AnyStringNumberImpl implements AnyStringNumber {
         List<String> foundStrings;
         List<String> foundStringsByNumbers = new ArrayList<>();
         foundStrings = fileParser.parse(pathToFile);
+        if (numbers == null) {
+            return foundStringsByNumbers;
+        }
         for (Integer i : numbers) {
             if ((i - 1 < foundStrings.size()) && (i - 1 >= 0)) {
                 foundStringsByNumbers.add(foundStrings.get(i - 1));

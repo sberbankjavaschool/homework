@@ -8,19 +8,17 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-//@Solution(8)
-//public class SerializableManager extends SaveGameManager {
-//    /**
-//     * Конструктор не меняйте.
-//     */
-//    private int numberOfFile = 0;
-//
-//    public SerializableManager(@NonNull String filesDirectoryPath) {
-//        super(filesDirectoryPath);
-//    }
-//
-//    @Override
-//    public void initialize() {
+@Solution(8)
+public class SerializableManager extends SaveGameManager<MapState<GameObject>, GameObject> {
+    /**
+     * Конструктор не меняйте.
+     */
+    public SerializableManager(@NonNull String filesDirectoryPath) {
+        super(filesDirectoryPath);
+    }
+
+    @Override
+    public void initialize() {
 //        numberOfFile +=1 ;
 //        InstantiatableEntity game = createEntity(InstantiatableEntity.Type.BUILDING,
 //                InstantiatableEntity.Status.DESPAWNED, numberOfFile);
@@ -35,48 +33,40 @@ import java.util.List;
 //        } catch (SaveGameException ex) {
 //
 //        }
-//
-//    }
-//
-//    @Override
-//    public void saveGame(String filename, Savable gameState) throws SaveGameException {
-//        try (FileOutputStream fos = new FileOutputStream(filesDirectory+File.separator+filename);
-//             ObjectOutputStream out = new ObjectOutputStream(fos))
-//        {
-//            out.writeObject(gameState);
-//        } catch (IOException ex) {
-//            ex.printStackTrace();
-//        }
-//    }
-//
-//    @Override
-//    public Savable loadGame(String filename) throws SaveGameException {
-//        try (FileInputStream fis = new FileInputStream(filesDirectory+File.separator+filename);
-//             ObjectInputStream in = new ObjectInputStream(fis)) {
-//            return (Savable) in.readObject();
-//        } catch (IOException | ClassNotFoundException ex) {
-//            ex.printStackTrace();
-//        }
-//        return null;
-//    }
-//
-//    @Override
-//    public InstantiatableEntity createEntity(InstantiatableEntity.Type type,
-//                                             InstantiatableEntity.Status status,
-//                                             long hitPoints) {
-//        return new GameObject(type, status, hitPoints);
-//    }
-//
-//    @Override
-//    public <GameObject extends InstantiatableEntity> Savable<GameObject> createSavable(String name,
-//                                                                     List<GameObject> entities) {
-//        return new MapState<GameObject>(name, entities);
-//    }
-//
-//    public static void main(String[] args) {
-//        SerializableManager serializableManager
-//                = new SerializableManager("C:\\Users\\Anastasia\\Desktop\\Java\\serialize");
-//        serializableManager.initialize();
-//    }
-//
-//}
+
+    }
+
+    @Override
+    public void saveGame(String filename, MapState<GameObject> gameState) throws SaveGameException {
+        try (FileOutputStream fos = new FileOutputStream(filesDirectory+File.separator+filename);
+             ObjectOutputStream out = new ObjectOutputStream(fos))
+        {
+            out.writeObject(gameState);
+        } catch (IOException ex) {
+            throw new SaveGameException("Stream reading is failed");
+        }
+    }
+
+    @Override
+    public MapState<GameObject> loadGame(String filename) throws SaveGameException {
+        try (FileInputStream fis = new FileInputStream(filesDirectory+File.separator+filename);
+             ObjectInputStream in = new ObjectInputStream(fis)) {
+            return (MapState<GameObject>) in.readObject();
+        } catch (IOException | ClassNotFoundException ex) {
+            throw new SaveGameException("Stream reading is failed");
+        }
+    }
+
+    @Override
+    public GameObject createEntity(InstantiatableEntity.Type type,
+                                             InstantiatableEntity.Status status,
+                                             long hitPoints) {
+        return new GameObject(type, status, hitPoints);
+    }
+
+    @Override
+    public MapState<GameObject> createSavable(String name, List<GameObject> entities) {
+        return new MapState<>(name, entities);
+    }
+
+}

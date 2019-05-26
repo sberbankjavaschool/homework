@@ -1,9 +1,10 @@
 package ru.sberbank.school.task07;
 
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.TreeSet;
 import java.util.List;
 
 /**
@@ -18,12 +19,16 @@ public class DifferentWordsImpl implements DifferentWords {
         this.fileParser = fileParser;
     }
 
-    public List<String> findSortedDifferentWords(String pathToFile) throws FileNotFoundException {
+    public TreeSet<String> findSortedDifferentWords(String pathToFile) throws FileNotFoundException {
         List<String> difWords = fileParser.parse(pathToFile);
-        HashSet<String> set = new HashSet<>(difWords);
-        difWords.clear();
-        difWords.addAll(set);
-        difWords.sort(Comparator.comparing(String::length));
-        return difWords;
+        TreeSet<String> set = new TreeSet<>((o1, o2) -> {
+            if (o1.length() == o2.length()) {
+                return o1.compareToIgnoreCase(o2);
+            }
+            return o1.length() - o2.length();
+        });
+        set.addAll(difWords);
+        return set;
     }
+
 }
