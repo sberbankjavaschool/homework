@@ -13,8 +13,8 @@ public class Main {
         ExternalQuotesService quotes = new ExternalQuotesServiceDemo();
         ServiceFactory factory = new CurrencyCalcFactory();
         FxConversionService calculator = factory.getFxConversionService(quotes);
+        ExtendedFxConversionService reverseCalculator = factory.getExtendedFxConversionService(quotes);
         ClientController client = new ClientController(calculator);
-        HelpFormatter hf = new HelpFormatter();
 
         try {
 
@@ -22,10 +22,10 @@ public class Main {
             FxResponse response = client.fetchResult(request);
 
             System.out.println(response);
-        } catch (FxConversionException cce) {
+        } catch (FxConversionException | NullPointerException e) {
 
-            System.err.println(cce.getMessage());
-            hf.printHelp("Usage: ", client.provideOptions());
+            System.err.println(e.getMessage());
+            new HelpFormatter().printHelp("Usage: ", client.provideOptions());
             System.exit(1);
         }
     }

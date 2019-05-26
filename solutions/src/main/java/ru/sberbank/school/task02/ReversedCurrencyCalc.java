@@ -21,6 +21,15 @@ public class ReversedCurrencyCalc extends CurrencyCalc implements ExtendedFxConv
                                                 @NonNull BigDecimal amount,
                                                 @NonNull Beneficiary beneficiary) {
 
+        return convertReversed(operation, symbol, amount, 0, beneficiary);
+    }
+
+    public Optional<BigDecimal> convertReversed(@NonNull ClientOperation operation,
+                                                @NonNull Symbol symbol,
+                                                @NonNull BigDecimal amount,
+                                                double delta,
+                                                @NonNull Beneficiary beneficiary) {
+
         if (amount.compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("amount should be positive");
         }
@@ -30,12 +39,23 @@ public class ReversedCurrencyCalc extends CurrencyCalc implements ExtendedFxConv
             throw new FxConversionException("no available quotes");
         }
 
-        Pair<ReversedQuote, ReversedQuote> bounds = findBounds(quotes, operation, amount);
+        Pair<ReversedQuote, ReversedQuote> neighbors = findClosest(quotes, operation, amount);
 
-        return getPrice(bounds.getKey(), bounds.getValue(), amount, beneficiary);
+        return getPrice(neighbors.getKey(), neighbors.getValue(), delta, amount, beneficiary);
     }
 
-    private Pair<ReversedQuote, ReversedQuote> findBounds(@NonNull List<Quote> quotes, ClientOperation direction, BigDecimal amount) {
+    /**
+     * This function picks two quotes with volumes
+     * that have bounds closest to amount.
+     * @param quotes List of available quotes.
+     * @param direction Operation type.
+     * @param amount Amount in target currency
+     * @return Pair of reversed quotes wich are made
+     *          from two suitable quotes.
+     */
+    private Pair<ReversedQuote, ReversedQuote> findClosest(List<Quote> quotes,
+                                                           ClientOperation direction,
+                                                           BigDecimal amount) {
 
         Quote upper = Quote.builder()
                 .symbol(quotes.get(0).getSymbol())
@@ -47,9 +67,7 @@ public class ReversedCurrencyCalc extends CurrencyCalc implements ExtendedFxConv
 
         for (Quote quote : quotes) {
 
-            BigDecimal price = direction == ClientOperation.BUY
-                            ? quote.getBid()
-                            : quote.getOffer();
+            BigDecimal price = direction == ClientOperation.BUY ? quote.getBid() : quote.getOffer();
             BigDecimal currentVolume = quote.getVolumeSize();
 
             if (upper.isInfinity() && quote.isInfinity()) {
@@ -72,37 +90,100 @@ public class ReversedCurrencyCalc extends CurrencyCalc implements ExtendedFxConv
         return new Pair<>(low, up);
     }
 
-    private Optional<BigDecimal> getPrice(ReversedQuote upper, ReversedQuote lower,
+    private Optional<BigDecimal> getPrice(ReversedQuote upper, ReversedQuote lower, double delta,
                                           BigDecimal amount, Beneficiary beneficiary) {
 
         BigDecimal lb = lower.getUpperBound().getVolume();
         BigDecimal ub = upper.getLowerBound().getVolume();
 
-        if (lb.compareTo(amount) >= 0 && ub.compareTo(amount) <= 0) {
+        BigDecimal price = pickPrice(lower, upper, beneficiary, checkBounds(ub, lb, amount, amount));
 
-            boolean bigger = beneficiary == Beneficiary.BANK ^ upper.getDirection() == ClientOperation.BUY;
-
-            BigDecimal price = bigger
-                    ? lower.getPrice()
-                    : upper.getPrice();
-
-            return Optional.of(price);
-        } else if (lb.compareTo(amount) >= 0) {
-            return Optional.of(lower.getPrice());
-        } else if (ub.compareTo(amount) <= 0) {
-            return Optional.of(upper.getPrice());
+        if(price == null && Math.abs(delta - 0) > 1e-5) {
+             price = pickPrice(lower, upper, beneficiary,
+                     checkBounds(ub, lb, amount.add(BigDecimal.valueOf(delta)),
+                                         amount.subtract(BigDecimal.valueOf(delta))));
         }
 
-        /*if(delta != 0) {
-
-            BigDecimal plusDelta = amount.plus(BigDecimal.valueOf(delta));
-            BigDecimal minusDelta = amount.plus(BigDecimal.valueOf(-delta));
-
-
-        }*/
-
-        return Optional.empty();
+        return price == null ? Optional.empty() : Optional.of(price);
     }
 
+    /**
+     * Checks if amount is inside one or more of its neighboring
+     * volumes' bounds.
+     * @param ub Right closest volume's lower bound.
+     * @param lb Left closest volume's upper bound.
+     * @param plusDelta Amount plus delta.
+     * @param minusDelta Amount minus delta.
+     * @return relative position of amount.
+     */
+    private Position checkBounds(BigDecimal ub, BigDecimal lb, BigDecimal plusDelta,
+                                   BigDecimal minusDelta) {
 
+        if (lb.compareTo(minusDelta) >= 0 && ub.compareTo(plusDelta) <= 0) {
+            return Position.BETWEENINTERSEC;
+        } else if (lb.compareTo(minusDelta) >= 0) {
+            return Position.INSIDELOWER;
+        } else if (ub.compareTo(plusDelta) <= 0) {
+            return Position.INSIDEUPPER;
+        }
+
+        return Position.OUTOFBOUNDS;
+    }
+
+    /**
+     * Picks price based on amount's position,
+     * beneficiary and operation type.
+     */
+    private BigDecimal pickPrice(ReversedQuote lower, ReversedQuote upper,
+                                 Beneficiary beneficiary, Position pos) {
+
+        /*
+         * BANK && SELL - lower price
+         * BANK && BUY - higher price
+         * CLIENT && SELL - higher price
+         * CLIENT && BUY - lower price
+         */
+        boolean max = beneficiary == Beneficiary.BANK ^ upper.getDirection() == ClientOperation.SELL;
+
+        switch (pos) {
+
+            case BETWEENINTERSEC:
+                return max ? upper.getPrice() : lower.getPrice();
+            case INSIDELOWER:
+                return lower.getPrice();
+            case INSIDEUPPER:
+                return upper.getPrice();
+            case OUTOFBOUNDS:
+            default:
+                return null;
+        }
+    }
+
+    /**
+     * Describes amount position relative to
+     * bounding volumes' values.
+     */
+
+    private enum Position {
+
+        /**
+         * Amount lies on the intersection of two volumes.
+         */
+        BETWEENINTERSEC,
+
+        /**
+         * Amount is below it's left closest volume's upper bound.
+         */
+        INSIDELOWER,
+
+        /**
+         * Amount is above it's right closest volume's lower bound.
+         */
+        INSIDEUPPER,
+
+        /**
+         * Amount isn't covered by any volume's bounds
+         */
+        OUTOFBOUNDS
+    }
 }

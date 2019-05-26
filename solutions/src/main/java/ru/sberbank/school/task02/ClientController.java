@@ -1,5 +1,6 @@
 package ru.sberbank.school.task02;
 
+import lombok.NonNull;
 import org.apache.commons.cli.Options;
 import ru.sberbank.school.task02.exception.*;
 import ru.sberbank.school.task02.util.*;
@@ -32,11 +33,7 @@ public class ClientController implements FxClientController {
     }
 
     @Override
-    public FxResponse fetchResult(FxRequest requests) {
-
-        if (requests == null) {
-            throw new ConverterConfigurationException("invalid request");
-        }
+    public FxResponse fetchResult(@NonNull FxRequest requests) {
 
         String symbol;
         String direction;
@@ -94,11 +91,7 @@ public class ClientController implements FxClientController {
         }
     }
 
-    private String checkSymbol(String symbol) {
-
-        if (symbol == null) {
-            throw new NullPointerException("symbol parameter missing");
-        }
+    private String checkSymbol(@NonNull String symbol) {
 
         symbol = symbol.replace("/", "_");
 
@@ -111,11 +104,7 @@ public class ClientController implements FxClientController {
         }
     }
 
-    private String checkDirection(String direction) {
-
-        if (direction == null) {
-            throw new NullPointerException("operation parameter missing");
-        }
+    private String checkDirection(@NonNull String direction) {
 
         if (direction.equalsIgnoreCase("BUY")) {
             return "BUY";
@@ -126,11 +115,7 @@ public class ClientController implements FxClientController {
         }
     }
 
-    private String checkDecimal(String value) {
-
-        if (value == null) {
-            throw new NullPointerException("amount parameter missing");
-        }
+    private String checkDecimal(@NonNull String value) {
 
         try {
             return new BigDecimal(value).setScale(2, BigDecimal.ROUND_HALF_UP).toString();
