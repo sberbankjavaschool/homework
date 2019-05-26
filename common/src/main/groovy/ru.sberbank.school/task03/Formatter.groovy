@@ -1,8 +1,8 @@
-package ru.sberbank.school
+package ru.sberbank.school.task03
 
-import ru.sberbank.school.model.DocumentInfo
+
 import ru.sberbank.school.task02.util.FxResponse
-import ru.sberbank.school.task03.ResponseFormatter
+import ru.sberbank.school.task03.model.DocumentInfo
 
 class Formatter implements ResponseFormatter{
 

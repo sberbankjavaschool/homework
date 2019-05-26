@@ -1,6 +1,6 @@
-package ru.sberbank.school
+package ru.sberbank.school.task03
 
-import ru.sberbank.school.model.*
+import ru.sberbank.school.task03.model.*
 
 class Template {
 

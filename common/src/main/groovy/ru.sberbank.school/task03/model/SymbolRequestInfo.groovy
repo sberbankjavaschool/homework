@@ -1,4 +1,4 @@
-package ru.sberbank.school.model
+package ru.sberbank.school.task03.model
 
 class SymbolRequestInfo {
 

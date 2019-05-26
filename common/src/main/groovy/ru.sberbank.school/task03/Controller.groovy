@@ -1,6 +1,6 @@
-package ru.sberbank.school
+package ru.sberbank.school.task03
 
-import ru.sberbank.school.model.*
+import ru.sberbank.school.task03.model.*
 import ru.sberbank.school.task02.util.FxResponse
 
 import static java.math.BigDecimal.ZERO
@@ -62,12 +62,14 @@ class Controller {
         BigDecimal bestBuyingAmount
         BigDecimal worstSellingAmount
         BigDecimal worstBuyingAmount
+        BigDecimal price
+        BigDecimal amount
         List<VolumeRequestInfo> volumeRequestInfoList = []
 
         directionMap["SELL"].each{ response ->
 
-            BigDecimal price = new BigDecimal(response.getPrice())
-            BigDecimal amount = new BigDecimal(response.getAmount())
+            price = new BigDecimal(response.getPrice())
+            amount = new BigDecimal(response.getAmount())
             sum += amount
 
             if (amount < minAmount) { minAmount = amount }
@@ -87,8 +89,8 @@ class Controller {
 
         directionMap["BUY"].each{ response ->
 
-            BigDecimal price = new BigDecimal(response.getPrice())
-            BigDecimal amount = new BigDecimal(response.getAmount())
+            price = new BigDecimal(response.getPrice())
+            amount = new BigDecimal(response.getAmount())
             sum += amount
 
             if (amount < minAmount) { minAmount = amount }
