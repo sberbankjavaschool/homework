@@ -1,22 +1,22 @@
 package ru.sberbank.school.task08;
 
-import com.sun.org.apache.bcel.internal.generic.RETURN;
-import lombok.NonNull;
-import ru.sberbank.school.task08.state.GameObject;
-import ru.sberbank.school.task08.state.InstantiatableEntity;
-import ru.sberbank.school.task08.state.MapState;
-import ru.sberbank.school.task08.state.Savable;
-import ru.sberbank.school.util.Solution;
-
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import sun.java2d.loops.DrawGlyphListAA;
-
-import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
+//import com.sun.org.apache.bcel.internal.generic.RETURN;
+//import lombok.NonNull;
+//import ru.sberbank.school.task08.state.GameObject;
+//import ru.sberbank.school.task08.state.InstantiatableEntity;
+//import ru.sberbank.school.task08.state.MapState;
+//import ru.sberbank.school.task08.state.Savable;
+//import ru.sberbank.school.util.Solution;
+//
+//import com.fasterxml.jackson.core.JsonGenerationException;
+//import com.fasterxml.jackson.databind.ObjectMapper;
+//import com.fasterxml.jackson.databind.SerializationFeature;
+//import com.fasterxml.jackson.databind.JsonMappingException;
+//import sun.java2d.loops.DrawGlyphListAA;
+//
+//import java.io.*;
+//import java.util.ArrayList;
+//import java.util.List;
 //
 //@Solution(8)
 //public class JacksonManager extends SaveGameManager {
