@@ -28,7 +28,7 @@ public class DifferentWordsImpl implements DifferentWords {
             return o1.length() - o2.length();
         });
         for (String word : difWords) {
-            set.addAll(Arrays.asList(word.toLowerCase().trim().split("\\s+")));
+            set.addAll(Arrays.asList(word.toLowerCase().trim().split("[=,;:.!?\\s]+")));
         }
         return set;
     }
