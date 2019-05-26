@@ -15,7 +15,7 @@ public class Test {
             System.out.println(stringsFromFile);
             Counter counter = new CounterImpl(fileParser);
             int difWords = counter.count(path);
-            System.out.println("Dif Words: "+difWords);
+            System.out.println("Dif Words: " + difWords);
             System.out.println("====================");
 
             DifferentWordsImpl differentWords = new DifferentWordsImpl(fileParser);
