@@ -10,6 +10,7 @@ import ru.sberbank.school.task02.util.Symbol;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import static java.math.RoundingMode.HALF_UP;
@@ -54,17 +55,21 @@ public class ExtendedFxConversionServiceImpl extends FxConversionServiceImpl imp
 
         Quote targetQuote = findQuote(quotes, operation, amount, beneficiary);
 
+        if (Objects.isNull(targetQuote)) {
+            return Optional.empty();
+        }
+
         BigDecimal quoteRate = operation == BUY ? targetQuote.getOffer() : targetQuote.getBid();
-
-        BigDecimal baseValue = targetQuote.getVolumeSize();
-
-        BigDecimal checkQuotedValue = baseValue.multiply(quoteRate);
 
         BigDecimal rate = BigDecimal.ONE.divide(quoteRate, SCALE, HALF_UP);
 
-        int quotedValueComparing = amount.compareTo(checkQuotedValue);
+        return Optional.of(rate);
 
-        return quotedValueComparing == 0 ? Optional.ofNullable(rate) : Optional.empty();
+/*        //для тестов
+        BigDecimal baseValue = targetQuote.getVolumeSize();
+        BigDecimal checkQuotedValue = baseValue.multiply(quoteRate);
+        int quotedValueComparing = amount.compareTo(checkQuotedValue);
+        return quotedValueComparing == 0 ? Optional.ofNullable(rate) : Optional.empty();*/
     }
 
     /**
@@ -92,6 +97,10 @@ public class ExtendedFxConversionServiceImpl extends FxConversionServiceImpl imp
 
         Quote targetQuote = findQuote(quotes, operation, amount, beneficiary);
 
+        if (Objects.isNull(targetQuote)) {
+            return Optional.empty();
+        }
+
         BigDecimal quoteRate = operation == BUY ? targetQuote.getOffer() : targetQuote.getBid();
 
         BigDecimal baseValue = targetQuote.getVolumeSize();
@@ -117,8 +126,9 @@ public class ExtendedFxConversionServiceImpl extends FxConversionServiceImpl imp
         BigDecimal quoteRate;
         BigDecimal targetValue;
 
-        Quote targetQuote = quotes.get(quotes.size() - 1);
-        Quote previousQuote = targetQuote;
+        Quote lastQuote = quotes.get(quotes.size() - 1);
+        Quote targetQuote = null;
+        Quote previousQuote = lastQuote;
 
         for (Quote quote : quotes) {
             boolean volumeOverlay = previousQuote.getVolumeSize().compareTo(quote.getVolumeSize()) == 0;
@@ -138,7 +148,7 @@ public class ExtendedFxConversionServiceImpl extends FxConversionServiceImpl imp
             boolean targetValueLessThanQuoteValue = targetValue.compareTo(quote.getVolumeSize()) <= 0;
             boolean targetValueMoreThanPreviousQuoteValue = targetValue.compareTo(previousQuote.getVolumeSize()) > 0;
             boolean quoteIsInfinityAndTargetValueMoreThanMaxValue = quote.isInfinity()
-                    && targetValue.compareTo(targetQuote.getVolumeSize()) > 0;
+                    && targetValue.compareTo(lastQuote.getVolumeSize()) > 0;
 
             if (quoteIsInfinityAndTargetValueMoreThanMaxValue
                     || (targetValueLessThanQuoteValue && (targetValueMoreThanPreviousQuoteValue || volumeOverlay))) {
