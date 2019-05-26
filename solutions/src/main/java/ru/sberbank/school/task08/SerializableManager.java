@@ -38,9 +38,8 @@ public class SerializableManager extends SaveGameManager<MapState<GameObject>, G
 
     @Override
     public void saveGame(String filename, MapState<GameObject> gameState) throws SaveGameException {
-        try (FileOutputStream fos = new FileOutputStream(filesDirectory+File.separator+filename);
-             ObjectOutputStream out = new ObjectOutputStream(fos))
-        {
+        try (FileOutputStream fos = new FileOutputStream(filesDirectory + File.separator + filename);
+             ObjectOutputStream out = new ObjectOutputStream(fos)) {
             out.writeObject(gameState);
         } catch (IOException ex) {
             throw new SaveGameException("Stream reading is failed");
@@ -49,7 +48,7 @@ public class SerializableManager extends SaveGameManager<MapState<GameObject>, G
 
     @Override
     public MapState<GameObject> loadGame(String filename) throws SaveGameException {
-        try (FileInputStream fis = new FileInputStream(filesDirectory+File.separator+filename);
+        try (FileInputStream fis = new FileInputStream(filesDirectory + File.separator + filename);
              ObjectInputStream in = new ObjectInputStream(fis)) {
             return (MapState<GameObject>) in.readObject();
         } catch (IOException | ClassNotFoundException ex) {
@@ -59,8 +58,8 @@ public class SerializableManager extends SaveGameManager<MapState<GameObject>, G
 
     @Override
     public GameObject createEntity(InstantiatableEntity.Type type,
-                                             InstantiatableEntity.Status status,
-                                             long hitPoints) {
+                                   InstantiatableEntity.Status status,
+                                   long hitPoints) {
         return new GameObject(type, status, hitPoints);
     }
 
