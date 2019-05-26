@@ -34,6 +34,7 @@ sherlockPath.deleteOnExit()
 
 task forceRebase {
     // Оставь надежду всякий сюда смотрящий
+    //noinspection GroovyAssignabilityCheck
     doFirst {
         def target = project.hasProperty("targetBranch")
         if (!target) {
@@ -65,6 +66,7 @@ task forceRebase {
 }
 
 task fixGit {
+    //noinspection GroovyAssignabilityCheck
     doFirst {
         def target = project.hasProperty("targetBranch")
         if (!target) {
@@ -80,7 +82,7 @@ task fixGit {
         def grgit = Grgit.clone(dir: tempDir,
                 uri: homeRepo,
                 checkout: true,
-                refToCheckout: "refs/heads/${targetBranch}",
+                refToCheckout: "refs/heads/source",
                 credentials: new Credentials(gitUser, gitPass))
 
         println "OK"
@@ -90,7 +92,7 @@ task fixGit {
         grgit.pull(remote: "origin", branch: targetBranch, rebase: false)
         println "pulled from source"
 
-        grgit.push(remote: "origin", refsOrSpecs: ["+refs/heads/${targetBranch}:${targetBranch}"], force: true)
+        grgit.push(remote: "origin", refsOrSpecs: ["+refs/heads/source:${targetBranch}"], force: true)
         print "pushed to: target"
     }
 }
