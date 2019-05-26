@@ -1,6 +1,5 @@
 package ru.sberbank.school.task02;
 
-import ru.sberbank.school.task02.exception.ConverterConfigurationException;
 import ru.sberbank.school.task02.exception.FxConversionException;
 import ru.sberbank.school.task02.util.ClientOperation;
 import ru.sberbank.school.task02.util.Quote;
@@ -11,10 +10,10 @@ import java.util.List;
 
 public class CurrencyCalc implements FxConversionService {
 
-    private ExternalQuotesService quotes;
+    protected ExternalQuotesService externalQuotesService;
 
-    public CurrencyCalc(ExternalQuotesService externalQuotes) {
-        this.quotes = externalQuotes;
+    public CurrencyCalc(ExternalQuotesService externalQuotesService) {
+        this.externalQuotesService = externalQuotesService;
     }
 
     @Override
@@ -32,12 +31,12 @@ public class CurrencyCalc implements FxConversionService {
             throw new IllegalArgumentException("amount should be positive");
         }
 
-        List<Quote> quotesList = quotes.getQuotes(symbol);
-        if (quotesList == null || quotesList.isEmpty()) {
+        List<Quote> quotes = externalQuotesService.getQuotes(symbol);
+        if (quotes == null || quotes.isEmpty()) {
             throw new FxConversionException("quotes unavailable");
         }
 
-        Quote quote = pickQuote(quotesList, amount);
+        Quote quote = pickQuote(quotes, amount);
 
         return operation == ClientOperation.SELL ? quote.getBid() : quote.getOffer();
     }
