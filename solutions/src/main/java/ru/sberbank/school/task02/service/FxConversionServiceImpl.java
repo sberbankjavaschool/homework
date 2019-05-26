@@ -5,26 +5,30 @@ import ru.sberbank.school.task02.FxConversionService;
 import ru.sberbank.school.task02.util.ClientOperation;
 import ru.sberbank.school.task02.util.Quote;
 import ru.sberbank.school.task02.util.Symbol;
+import ru.sberbank.school.task02.util.Volume;
 
 import java.math.BigDecimal;
 import java.util.List;
 
 public class FxConversionServiceImpl implements FxConversionService {
 
-    private ExternalQuotesService externalQuotesService;
+    protected ExternalQuotesService externalQuotesService;
 
     FxConversionServiceImpl(ExternalQuotesService externalQuotesService) {
         this.externalQuotesService = externalQuotesService;
     }
+    protected List<Quote> list;
 
     @Override
     public BigDecimal convert(ClientOperation operation, Symbol symbol, BigDecimal amount) {
 
-        List<Quote> list = externalQuotesService.getQuotes(symbol);
+        this.list = externalQuotesService.getQuotes(symbol);
+
+        BigDecimal upperVolume = getUpperVolume(amount);
 
         for (Quote quote : list) {
 
-            if (quote.getVolumeSize().equals(getUpperVolume(symbol, amount))) {
+            if (quote.getVolumeSize().equals(upperVolume)) {
                 if (operation.equals(ClientOperation.SELL)) {
                     return quote.getBid();
                 } else {
@@ -36,20 +40,14 @@ public class FxConversionServiceImpl implements FxConversionService {
         return BigDecimal.ZERO;
     }
 
-    private BigDecimal getUpperVolume(Symbol symbol, BigDecimal amount) {
+    protected BigDecimal getUpperVolume(BigDecimal amount) {
 
-        BigDecimal max = BigDecimal.ZERO;
-        List<Quote> list = externalQuotesService.getQuotes(symbol);
 
-        for (Quote quote : list) {
-            max = quote.getVolumeSize().max(max);
-        }
-
-        BigDecimal upperVolume = max;
+        BigDecimal upperVolume = BigDecimal.valueOf(Long.MAX_VALUE);
         int traceVolume = 0;
 
         for (Quote quote : list) {
-            if (quote.getVolumeSize().compareTo(amount) == 1) {
+            if (quote.getVolumeSize().compareTo(amount) > 0) {
                 upperVolume = quote.getVolumeSize().min(upperVolume);
             } else {
                 traceVolume++;
@@ -57,9 +55,12 @@ public class FxConversionServiceImpl implements FxConversionService {
         }
 
         if (traceVolume == list.size()) {
+
             upperVolume = BigDecimal.valueOf(-1);
         }
 
         return upperVolume;
     }
+
+
 }
