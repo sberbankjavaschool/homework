@@ -1,25 +1,34 @@
 package ru.sberbank.school.task08;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.NonNull;
-import ru.sberbank.school.task08.state.*;
+import ru.sberbank.school.task08.state.GameObject;
+import ru.sberbank.school.task08.state.InstantiatableEntity;
+import ru.sberbank.school.task08.state.MapState;
 import ru.sberbank.school.util.Solution;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 
 @Solution(8)
-public class SerializableManager extends SaveGameManager<MapState<GameObject>, GameObject> {
+public class JacksonManager extends SaveGameManager<MapState<GameObject>, GameObject> {
+    private ObjectMapper mapper;
+
     /**
-     * Конструктор не меняйте.
+     * Класс-наследник должен иметь конструктор эквивалентный этому.
+     *
+     * @param filesDirectoryPath Путь до директории, в которой хранятся файлы сохранений
      */
-    public SerializableManager(@NonNull String filesDirectoryPath) {
+    public JacksonManager(@NonNull String filesDirectoryPath) {
         super(filesDirectoryPath);
     }
 
     @Override
     public void initialize() {
-//        throw new UnsupportedOperationException("Implement me!");
+        mapper = new ObjectMapper();
     }
 
     @Override
@@ -27,36 +36,23 @@ public class SerializableManager extends SaveGameManager<MapState<GameObject>, G
         Objects.requireNonNull(filename, "Имя файла не должно быть null");
         Objects.requireNonNull(gameState, "Сохраняемый объект не должен быть null");
 
-        try (FileOutputStream fos = new FileOutputStream(filesDirectory + File.separator + filename);
-                ObjectOutputStream outputStream = new ObjectOutputStream(fos)) {
-
-            outputStream.writeObject(gameState);
-
-        } catch (FileNotFoundException e) {
-            throw new SaveGameException("Файл не найден", e, SaveGameException.Type.USER, gameState);
-        } catch (IOException e) {
-            throw new SaveGameException("Возникла ошибка при записи объекта в поток", e,
-                    SaveGameException.Type.IO, gameState);
+        try {
+            mapper.writeValue(new File(filesDirectory + File.separator + filename), gameState);
+        } catch (NullPointerException | IOException e) {
+            throw new SaveGameException("Возникла ошибка при записи объекта", e, SaveGameException.Type.IO, gameState);
         }
     }
 
     @Override
     public MapState<GameObject> loadGame(String filename) throws SaveGameException {
         Objects.requireNonNull(filename, "Имя файла не должно быть null");
-        MapState<GameObject> savable = null;
+        MapState savable = null;
 
-        try (FileInputStream fis = new FileInputStream(filesDirectory + File.separator + filename);
-                ObjectInputStream inputStream = new ObjectInputStream(fis)) {
-
-            savable = (MapState<GameObject>) inputStream.readObject();
-
-        } catch (FileNotFoundException e) {
-            throw new SaveGameException("Файл не найден", e, SaveGameException.Type.USER, savable);
+        try {
+            savable = mapper.readValue(new File(filesDirectory + File.separator + filename), MapState.class);
         } catch (IOException e) {
-            throw new SaveGameException("Возникла ошибка при чтении объекта из потока", e,
+            throw new SaveGameException("Возникла ошибка при считывании объекта", e,
                     SaveGameException.Type.IO, savable);
-        } catch (ClassNotFoundException e) {
-            throw new SaveGameException("Десериализуемый класс не найден", e, SaveGameException.Type.SYSTEM, savable);
         }
 
         return savable;

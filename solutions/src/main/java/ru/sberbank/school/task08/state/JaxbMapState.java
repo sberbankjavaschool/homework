@@ -1,30 +1,36 @@
 package ru.sberbank.school.task08.state;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.sun.xml.internal.txw2.annotation.XmlElement;
-
-import javax.xml.bind.annotation.XmlElements;
-import java.io.Serializable;
+import javax.xml.bind.annotation.*;
 import java.util.List;
 
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public class MapState<T extends GameObject> implements Savable<T>, Serializable {
-    private final String name;
-    private final List<T> gameObjects;
+@XmlRootElement(name = "MapState")
+public class JaxbMapState<T extends GameObject> implements Savable<T> {
+    private String name;
+    private List<T> gameObjects;
 
-    private MapState() {
+    private JaxbMapState() {
         gameObjects = null;
         name = null;
     }
 
-    public MapState(String name, List<T> gameObjects) {
+    public JaxbMapState(String name, List<T> gameObjects) {
         this.name = name;
+        this.gameObjects = gameObjects;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @XmlElementWrapper(name = "gameObjects")
+    public void setGameObjects(List<T> gameObjects) {
         this.gameObjects = gameObjects;
     }
 
     public String getName() {
         return name;
     }
+
 
     public List<T> getGameObjects() {
         return this.gameObjects;
@@ -34,10 +40,10 @@ public class MapState<T extends GameObject> implements Savable<T>, Serializable 
         if (o == this) {
             return true;
         }
-        if (!(o instanceof MapState)) {
+        if (!(o instanceof JaxbMapState)) {
             return false;
         }
-        final MapState other = (MapState) o;
+        final JaxbMapState other = (JaxbMapState) o;
         final Object this$gameObjects = this.getGameObjects();
         final Object other$gameObjects = other.getGameObjects();
         return this$gameObjects == null ? other$gameObjects == null : this$gameObjects.equals(other$gameObjects);
