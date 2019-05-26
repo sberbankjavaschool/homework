@@ -19,7 +19,7 @@ public class WordsFrequencyImpl implements WordFrequency {
         List<String> wordsFromFile = fileParser.parse(pathToFile);
         for (String word : wordsFromFile) {
             for (String s : Arrays.asList(word.toLowerCase().trim().split("\\s"))) {
-                wordsFrequencyMap.put(s, wordsFrequencyMap.getOrDefault(word, 0) + 1);
+                wordsFrequencyMap.put(s, wordsFrequencyMap.getOrDefault(s, 0) + 1);
             }
         }
         return wordsFrequencyMap;
