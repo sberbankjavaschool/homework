@@ -33,7 +33,7 @@ public class CurrencyCalc implements FxConversionService {
         }
 
         List<Quote> quotesList = quotes.getQuotes(symbol);
-        if (quotesList.isEmpty()) {
+        if (quotesList == null || quotesList.isEmpty()) {
             throw new FxConversionException("quotes unavailable");
         }
 

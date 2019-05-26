@@ -32,7 +32,7 @@ public class ArgumentParser {
             CommandLine cmd = parser.parse(options, args, true);
             Map<String, String> parsedArgs = new HashMap<>();
 
-            for(Option option : options.getOptions()) {
+            for (Option option : options.getOptions()) {
                 parsedArgs.put(option.getOpt(), option.hasArg()
                                                 ? cmd.getOptionValue(option.getOpt())
                                                 : "");
