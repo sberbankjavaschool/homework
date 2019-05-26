@@ -1,7 +1,12 @@
 package ru.sberbank.school.task08;
 
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.io.Input;
+import com.esotericsoftware.kryo.io.Output;
 import lombok.NonNull;
-import ru.sberbank.school.task08.state.*;
+import ru.sberbank.school.task08.state.GameObject;
+import ru.sberbank.school.task08.state.InstantiatableEntity;
+import ru.sberbank.school.task08.state.MapState;
 import ru.sberbank.school.util.Solution;
 
 import java.io.*;
@@ -9,17 +14,22 @@ import java.util.List;
 import java.util.Objects;
 
 @Solution(8)
-public class SerializableManager extends SaveGameManager<MapState<GameObject>, GameObject> {
+public class KryoManager extends SaveGameManager<MapState<GameObject>, GameObject> {
+    private Kryo kryo;
+
     /**
-     * Конструктор не меняйте.
+     * Класс-наследник должен иметь конструктор эквивалентный этому.
+     *
+     * @param filesDirectoryPath Путь до директории, в которой хранятся файлы сохранений
      */
-    public SerializableManager(@NonNull String filesDirectoryPath) {
+    public KryoManager(@NonNull String filesDirectoryPath) {
         super(filesDirectoryPath);
     }
 
     @Override
     public void initialize() {
-//        throw new UnsupportedOperationException("Implement me!");
+        kryo = new Kryo();
+        kryo.register(MapState.class, new KryoSerializer());
     }
 
     @Override
@@ -28,9 +38,9 @@ public class SerializableManager extends SaveGameManager<MapState<GameObject>, G
         Objects.requireNonNull(gameState, "Сохраняемый объект не должен быть null");
 
         try (FileOutputStream fos = new FileOutputStream(filesDirectory + File.separator + filename);
-                ObjectOutputStream outputStream = new ObjectOutputStream(fos)) {
+                Output output = new Output(fos)) {
 
-            outputStream.writeObject(gameState);
+            kryo.writeObject(output, gameState);
 
         } catch (FileNotFoundException e) {
             throw new SaveGameException("Файл не найден", e, SaveGameException.Type.USER, gameState);
@@ -46,17 +56,15 @@ public class SerializableManager extends SaveGameManager<MapState<GameObject>, G
         MapState<GameObject> savable = null;
 
         try (FileInputStream fis = new FileInputStream(filesDirectory + File.separator + filename);
-                ObjectInputStream inputStream = new ObjectInputStream(fis)) {
+                Input inputStream = new Input(fis)) {
 
-            savable = (MapState<GameObject>) inputStream.readObject();
+            savable = kryo.readObject(inputStream, MapState.class);
 
         } catch (FileNotFoundException e) {
             throw new SaveGameException("Файл не найден", e, SaveGameException.Type.USER, savable);
         } catch (IOException e) {
             throw new SaveGameException("Возникла ошибка при чтении объекта из потока", e,
                     SaveGameException.Type.IO, savable);
-        } catch (ClassNotFoundException e) {
-            throw new SaveGameException("Десериализуемый класс не найден", e, SaveGameException.Type.SYSTEM, savable);
         }
 
         return savable;
@@ -64,8 +72,8 @@ public class SerializableManager extends SaveGameManager<MapState<GameObject>, G
 
     @Override
     public GameObject createEntity(InstantiatableEntity.Type type,
-                                   InstantiatableEntity.Status status,
-                                   long hitPoints) {
+                                             InstantiatableEntity.Status status,
+                                             long hitPoints) {
 //        Objects.requireNonNull(type, "Тип не должен быть null");
 //        Objects.requireNonNull(status, "Статус не должен быть null");
 //        if (hitPoints < 0) {

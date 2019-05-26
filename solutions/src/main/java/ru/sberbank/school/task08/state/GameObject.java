@@ -1,16 +1,34 @@
 package ru.sberbank.school.task08.state;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
+import java.io.Serializable;
 import java.util.Objects;
 
-public class GameObject implements InstantiatableEntity {
-    private final Type type;
-    private final Status status;
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class GameObject implements InstantiatableEntity, Serializable {
+    private Type type;
+    private Status status;
     private long hitPoints;
+
+    public GameObject() {
+    }
 
     public GameObject(Type type, Status status, long hitPoints) {
         this.type = type;
         this.status = status;
         this.hitPoints = hitPoints;
+    }
+
+    public void setType(Type type) {
+        this.type = type;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
     }
 
     public Type getType() {
@@ -31,11 +49,15 @@ public class GameObject implements InstantiatableEntity {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof GameObject)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof GameObject)) {
+            return false;
+        }
         GameObject that = (GameObject) o;
-        return type == that.type &&
-                status == that.status;
+        return type == that.type
+                && status == that.status;
     }
 
     @Override
