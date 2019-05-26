@@ -3,6 +3,7 @@ package ru.sberbank.school.task07;
 import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeSet;
 
 public class Test {
     public static void main(String[] args) {
@@ -17,7 +18,7 @@ public class Test {
             System.out.println("====================");
 
             DifferentWordsImpl differentWords = new DifferentWordsImpl(fileParser);
-            List<String> sortedListDifWords = differentWords.findSortedDifferentWords(path);
+            TreeSet<String> sortedListDifWords = differentWords.findSortedDifferentWords(path);
             System.out.println(sortedListDifWords);
             System.out.println("====================DW");
 
@@ -33,7 +34,7 @@ public class Test {
             System.out.println("====================RO");
 
             AnyStringNumberImpl anyStringNumber = new AnyStringNumberImpl(fileParser);
-            List<String> stringsByNumbers = anyStringNumber.findStringsByNumbers(path, 1, 4, 22, 5, 2, 5);
+            List<String> stringsByNumbers = anyStringNumber.findStringsByNumbers(path, null);
             System.out.println(stringsByNumbers);
             System.out.println("====================AS");
 
