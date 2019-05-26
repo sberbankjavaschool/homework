@@ -25,8 +25,12 @@ public class MapState<T extends InstantiatableEntity> implements Savable<T> {
     }
 
     public boolean equals(final Object o) {
-        if (o == this) return true;
-        if (!(o instanceof MapState)) return false;
+        if (o == this) {
+            return true;
+        }
+        if (!(o instanceof MapState)) {
+            return false;
+        }
         final MapState other = (MapState) o;
         final Object this$gameObjects = this.getGameObjects();
         final Object other$gameObjects = other.getGameObjects();
@@ -34,10 +38,10 @@ public class MapState<T extends InstantiatableEntity> implements Savable<T> {
     }
 
     public int hashCode() {
-        final int PRIME = 59;
+        final int prime = 59;
         int result = 1;
         final Object $gameObjects = this.getGameObjects();
-        result = result * PRIME + ($gameObjects == null ? 43 : $gameObjects.hashCode());
+        result = result * prime + ($gameObjects == null ? 43 : $gameObjects.hashCode());
         return result;
     }
 
