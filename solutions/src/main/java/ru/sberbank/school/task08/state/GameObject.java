@@ -8,8 +8,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.Objects;
 
-@XmlRootElement(name = "object")
-@XmlAccessorType(XmlAccessType.FIELD)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class GameObject implements InstantiatableEntity, Serializable {
     private Type type;
