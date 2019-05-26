@@ -68,7 +68,7 @@ public class CollectionUtils {
      * @param removeFrom коллекция, из которой удалять элементы
      * @param toRemove   коллекция, в которой лежат элементы для удаления из коллекции removeFrom
      */
-    public static <T> void removeAll(List<T> removeFrom, List<? extends T> toRemove) {
+    public static <T> void removeAll(List<? super T> removeFrom, List<? extends T> toRemove) {
         removeFrom.removeAll(toRemove);
     }
 
@@ -79,7 +79,7 @@ public class CollectionUtils {
      * @param c2 вторая коллекция
      * @return true, если все элементы коллекции c2 содержатся в c1
      */
-    public static <T> boolean containsAll(List<T> c1, List<? extends T> c2) {
+    public static <T> boolean containsAll(List<? super T> c1, List<? extends T> c2) {
         return c1.containsAll(c2);
     }
 
@@ -90,7 +90,7 @@ public class CollectionUtils {
      * @param c2 вторая коллекция
      * @return true, если хотя бы 1 элемент коллекции c2 содержатся в c1
      */
-    public static <T> boolean containsAny(List<T> c1, List<? extends T> c2) {
+    public static <T> boolean containsAny(List<? super T> c1, List<? extends T> c2) {
         for (T element : c2) {
             if (c1.contains(element)) {
                 return true;
