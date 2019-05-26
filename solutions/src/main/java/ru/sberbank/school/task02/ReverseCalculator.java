@@ -35,24 +35,23 @@ public class ReverseCalculator implements ExtendedFxConversionService {
     @Override
     public Optional<BigDecimal> convertReversed(ClientOperation operation, Symbol symbol, BigDecimal amount,
                                                 double delta, Beneficiary beneficiary) {
-        validate(operation, symbol, amount, beneficiary);
+        validate(operation, symbol, amount, beneficiary, delta);
 
-        if (delta < 0) {
-            throw new IllegalArgumentException("Negative delta is mindless");
-        }
-
-        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new IllegalArgumentException("Wrong amount");
-        }
         List<Quote> quotes = provider.getQuotes(symbol);
         if (quotes.isEmpty()) {
             throw new FxConversionException("No quotes found");
         }
 
-        List<Quote> filteredQuotes = filterQuotes(amount, quotes, operation, delta);
+        List<Quote> filteredQuotes = filterQuotes(amount, quotes, operation, 0);
 
         if (filteredQuotes.isEmpty()) {
-            return Optional.empty();
+            if (delta == 0) {
+                return Optional.empty();
+            }
+            filteredQuotes = filterQuotes(amount, quotes, operation, delta);
+            if (filteredQuotes.isEmpty()) {
+                return Optional.empty();
+            }
         }
         BigDecimal priceResult;
         if (filteredQuotes.size() == 1) {
@@ -91,10 +90,15 @@ public class ReverseCalculator implements ExtendedFxConversionService {
         List<Quote> filteredQuotes = new ArrayList<>();
         BigDecimal lastVolume = BigDecimal.ZERO;
         for (Quote quote : quotes) {
+
             BigDecimal price = operation == ClientOperation.SELL ? quote.getBid() : quote.getOffer();
-            if ((amount.add(BigDecimal.valueOf(delta))).compareTo(lastVolume.multiply(price)) >= 0
-                    && (quote.getVolume().isInfinity() || (amount.subtract(BigDecimal.valueOf(delta)))
-                    .compareTo(quote.getVolumeSize().multiply(price)) < 0)) {
+            BigDecimal amountWithHighDelta = amount.add(BigDecimal.valueOf(delta));
+            BigDecimal amountWithLowDelta = amount.subtract(BigDecimal.valueOf(delta));
+            BigDecimal bottomBoundary = lastVolume.multiply(price);
+            BigDecimal topBoundary = quote.getVolumeSize().multiply(price);
+
+            if (amountWithHighDelta.compareTo(bottomBoundary) >= 0
+                    && (quote.getVolume().isInfinity() || amountWithLowDelta.compareTo(topBoundary) < 0)) {
                 filteredQuotes.add(quote);
             }
             lastVolume = quote.getVolumeSize();
@@ -102,9 +106,13 @@ public class ReverseCalculator implements ExtendedFxConversionService {
         return filteredQuotes;
     }
 
-    private void validate(ClientOperation operation, Symbol symbol, BigDecimal amount, Beneficiary beneficiary) {
+    private void validate(ClientOperation operation, Symbol symbol, BigDecimal amount, Beneficiary beneficiary,
+                          double delta) {
         calculator.validate(operation, symbol, amount);
         Objects.requireNonNull(beneficiary, "No beneficiary provided");
+        if (delta < 0) {
+            throw new IllegalArgumentException("Negative delta is mindless");
+        }
     }
 
 }
