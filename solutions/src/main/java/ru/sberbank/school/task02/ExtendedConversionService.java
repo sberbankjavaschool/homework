@@ -29,6 +29,13 @@ public class ExtendedConversionService extends ConversionService implements Exte
         }
     }
 
+    @Override
+    public Optional<BigDecimal> convertReversed(ClientOperation operation, Symbol symbol,
+                                                BigDecimal amount, double delta,
+                                                Beneficiary beneficiary) {
+        return Optional.empty();
+    }
+
     private List<BigDecimal> getPriceList(ClientOperation operation, Symbol symbol,BigDecimal amount) {
         List<Quote> quotes = getExternalQuotesService().getQuotes(symbol);
         List<BigDecimal> foundPrices = new ArrayList<>();
@@ -51,15 +58,10 @@ public class ExtendedConversionService extends ConversionService implements Exte
     private BigDecimal getPriceBeneficiary(ClientOperation operation,
                                            List<BigDecimal> foundPrices,
                                            Beneficiary beneficiary) {
-        return (beneficiary == beneficiary.CLIENT && operation == operation.SELL ||
-                beneficiary == beneficiary.BANK && operation == operation.BUY)
-                ? Collections.max(foundPrices): Collections.min(foundPrices);
+        return (beneficiary == beneficiary.CLIENT && operation == operation.SELL
+                || beneficiary == beneficiary.BANK && operation == operation.BUY)
+                ? Collections.max(foundPrices) : Collections.min(foundPrices);
     }
 
-    @Override
-    public Optional<BigDecimal> convertReversed(ClientOperation operation, Symbol symbol,
-                                                BigDecimal amount, double delta,
-                                                Beneficiary beneficiary) {
-        return Optional.empty();
-    }
+
 }

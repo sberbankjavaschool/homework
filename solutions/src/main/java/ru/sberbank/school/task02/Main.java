@@ -13,7 +13,8 @@ public class Main {
 
         ExternalQuotesService myExternalQuotesService = new MyExternalQuotesService();
         ServiceFactoryImpl serviceFactoryImpl = new ServiceFactoryImpl();
-        ExtendedFxConversionService extendedConversionService = serviceFactoryImpl.getExtendedFxConversionService(myExternalQuotesService);
+        ExtendedFxConversionService extendedConversionService =
+                serviceFactoryImpl.getExtendedFxConversionService(myExternalQuotesService);
 
         System.out.println(extendedConversionService.convertReversed(ClientOperation.BUY,
                 Symbol.USD_RUB,

@@ -69,7 +69,7 @@ public class ConversionService implements FxConversionService {
                 }
             }
         }
-        return (nearQuote == null)? infQuote : nearQuote;
+        return (nearQuote == null) ? infQuote : nearQuote;
     }
 
     protected BigDecimal getPrice(ClientOperation operation, Quote quote) {
