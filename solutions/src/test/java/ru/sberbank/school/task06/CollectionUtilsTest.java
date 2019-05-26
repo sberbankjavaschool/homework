@@ -13,10 +13,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static ru.sberbank.school.task06.CollectionUtils.*;
 
-/**
+/**25.05.19
  * Тестирование работы статических методов {@link CollectionUtils}
  *
- * @author Gregory Melnikov, created on 25.05.19
+ * @author Gregory Melnikov
  */
 
 public class CollectionUtilsTest {
@@ -167,17 +167,6 @@ public class CollectionUtilsTest {
 
     @Test
     public void rangeTestComparator() {
-        Comparator<Plant> comparator = new Comparator<Plant>() {
-            @Override
-            public int compare(Plant o1, Plant o2) {
-                String info1 = o1.getInfo();
-                String info2 = o2.getInfo();
-                if (info1.compareTo(info2) > 0) return 1;
-                if (info1.compareTo(info2) < 0) return -1;
-                return 0;
-            }
-        };
-
         List<Plant> plants = new ArrayList<>();
         plants.add(new Oak());//0
         plants.add(new Tree());//1
@@ -190,6 +179,21 @@ public class CollectionUtilsTest {
         add(target, plants.get(4));
         add(target, plants.get(1));
 
+        Comparator<Plant> comparator = new Comparator<Plant>() {
+            @Override
+            public int compare(Plant o1, Plant o2) {
+                String info1 = o1.getInfo();
+                String info2 = o2.getInfo();
+                if (info1.compareTo(info2) > 0) {
+                    return 1;
+                }
+                if (info1.compareTo(info2) < 0) {
+                    return -1;
+                }
+                return 0;
+            }
+        };
+
         List<Plant> result = range(plants, new Plant(), new Tree(), comparator);
         System.out.println(result.toString());
         assertThat(result, equalTo(target));
@@ -199,14 +203,17 @@ public class CollectionUtilsTest {
     class Plant {
         String info = "1 level";
     }
+
     @Getter
     class Tree extends Plant {
         String info = "2 level";
     }
+
     @Getter
     class Oak extends Tree {
         String info = "3 level";
     }
+
     @Getter
     class Maple extends Tree {
         String info = "3 level";
