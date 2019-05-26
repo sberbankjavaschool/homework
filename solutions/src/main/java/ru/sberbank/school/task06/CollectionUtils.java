@@ -70,7 +70,7 @@ public class CollectionUtils {
      * @param removeFrom коллекция, из которой удалять элементы
      * @param toRemove   коллекция, в которой лежат элементы для удаления из коллекции removeFrom
      */
-    public static <T> void removeAll(List<? super T> removeFrom, List<? extends T> toRemove) {
+    public static void removeAll(List<?> removeFrom, List<?> toRemove) {
 
         removeFrom.removeAll(toRemove);
     }
