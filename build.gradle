@@ -34,6 +34,7 @@ sherlockPath.deleteOnExit()
 
 task forceRebase {
     // Оставь надежду всякий сюда смотрящий
+    //noinspection GroovyAssignabilityCheck
     doFirst {
         def target = project.hasProperty("targetBranch")
         if (!target) {
@@ -60,6 +61,38 @@ task forceRebase {
         println "pulled from source"
 
         grgit.push(remote: "origin", refsOrSpecs: ["+refs/heads/${targetBranch}:${targetBranch}"])
+        print "pushed to: target"
+    }
+}
+
+task fixGit {
+    //noinspection GroovyAssignabilityCheck
+    doFirst {
+        def target = project.hasProperty("targetBranch")
+        if (!target) {
+            println 'MISSING PARAMS'
+            return 1
+        }
+
+        def tempDir = File.createTempDir()
+        println tempDir.path
+        tempDir.deleteOnExit()
+
+        print "Cloning... "
+        def grgit = Grgit.clone(dir: tempDir,
+                uri: homeRepo,
+                checkout: true,
+                refToCheckout: "refs/heads/source",
+                credentials: new Credentials(gitUser, gitPass))
+
+        println "OK"
+
+        grgit.fetch()
+        grgit.pull(remote: "origin", branch: 'source', rebase: true)
+        grgit.pull(remote: "origin", branch: targetBranch, rebase: false)
+        println "pulled from source"
+
+        grgit.push(remote: "origin", refsOrSpecs: ["+refs/heads/source:${targetBranch}"], force: true)
         print "pushed to: target"
     }
 }
