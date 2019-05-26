@@ -23,7 +23,8 @@ public class CounterImpl implements Counter {
         List<String> words = fileParser.parse(pathToFile);
         HashSet<String> wordsMap = new HashSet<>();
         for (String word : words) {
-            wordsMap.addAll(Arrays.asList(word.toLowerCase().trim().split("\\s")));
+            List<String> listwords = Arrays.asList(word.toLowerCase().trim().split("\\s"));
+            wordsMap.addAll(listwords);
         }
         return wordsMap.size();
     }
