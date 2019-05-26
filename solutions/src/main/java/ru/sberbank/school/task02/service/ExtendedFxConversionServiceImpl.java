@@ -64,7 +64,7 @@ public class ExtendedFxConversionServiceImpl extends FxConversionServiceImpl imp
         BigDecimal minPrice = BigDecimal.valueOf(Long.MAX_VALUE);
         BigDecimal maxPrice = BigDecimal.ZERO;
 
-        for (BigDecimal value : checkList){
+        for (BigDecimal value : checkList) {
             minPrice = minPrice.min(value);
             maxPrice = maxPrice.max(value);
         }
