@@ -6,8 +6,8 @@ import java.util.Map;
 
 public class Test {
     public static void main(String[] args) {
-        String path = "C:\\Users\\Anastasia\\Desktop\\Java\\Tasks\\homework\\solutions\\src\\main\\java\\" +
-                "ru\\sberbank\\school\\task07\\test.txt";
+        String path = "C:\\Users\\Anastasia\\Desktop\\Java\\Tasks\\homework\\solutions\\src\\main\\java\\"
+                + "ru\\sberbank\\school\\task07\\test.txt";
         FileParser fileParser = new FileParserImpl();
         try {
             List<String> stringsFromFile = fileParser.parse(path);
@@ -39,7 +39,7 @@ public class Test {
 
 
         } catch (FileNotFoundException ex) {
-
+            System.out.println("File not found");
         }
 
 

@@ -84,7 +84,8 @@ package ru.sberbank.school.task08;
 //
 //    @Override
 //    public <GameObject extends InstantiatableEntity> Savable<GameObject> createSavable(String name,
-//                                                                                            List<GameObject> entities) {
+//                                                                                            List<GameObject> entities)
+//    {
 //        return new MapState<GameObject>(name, entities);
 //    }
 //
