@@ -32,7 +32,7 @@ public class KryoSerializer extends Serializer<MapState<GameObject>> {
         int size = input.readInt();
         String name = input.readString();
         List<GameObject> objectsList = new ArrayList<>();
-        for (int i = 0; i<size; i++) {
+        for (int i = 0; i < size; i++) {
             InstantiatableEntity.Status status = InstantiatableEntity.Status.valueOf(input.readString());
             InstantiatableEntity.Type typeIE = InstantiatableEntity.Type.valueOf(input.readString());
             Long hitPoints = input.readLong();

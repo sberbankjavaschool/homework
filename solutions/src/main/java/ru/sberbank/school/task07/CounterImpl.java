@@ -22,7 +22,9 @@ public class CounterImpl implements Counter {
     public int count(String pathToFile) throws FileNotFoundException {
         List<String> words = fileParser.parse(pathToFile);
         HashSet<String> wordsMap = new HashSet<>();
-        wordsMap.addAll(words);
+        for (String word : words) {
+            wordsMap.addAll(Arrays.asList(word.trim().split("\\s+")));
+        }
         return wordsMap.size();
     }
 }
