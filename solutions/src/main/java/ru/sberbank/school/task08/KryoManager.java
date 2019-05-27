@@ -47,6 +47,8 @@ public class KryoManager extends SaveGameManager<MapState<GameObject>, GameObjec
             kryo.writeObject(output, gameState);
         } catch (FileNotFoundException e) {
             throw new SaveGameException(e.toString(), SaveGameException.Type.USER, gameState);
+        } catch (IOException e) {
+            throw new SaveGameException(e.toString(), SaveGameException.Type.IO, null);
         }
 
     }
@@ -61,6 +63,8 @@ public class KryoManager extends SaveGameManager<MapState<GameObject>, GameObjec
             return kryo.readObject(input, MapState.class);
         } catch (FileNotFoundException e) {
             throw new SaveGameException(e.toString(), SaveGameException.Type.USER, null);
+        } catch (IOException e) {
+            throw new SaveGameException(e.toString(), SaveGameException.Type.IO, null);
         }
 
     }
