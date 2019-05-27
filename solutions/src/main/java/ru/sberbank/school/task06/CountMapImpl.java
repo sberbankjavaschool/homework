@@ -10,7 +10,7 @@ import java.util.Map;
  */
 public class CountMapImpl<O> implements CountMap<O> {
 
-    private transient HashMap<O, Integer> map;
+    private HashMap<O, Integer> map;
 
     public CountMapImpl() {
         map = new HashMap<>();
@@ -71,11 +71,11 @@ public class CountMapImpl<O> implements CountMap<O> {
      * @param source коллекция - источник
      */
     @Override
-    public void addAll(CountMap<O> source) {
+    public void addAll(CountMap<? extends O> source) {
 
-        Map<O, Integer> entryMap = source.toMap();
+        Map<? extends O, Integer> entryMap = source.toMap();
 
-        for (Map.Entry<O, Integer> entry : entryMap.entrySet()) {
+        for (Map.Entry<? extends O, Integer> entry : entryMap.entrySet()) {
             O o = entry.getKey();
             int counter = 0;
             if (map.containsKey(o)) {
