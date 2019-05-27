@@ -33,7 +33,6 @@ public class KryoManager extends SaveGameManager<MapState<GameObject>, GameObjec
 
     @Override
     public void saveGame(String filename, MapState<GameObject> gameState) throws SaveGameException {
-
         try (FileOutputStream fos = new FileOutputStream(filename);
              Output out = new Output(fos)) {
             kryo.writeObject(out, gameState);

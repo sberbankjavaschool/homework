@@ -29,13 +29,6 @@ public class JacksonManager extends SaveGameManager<MapState<GameObject>, GameOb
     @Override
     public void initialize() {
         mapper = new ObjectMapper();
-//        numberOfFile += 1;
-//        InstantiatableEntity game = createEntity(InstantiatableEntity.Type.BUILDING,
-//                InstantiatableEntity.Status.DESPAWNED, numberOfFile);
-//        List<InstantiatableEntity> listEntitites = new ArrayList<>();
-//        Savable<InstantiatableEntity> mapSavedEntitites = createSavable("saveGame" + numberOfFile, listEntitites);
-//        System.out.println("Before serialization: " + game);
-//
     }
 
     @Override
@@ -70,7 +63,7 @@ public class JacksonManager extends SaveGameManager<MapState<GameObject>, GameOb
     }
 
     @Override
-    public InstantiatableEntity createEntity(InstantiatableEntity.Type type,
+    public GameObject createEntity(InstantiatableEntity.Type type,
                                              InstantiatableEntity.Status status,
                                              long hitPoints) {
         return new GameObject(type, status, hitPoints);
