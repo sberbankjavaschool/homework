@@ -44,7 +44,7 @@ public interface CountMap<O> {
      *
      * @param source коллекция - источник
      */
-    void addAll(CountMap<O> source);
+    void addAll(CountMap<? extends O> source);
 
     //Вернуть java.util.Map. ключ - добавленный элемент, значение - количество его добавлений
 
