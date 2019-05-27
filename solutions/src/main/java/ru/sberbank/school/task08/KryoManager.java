@@ -1,24 +1,33 @@
 package ru.sberbank.school.task08;
 
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.io.Input;
+import com.esotericsoftware.kryo.io.Output;
 import lombok.NonNull;
 import ru.sberbank.school.task08.state.*;
 import ru.sberbank.school.util.Solution;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 @Solution(8)
-public class SerializableManager extends SaveGameManager<MapState<GameObject>, GameObject> {
-    /**
-     * Конструктор не меняйте.
-     */
-    public SerializableManager(@NonNull String filesDirectoryPath) {
+public class KryoManager extends SaveGameManager<MapState<GameObject>, GameObject> {
+    private Kryo kryo;
+
+    public KryoManager(@NonNull String filesDirectoryPath) {
         super(filesDirectoryPath);
     }
 
     @Override
     public void initialize() {
+        kryo = new Kryo();
+        kryo.register(MapState.class, new MapStateSerializer());
+        kryo.register(ArrayList.class);
+        kryo.register(GameObject.class);
+        kryo.register(InstantiatableEntity.Type.class);
+        kryo.register(InstantiatableEntity.Status.class);
     }
 
     @Override
@@ -29,9 +38,9 @@ public class SerializableManager extends SaveGameManager<MapState<GameObject>, G
         String path = filesDirectory + "/" + filename;
 
         try (FileOutputStream fileOutputStream = new FileOutputStream(path);
-                ObjectOutputStream outputStream = new ObjectOutputStream(fileOutputStream)) {
+                Output output = new Output(fileOutputStream)) {
 
-            outputStream.writeObject(gameState);
+            kryo.writeObject(output, gameState);
 
         } catch (FileNotFoundException e) {
             throw new SaveGameException("The path was not found", e, SaveGameException.Type.SYSTEM, gameState);
@@ -49,16 +58,14 @@ public class SerializableManager extends SaveGameManager<MapState<GameObject>, G
         MapState<GameObject> gameState = null;
 
         try (FileInputStream fileInputStream = new FileInputStream(path);
-                ObjectInputStream inputStream = new ObjectInputStream(fileInputStream)) {
+                Input input = new Input(fileInputStream)) {
 
-            gameState = (MapState<GameObject>) inputStream.readObject();
+            gameState = kryo.readObject(input, MapState.class);
+
             return gameState;
 
         } catch (FileNotFoundException e) {
             throw new SaveGameException("The file was not found", e, SaveGameException.Type.SYSTEM, gameState);
-        } catch (ClassNotFoundException e) {
-            throw new SaveGameException("Class of a serialized object cannot be found", e,
-                    SaveGameException.Type.SYSTEM, gameState);
         } catch (IOException e) {
             throw new SaveGameException("Fail or interrupt I/O operations", e, SaveGameException.Type.IO, gameState);
         }
@@ -75,5 +82,4 @@ public class SerializableManager extends SaveGameManager<MapState<GameObject>, G
     public MapState<GameObject> createSavable(String name, List<GameObject> entities) {
         return new MapState<>(name, entities);
     }
-
 }
