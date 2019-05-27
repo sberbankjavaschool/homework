@@ -1,16 +1,16 @@
 package ru.sberbank.school.task07;
 
 import lombok.RequiredArgsConstructor;
-import ru.sberbank.school.task06.CountMap;
 import ru.sberbank.school.task06.CountMapImpl;
 
 import java.io.FileNotFoundException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
  * 26.05.2019
- * По сути копия {@link CounterImpl}, которая возвращает коллекцию
+ * Формирует коллекцию уникальных слов с указанием частоты их упоминания
  *
  * @author Gregory Melnikov
  */
@@ -33,14 +33,18 @@ public class WordsFrequencyImpl implements WordFrequency {
 
         List<String> parsedStrings = fileParser.parse(pathToFile);
 
-        CountMap<String> seeker = new CountMapImpl<>();
+        Map<String, Integer> seeker = new HashMap();
 
         for (String string : parsedStrings) {
             String[] stringParts = string.split(splitRegex);
             for (String stringPart : stringParts) {
-                seeker.add(stringPart);
+                int counter = 0;
+                if (seeker.containsKey(stringPart)) {
+                    counter = seeker.get(stringPart);
+                }
+                seeker.put(stringPart, ++counter);
             }
         }
-        return seeker.toMap();
+        return seeker;
     }
 }
