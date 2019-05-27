@@ -1,22 +1,30 @@
 package ru.sberbank.school.task08;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.NonNull;
-import ru.sberbank.school.task08.state.*;
+import ru.sberbank.school.task08.state.GameObject;
+import ru.sberbank.school.task08.state.InstantiatableEntity;
+import ru.sberbank.school.task08.state.MapState;
+import ru.sberbank.school.task08.state.Savable;
 import ru.sberbank.school.util.Solution;
 
 import java.io.*;
 import java.util.List;
 
 @Solution(8)
-public class SerializableManager extends SaveGameManager {
+public class JacksonSerializableManager extends SaveGameManager {
+
+    private ObjectMapper objectMapper;
     private String separator = File.separator;
 
-    public SerializableManager(@NonNull String filesDirectoryPath) {
+    public JacksonSerializableManager(@NonNull String filesDirectoryPath) {
         super(filesDirectoryPath);
     }
 
     @Override
     public void initialize() {
+        objectMapper = new ObjectMapper();
         if (filesDirectory.equals("")) {
             separator = "";
         }
@@ -25,30 +33,28 @@ public class SerializableManager extends SaveGameManager {
     @Override
     public void saveGame(@NonNull String filename,
                          @NonNull Savable gameState) throws SaveGameException {
-        try (FileOutputStream fos = new FileOutputStream(filesDirectory + separator + filename);
-                ObjectOutputStream oos = new ObjectOutputStream(fos)) {
-            oos.writeObject(gameState);
-            oos.flush();
+        try {
+            objectMapper.writeValue(new File(filesDirectory + separator + filename), gameState);
         } catch (FileNotFoundException e) {
-            throw new SaveGameException("Открыть файл не удалось.", e,
+            throw new SaveGameException("Открыть файл не удалось.",
                     SaveGameException.Type.IO, gameState);
         } catch (IOException e) {
-            throw new SaveGameException("Ошибка записи в файл!", e,
-                    SaveGameException.Type.IO, gameState);
+            throw new SaveGameException("Ощибка записи класса.",
+                    SaveGameException.Type.SYSTEM, gameState);
         }
     }
 
     @Override
     public Savable loadGame(@NonNull String filename) throws SaveGameException {
-        Savable savable = null;
-        try (FileInputStream fis = new FileInputStream(filesDirectory + separator + filename);
-                ObjectInputStream ois = new ObjectInputStream(fis)) {
-            savable = (Savable) ois.readObject();
-        } catch (IOException e) {
-            throw new SaveGameException("Ошибка чтения!", e,
+        MapState savable = null;
+        try {
+            File fis = new File(filesDirectory + separator + filename);
+            savable = objectMapper.readValue(fis, new TypeReference<MapState<GameObject>>(){});
+        } catch (FileNotFoundException e) {
+            throw new SaveGameException("Файл не найден!",
                     SaveGameException.Type.IO, savable);
-        } catch (ClassNotFoundException e) {
-            throw new SaveGameException("Определение класса не найдено!", e,
+        } catch (IOException e) {
+            throw new SaveGameException("Ошибка чтения класса.",
                     SaveGameException.Type.USER, savable);
         }
 
@@ -66,5 +72,4 @@ public class SerializableManager extends SaveGameManager {
     public Savable createSavable(String name, List entities) {
         return new MapState<>(name, entities);
     }
-
 }
