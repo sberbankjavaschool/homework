@@ -1,8 +1,9 @@
 package ru.sberbank.school.task08.state;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class MapState<T extends InstantiatableEntity> implements Savable<T> {
+public class MapState<T extends InstantiatableEntity> implements Savable<T>, Serializable {
     private final String name;
     private final List<T> gameObjects;
 
