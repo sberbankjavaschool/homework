@@ -15,6 +15,7 @@ public class SerializableManagerTest {
 
     public static SerializableManager manager;
     public static MapState<GameObject> mapState;
+    String filename;
 
     @BeforeEach
     public void init() {
@@ -38,15 +39,15 @@ public class SerializableManagerTest {
         objects.add(dragon);
 
         mapState = new MapState<>("level 1", objects);
+        filename = mapState.getName() + ".serializable";
     }
 
     @Test
-    public void testReadWrite() {
+    public void testSaveLoad() {
 
         MapState<GameObject> loadMapState = null;
 
         try {
-            String filename = mapState.getName() + ".serializable";
             manager.saveGame(filename, mapState);
             loadMapState = manager.loadGame(filename);
         } catch (SaveGameException e) {
@@ -56,6 +57,23 @@ public class SerializableManagerTest {
 
         Assertions.assertEquals(mapState, loadMapState);
 
+    }
+
+    @Test
+    void testSaveNull() {
+        Assertions.assertThrows(NullPointerException.class, () -> manager.saveGame(null, mapState));
+        Assertions.assertThrows(NullPointerException.class, () -> manager.saveGame(filename, null));
+    }
+
+
+    @Test
+    void testNull() throws SaveGameException {
+        mapState = manager.createSavable("Пустое состояние", null);
+        manager.saveGame(filename, mapState);
+        MapState<GameObject> loadMapState = manager.loadGame(filename);
+
+        Assertions.assertEquals(mapState, loadMapState);
+        Assertions.assertNotSame(mapState, loadMapState);
     }
 
 }
