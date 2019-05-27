@@ -1,14 +1,14 @@
 package ru.sberbank.school.task07;
 
 import lombok.RequiredArgsConstructor;
-import ru.sberbank.school.task06.CountMap;
-import ru.sberbank.school.task06.CountMapImpl;
 
 import java.io.FileNotFoundException;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**26.05.2019
- * Реализация на основе {@link CountMapImpl}
+ * Реализация на основе {@link HashSet}
  *
  * @author Gregory Melnikov
  */
@@ -31,7 +31,7 @@ public class CounterImpl implements Counter {
 
         List<String> parsedStrings = fileParser.parse(pathToFile);
 
-        CountMap<String> seeker = new CountMapImpl<>();
+        Set<String> seeker = new HashSet<>();
 
         for (String string : parsedStrings) {
             String[] stringParts = string.split(splitRegex);
