@@ -10,9 +10,9 @@ class Controller {
 
     static DocumentInfo buildDocument(List<FxResponse> responses) {
 
-        String maxRequestsSymbol
         Set<String> symbols = []
         List<SymbolRequestInfo> infoList = []
+        String maxRequestsSymbol = ""
 
         int totalRequests = 0
         int maxRequests = 0
@@ -35,14 +35,12 @@ class Controller {
             infoList << buildSymbolBlock(currentSymbolList, key)
         }
 
-        DocumentInfo document = new DocumentInfo()
-        document.with {
-            it.totalRequests = totalRequests.toString()
-            it.maxRequests = maxRequests.toString()
-            it.maxRequestsSymbol = maxRequestsSymbol
-            it.symbols.addAll symbols
-            it.symbolRequestInfoList = infoList
-        }
+        DocumentInfo document = new DocumentInfo(
+                totalRequests : totalRequests.toString(),
+                maxRequests : maxRequests.toString(),
+                maxRequestsSymbol : maxRequestsSymbol,
+                symbols : symbols,
+                symbolRequestInfoList : infoList)
 
         document
     }
@@ -110,22 +108,20 @@ class Controller {
 
         String average = sum.divide(valueOf(list.size()), 2, BigDecimal.ROUND_HALF_UP).toString()
 
-        SymbolRequestInfo info = new SymbolRequestInfo()
-        info.with{
-            it.min = minAmount.toString()
-            it.max = maxAmount.toString()
-            it.symbol = symbol
-            it.average = average
-            it.bestSellingPrice = bestSellingPrice.toString()
-            it.bestBuyingPrice = bestSellingPrice.toString()
-            it.bestSellingAmount = bestSellingAmount.toString()
-            it.bestBuyingAmount = bestBuyingAmount.toString()
-            it.worstSellingPrice = worstSellingPrice.toString()
-            it.worstBuyingPrice = worstBuyingPrice.toString()
-            it.worstSellingAmount = worstSellingAmount.toString()
-            it.worstBuyingAmount = worstBuyingAmount.toString()
-            it.volumeRequestInfoList = volumeRequestInfoList
-        }
+        SymbolRequestInfo info = new SymbolRequestInfo(
+                min : minAmount.toString(),
+                max : maxAmount.toString(),
+                symbol : symbol,
+                average : average,
+                bestSellingPrice : bestSellingPrice.toString(),
+                bestBuyingPrice : bestSellingPrice.toString(),
+                bestSellingAmount : bestSellingAmount.toString(),
+                bestBuyingAmount : bestBuyingAmount.toString(),
+                worstSellingPrice : worstSellingPrice.toString(),
+                worstBuyingPrice : worstBuyingPrice.toString(),
+                worstSellingAmount : worstSellingAmount.toString(),
+                worstBuyingAmount : worstBuyingAmount.toString(),
+                volumeRequestInfoList : volumeRequestInfoList)
 
         info
     }                             

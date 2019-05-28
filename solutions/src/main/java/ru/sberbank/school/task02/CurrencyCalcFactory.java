@@ -7,5 +7,10 @@ public class CurrencyCalcFactory implements ServiceFactory {
     public FxConversionService getFxConversionService(ExternalQuotesService externalQuotesService) {
         return new CurrencyCalc(externalQuotesService);
     }
+
+    @Override
+    public ExtendedFxConversionService getExtendedFxConversionService(ExternalQuotesService externalQuotesService) {
+        return new ReversedCurrencyCalc(externalQuotesService);
+    }
 }
 
