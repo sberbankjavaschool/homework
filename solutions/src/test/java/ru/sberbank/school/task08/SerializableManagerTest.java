@@ -46,7 +46,8 @@ class SerializableManagerTest {
     @DisplayName("Incorrect filesDirectoryPath")
     void saveGameFileNotFound() {
         serializableManager = new SerializableManager("");
-        Assertions.assertThrows(SaveGameException.class, () -> serializableManager.saveGame(fileName, mapStateGameObjects));
+        Assertions.assertThrows(SaveGameException.class, ()
+                -> serializableManager.saveGame(fileName, mapStateGameObjects));
         serializableManager = new SerializableManager(path);
     }
 
@@ -55,7 +56,8 @@ class SerializableManagerTest {
     void saveGameNull() {
         Assertions.assertThrows(NullPointerException.class, ()
                 -> serializableManager.saveGame(null, mapStateGameObjects));
-        Assertions.assertThrows(NullPointerException.class, () -> serializableManager.saveGame(fileName, null));
+        Assertions.assertThrows(NullPointerException.class, ()
+                -> serializableManager.saveGame(fileName, null));
     }
 
     @Test
