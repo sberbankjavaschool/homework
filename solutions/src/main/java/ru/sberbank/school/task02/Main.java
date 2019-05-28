@@ -28,9 +28,12 @@ public class Main {
                     new BigDecimal(7_750_000), Beneficiary.CLIENT);
             Optional<BigDecimal> price2 = reverseCalculator.convertReversed(ClientOperation.SELL, Symbol.USD_RUB,
                     new BigDecimal(0.5), Beneficiary.BANK);
+            Optional<BigDecimal> price3 = reverseCalculator.convertReversed(ClientOperation.SELL, Symbol.USD_RUB,
+                    new BigDecimal(7_500), Beneficiary.CLIENT);
 
             System.out.println(price);
             System.out.println(price2);
+            System.out.println(price3);
         } catch (FxConversionException | NullPointerException e) {
 
             System.err.println(e.getMessage());

@@ -1,6 +1,5 @@
 package ru.sberbank.school.task02;
 
-import javafx.util.Pair;
 import lombok.NonNull;
 import ru.sberbank.school.task02.exception.FxConversionException;
 import ru.sberbank.school.task02.util.*;
@@ -38,9 +37,9 @@ public class ReversedCurrencyCalc extends CurrencyCalc implements ExtendedFxConv
             throw new FxConversionException("no available quotes");
         }
 
-        Pair<ReversedQuote, ReversedQuote> neighbors = findClosest(quotes, operation, amount);
+        SortedSet<ReversedQuote> prices = findPrices(quotes, operation, amount);
 
-        return getPrice(neighbors.getKey(), neighbors.getValue(), delta, amount, beneficiary);
+        return getPrice(prices, beneficiary, operation);
     }
 
     /**
@@ -52,33 +51,12 @@ public class ReversedCurrencyCalc extends CurrencyCalc implements ExtendedFxConv
      * @return Pair of reversed quotes wich are made
      *          from two suitable quotes.
      */
-    private Pair<ReversedQuote, ReversedQuote> findClosest(@NonNull List<Quote> quotes,
-                                                           @NonNull ClientOperation direction,
-                                                           @NonNull BigDecimal amount) {
+    private SortedSet<ReversedQuote> findPrices(@NonNull List<Quote> quotes,
+                                                 @NonNull ClientOperation direction,
+                                                 @NonNull BigDecimal amount) {
 
-        /*ReversedQuote left = new ReversedQuote(
-                Quote
-                        .builder()
-                        .symbol(quotes.get(0).getSymbol())
-                        .volume(Volume.INFINITY)
-                        .bid(BigDecimal.ONE)
-                        .offer(BigDecimal.ONE)
-                        .build(),
-                direction,
-                Volume.INFINITY);
-
-        ReversedQuote right = new ReversedQuote(
-                Quote
-                        .builder()
-                        .symbol(quotes.get(0).getSymbol())
-                        .volume(Volume.INFINITY)
-                        .bid(BigDecimal.ONE)
-                        .offer(BigDecimal.ONE)
-                        .build(),
-                direction,
-                Volume.INFINITY);*/
+        SortedSet<ReversedQuote> prices = new TreeSet<>(Comparator.comparing(ReversedQuote::getPrice));
         Iterator<Quote> iter = quotes.iterator();
-        Position currentPos;
 
         ReversedQuote left = new ReversedQuote(iter.next(), direction);
         ReversedQuote right = new ReversedQuote(iter.next(), direction);
@@ -100,6 +78,18 @@ public class ReversedCurrencyCalc extends CurrencyCalc implements ExtendedFxConv
         }
 
         right.setLowerBound(leftVolume);
+        Position currentPos = checkBounds(left.getLowerBound(), left.getUpperBound(),
+                                          right.getLowerBound(), right.getUpperBound(), amount);
+
+        if (currentPos == Position.INTERSECTION) {
+
+            prices.add(left);
+            prices.add(right);
+        } else if (currentPos == Position.LEFT) {
+            prices.add(left);
+        } else if (currentPos == Position.RIGHT) {
+            prices.add(right);
+        }
 
         while (iter.hasNext()) {
 
@@ -112,62 +102,111 @@ public class ReversedCurrencyCalc extends CurrencyCalc implements ExtendedFxConv
                 current.setLowerBound(leftVolume);
                 right.setLowerBound(currentVolume);
 
-                currentPos = checkBounds(left, right, amount);
+                currentPos = checkBounds(left.getLowerBound(), left.getUpperBound(),
+                                         right.getLowerBound(), right.getUpperBound(), amount);
 
-                if (currentPos == Position.OUTOFBOUNDS ||
-                    currentPos == Position.BETWEENINTERSEC) {
+                if (currentPos == Position.MIDDLE) {
+
+                    prices.remove(right);
+                    prices.remove(left);
+                    currentPos = checkBounds(current.getLowerBound(), current.getUpperBound(), amount);
+
+                    if (currentPos == Position.INTERSECTION) {
+
+                        prices.add(current);
+                        left = current;
+                        leftVolume = currentVolume;
+                    } else if (currentPos == Position.BOTTOM) {
+
+                        left = current;
+                        leftVolume = currentVolume;
+                    } else if (currentPos == Position.TOP) {
+
+                        right = current;
+                        rightVolume = currentVolume;
+                    }
+                } else if (currentPos == Position.LEFT) {
+
+                    prices.remove(right);
+                    currentPos = checkBounds(current.getLowerBound(), current.getUpperBound(), amount);
 
                     right = current;
                     rightVolume = currentVolume;
+
+                    if (currentPos == Position.INTERSECTION) {
+                        prices.add(current);
+                    }
+                } else if (currentPos == Position.RIGHT) {
+
+                    prices.remove(left);
+                    currentPos = checkBounds(current.getLowerBound(), current.getUpperBound(), amount);
+
                     left = current;
                     leftVolume = currentVolume;
-                } else if (currentPos == Position.INSIDELOWER) {
 
-                    right = current;
-                    rightVolume = currentVolume;
-                } else if (currentPos == Position.INSIDEUPPER) {
 
-                    left = current;
-                    leftVolume = currentVolume;
+                    if (currentPos == Position.INTERSECTION) {
+                        prices.add(current);
+                    }
                 }
 
             } else if (compare(currentVolume, leftVolume) <= 0) {
 
-                currentPos = checkBounds(current, current, amount);
                 left.setLowerBound(currentVolume);
+                currentPos = checkBounds(left.getLowerBound(), left.getUpperBound(), amount);
 
-                if (currentPos == Position.INSIDELOWER ||
-                    currentPos == Position.BETWEENINTERSEC) {
+                if (currentPos == Position.BOTTOM) {
+
+                    prices.remove(left);
+                    currentPos = checkBounds(current.getLowerBound(), current.getUpperBound(), amount);
 
                     right = left;
                     rightVolume = leftVolume;
                     left = current;
                     leftVolume = currentVolume;
+
+                    if (currentPos == Position.INTERSECTION) {
+                        prices.add(current);
+                    }
                 }
 
             } else if (compare(currentVolume, rightVolume) >= 0) {
 
-                currentPos = checkBounds(current, current, amount);
                 current.setLowerBound(rightVolume);
+                currentPos = checkBounds(right.getLowerBound(), right.getUpperBound(), amount);
 
-                if (currentPos == Position.INSIDEUPPER ||
-                    currentPos == Position.BETWEENINTERSEC) {
+                if (currentPos == Position.TOP) {
+
+                    prices.remove(right);
+                    currentPos = checkBounds(current.getLowerBound(), current.getUpperBound(), amount);
 
                     left = right;
                     leftVolume = rightVolume;
                     right = current;
                     rightVolume = currentVolume;
+
+                    if (currentPos == Position.INTERSECTION) {
+                        prices.add(current);
+                    }
                 }
             }
         }
 
-        return new Pair<>(left, right);
+        return prices;
     }
 
-    private Optional<BigDecimal> getPrice(ReversedQuote lower, ReversedQuote upper, double delta,
-                                          BigDecimal amount, Beneficiary beneficiary) {
+    private Optional<BigDecimal> getPrice(SortedSet<ReversedQuote> prices,
+                                          Beneficiary beneficiary,
+                                          ClientOperation direction) {
 
-        BigDecimal price = pickPrice(lower, upper, beneficiary, checkBounds(lower, upper, amount));
+        if (prices.isEmpty()) {
+            return Optional.empty();
+        }
+        if (prices.size() == 1) {
+            return Optional.of(prices.first().getPrice());
+        }
+
+        boolean isBigger = beneficiary == Beneficiary.BANK ^ direction == ClientOperation.SELL;
 
         /*if(price == null && Math.abs(delta - 0) > 1e-5) {
 
@@ -177,68 +216,62 @@ public class ReversedCurrencyCalc extends CurrencyCalc implements ExtendedFxConv
             price = pickPrice(lower, upper, beneficiary, pos);
         }*/
 
-        return price == null ? Optional.empty() : Optional.of(price);
+        return isBigger ? Optional.of(prices.first().getPrice())
+                        : Optional.of(prices.last().getPrice());
     }
 
     /**
      * Checks if amount is inside of one or more
      * of its neighboring volumes' bounds.
-     * @param ub Right closest volume's lower bound.
-     * @param lb Left closest volume's upper bound.
-     * @param amount Amount
      * @return relative position of amount.
      */
-    private Position checkBounds(ReversedQuote lb, ReversedQuote ub, BigDecimal amount) {
-
-        Volume lower = lb.getUpperBound();
-        Volume upper = ub.getLowerBound();
+    private Position checkBounds(Volume lowerLeft, Volume lowerRight,
+                                 Volume upperLeft, Volume upperRight,
+                                 BigDecimal amount) {
+        
         Volume a = Volume.from(amount);
 
-        SortedSet<Volume> bounds = new TreeSet<>(this::compare);
+        TreeSet<Volume> bounds = new TreeSet<>(this::compare);
 
-        bounds.add(lower);
-        bounds.add(upper);
+        bounds.add(lowerLeft);
+        bounds.add(lowerRight);
+        bounds.add(upperLeft);
+        bounds.add(upperRight);
         bounds.add(a);
 
-        if (bounds.first().equals(upper) && bounds.last().equals(lower)) {
-            return Position.BETWEENINTERSEC;
-        } else if (bounds.first().equals(a)) {
-            return Position.INSIDELOWER;
-        } else if (bounds.last().equals(a)) {
-            return Position.INSIDEUPPER;
+        if (bounds.first().equals(a)) {
+            return Position.BOTTOM;
+        }
+        if (bounds.last().equals(a)) {
+            return Position.TOP;
+        }
+        if (lowerLeft.equals(bounds.lower(a)) && lowerRight.equals(bounds.higher(a))) {
+            return Position.LEFT;
+        }
+        if (upperLeft.equals(bounds.lower(a)) && upperRight.equals(bounds.higher(a))) {
+            return Position.RIGHT;
+        }
+        if (upperLeft.equals(bounds.lower(a)) && lowerRight.equals(bounds.higher(a))) {
+            return Position.INTERSECTION;
         }
 
-        return Position.OUTOFBOUNDS;
+        return Position.MIDDLE;
     }
 
-    /**
-     * Picks price based on amount's position,
-     * beneficiary and operation type.
-     */
-    private BigDecimal pickPrice(ReversedQuote lower, ReversedQuote upper,
-                                 Beneficiary beneficiary, Position pos) {
+    private Position checkBounds(Volume left, Volume right, BigDecimal amount) {
 
-        /*
-         * BANK && SELL - lower price
-         * BANK && BUY - higher price
-         * CLIENT && SELL - higher price
-         * CLIENT && BUY - lower price
-         */
-        boolean max = beneficiary == Beneficiary.BANK ^ upper.getDirection() == ClientOperation.SELL;
+        Volume a = Volume.from(amount);
 
-        switch (pos) {
-
-            case BETWEENINTERSEC:
-                return max ? upper.getPrice() : lower.getPrice();
-            case INSIDELOWER:
-                return lower.getPrice();
-            case INSIDEUPPER:
-                return upper.getPrice();
-            case OUTOFBOUNDS:
-            default:
-                return null;
+        if (compare(a, left) < 0) {
+            return Position.BOTTOM;
         }
+        if (compare(a, right) > 0) {
+            return Position.TOP;
+        }
+
+        return Position.INTERSECTION;
     }
+
 
     /**
      * Describes amount position relative to
@@ -247,24 +280,34 @@ public class ReversedCurrencyCalc extends CurrencyCalc implements ExtendedFxConv
     private enum Position {
 
         /**
-         * Amount lies on the intersection of two volumes.
+         * Amount lies between two intersecting bounds.
          */
-        BETWEENINTERSEC,
+        INTERSECTION,
 
         /**
-         * Amount is below it's left closest volume's upper bound.
+         * Amount is inside lower bounds.
          */
-        INSIDELOWER,
+        LEFT,
 
         /**
-         * Amount is above it's right closest volume's lower bound.
+         * Amount is inside upper bounds.
          */
-        INSIDEUPPER,
+        RIGHT,
 
         /**
-         * Amount isn't covered by any volume's bounds
+         * Amount is between two non-intersecting bounds.
          */
-        OUTOFBOUNDS
+        MIDDLE,
+
+        /**
+         * Amount is between upper bound and inf.
+         */
+        TOP,
+
+        /**
+         * Amount is between lower bound and zero.
+         */
+        BOTTOM
     }
 
     private int compare(Volume v1, Volume v2){
