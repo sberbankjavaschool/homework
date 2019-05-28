@@ -1,6 +1,5 @@
 package ru.sberbank.school.task08;
 
-import com.sun.org.apache.bcel.internal.generic.RETURN;
 import lombok.NonNull;
 import ru.sberbank.school.task08.state.GameObject;
 import ru.sberbank.school.task08.state.InstantiatableEntity;
@@ -12,10 +11,8 @@ import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import sun.java2d.loops.DrawGlyphListAA;
 
 import java.io.*;
-import java.util.ArrayList;
 import java.util.List;
 
 @Solution(8)
@@ -32,11 +29,12 @@ public class JacksonManager extends SaveGameManager<MapState<GameObject>, GameOb
     }
 
     @Override
-    public void saveGame(String filename, MapState<GameObject> gameState) throws SaveGameException {
+    public void saveGame(@NonNull String filename, @NonNull MapState<GameObject> gameState) throws SaveGameException {
         mapper.enable(SerializationFeature.INDENT_OUTPUT);
         try {
             mapper.writeValue(new File(filesDirectory + File.separator + filename), gameState);
-            //System.out.println(mapper.createArrayNode());
+        } catch (FileNotFoundException e) {
+            throw new SaveGameException("File not found");
         } catch (JsonGenerationException exc) {
             exc.printStackTrace();
         } catch (JsonMappingException exc) {
@@ -71,7 +69,7 @@ public class JacksonManager extends SaveGameManager<MapState<GameObject>, GameOb
 
     @Override
     public MapState<GameObject> createSavable(String name, List<GameObject> entities) {
-        return new MapState<GameObject>(name, entities);
+        return new MapState<>(name, entities);
     }
 
 }

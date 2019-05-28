@@ -1,5 +1,6 @@
 package ru.sberbank.school.task08;
 
+import lombok.NonNull;
 import ru.sberbank.school.task08.state.GameObject;
 import ru.sberbank.school.task08.state.InstantiatableEntity;
 import ru.sberbank.school.task08.state.MapState;
@@ -15,10 +16,9 @@ import java.util.List;
 public class KryoSerializer extends Serializer<MapState<GameObject>> {
 
     @Override
-    public void write(Kryo kryo, Output output, MapState<GameObject> object) {
+    public void write(Kryo kryo, @NonNull Output output, @NonNull MapState<GameObject> object) {
         output.write(object.getGameObjects().size());
         output.writeString(object.getName());
-
         for (GameObject go : object.getGameObjects()) {
             output.writeString(go.getType().name());
             output.writeString(go.getStatus().name());
@@ -28,7 +28,7 @@ public class KryoSerializer extends Serializer<MapState<GameObject>> {
     }
 
     @Override
-    public MapState<GameObject> read(Kryo kryo, Input input, Class<? extends MapState<GameObject>> type) {
+    public MapState<GameObject> read(Kryo kryo, @NonNull Input input, Class<? extends MapState<GameObject>> type) {
         int size = input.readInt();
         String name = input.readString();
         List<GameObject> objectsList = new ArrayList<>();
