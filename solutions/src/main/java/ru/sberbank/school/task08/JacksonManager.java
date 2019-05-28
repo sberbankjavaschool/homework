@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 import java.io.*;
 import java.util.List;
+import java.util.Objects;
 
 @Solution(8)
 public class JacksonManager extends SaveGameManager<MapState<GameObject>, GameObject> {
@@ -33,14 +34,12 @@ public class JacksonManager extends SaveGameManager<MapState<GameObject>, GameOb
         mapper.enable(SerializationFeature.INDENT_OUTPUT);
         try {
             mapper.writeValue(new File(filesDirectory + File.separator + filename), gameState);
-        } catch (FileNotFoundException e) {
+        } catch (NullPointerException | FileNotFoundException e) {
             throw new SaveGameException("File not found");
         } catch (JsonGenerationException exc) {
-            exc.printStackTrace();
-        } catch (JsonMappingException exc) {
-            exc.printStackTrace();
+            throw new SaveGameException("Stream reading is failed");
         } catch (IOException exc) {
-            exc.printStackTrace();
+            throw new SaveGameException("Stream reading is failed");
         }
 
     }

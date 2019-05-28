@@ -1,5 +1,6 @@
 package ru.sberbank.school.task08;
 
+import com.esotericsoftware.kryo.KryoException;
 import lombok.NonNull;
 import ru.sberbank.school.task08.state.GameObject;
 import ru.sberbank.school.task08.state.InstantiatableEntity;
@@ -26,7 +27,7 @@ public class KryoManager extends SaveGameManager<MapState<GameObject>, GameObjec
 
     @Override
     public void initialize() {
-        Kryo kryo = new Kryo();
+        kryo = new Kryo();
         KryoSerializer kryoSerializer = new KryoSerializer();
         kryo.register(MapState.class, kryoSerializer);
         kryo.register(InstantiatableEntity.Type.class);
@@ -37,11 +38,13 @@ public class KryoManager extends SaveGameManager<MapState<GameObject>, GameObjec
 
     @Override
     public void saveGame(@NonNull String filename, @NonNull MapState<GameObject> gameState) throws SaveGameException {
-        try (FileOutputStream fos = new FileOutputStream(filename);
+        try (FileOutputStream fos = new FileOutputStream(filesDirectory + File.separator + filename);
              Output out = new Output(fos)) {
             kryo.writeObject(out, gameState);
-        } catch (FileNotFoundException ex) {
+        } catch (NullPointerException | FileNotFoundException ex) {
             throw new SaveGameException("File not found");
+        } catch (KryoException e) {
+            throw new SaveGameException("Kryo ex");
         } catch (IOException ex) {
             ex.printStackTrace();
         }
@@ -49,11 +52,13 @@ public class KryoManager extends SaveGameManager<MapState<GameObject>, GameObjec
 
     @Override
     public MapState<GameObject> loadGame(@NonNull String filename) throws SaveGameException {
-        try (FileInputStream fis = new FileInputStream(filename);
+        try (FileInputStream fis = new FileInputStream(filesDirectory + File.separator + filename);
              Input in = new Input(fis)) {
             return (MapState<GameObject>) kryo.readObject(in, MapState.class);
         } catch (FileNotFoundException ex) {
             throw new SaveGameException("File not found");
+        } catch (KryoException e) {
+            throw new SaveGameException("Kryo ex");
         } catch (IOException ex) {
             ex.printStackTrace();
         }
