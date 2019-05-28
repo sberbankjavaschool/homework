@@ -1,12 +1,9 @@
 package ru.sberbank.school.task08;
 
-import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.io.Input;
-import com.esotericsoftware.kryo.io.Output;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.io.*;
 import java.util.List;
 import java.util.Objects;
 
@@ -18,21 +15,20 @@ import lombok.NonNull;
 import ru.sberbank.school.util.Solution;
 
 @Solution(8)
-public class KryoManager extends SaveGameManager<MapState<GameObject>, GameObject> {
+public class JacksonManager extends SaveGameManager<MapState<GameObject>, GameObject> {
 
-    private Kryo kryo;
+    private ObjectMapper mapper;
 
     /**
      * Конструктор не меняйте.
      */
-    public KryoManager(@NonNull String filesDirectoryPath) {
+    public JacksonManager(@NonNull String filesDirectoryPath) {
         super(filesDirectoryPath);
     }
 
     @Override
     public void initialize() {
-        kryo = new Kryo();
-        kryo.register(MapState.class, new KryoSerializer());
+        mapper = new ObjectMapper();
     }
 
     @Override
@@ -43,10 +39,10 @@ public class KryoManager extends SaveGameManager<MapState<GameObject>, GameObjec
 
         String fullName = filesDirectory + "/" + filename;
 
-        try (Output output = new Output(new FileOutputStream(fullName))) {
-            kryo.writeObject(output, gameState);
+        try (FileOutputStream output = new FileOutputStream(fullName)) {
+            mapper.writeValue(output, gameState);
         } catch (FileNotFoundException e) {
-            throw new SaveGameException(e.toString(), SaveGameException.Type.USER, gameState);
+            throw new SaveGameException(e.toString(), SaveGameException.Type.USER, null);
         } catch (IOException e) {
             throw new SaveGameException(e.toString(), SaveGameException.Type.IO, null);
         }
@@ -59,8 +55,9 @@ public class KryoManager extends SaveGameManager<MapState<GameObject>, GameObjec
         Objects.requireNonNull(filename, "Parameter filename must be not null!");
 
         String fullName = filesDirectory + "/" + filename;
-        try (Input input = new Input(new FileInputStream(fullName))) {
-            return kryo.readObject(input, MapState.class);
+
+        try (FileInputStream input = new FileInputStream(fullName)) {
+            return mapper.readValue(input, new TypeReference<MapState<GameObject>>(){});
         } catch (FileNotFoundException e) {
             throw new SaveGameException(e.toString(), SaveGameException.Type.USER, null);
         } catch (IOException e) {
@@ -70,14 +67,12 @@ public class KryoManager extends SaveGameManager<MapState<GameObject>, GameObjec
     }
 
     @Override
-    public GameObject createEntity(InstantiatableEntity.Type type,
-                                   InstantiatableEntity.Status status,
-                                   long hitPoints) {
+    public InstantiatableEntity createEntity(InstantiatableEntity.Type type, InstantiatableEntity.Status status, long hitPoints) {
         return new GameObject(type, status, hitPoints);
     }
 
     @Override
-    public MapState<GameObject> createSavable(String name, List<GameObject> entities) {
+    public MapState<GameObject>  createSavable(String name, List<GameObject> entities) {
         return new MapState<>(name, entities);
     }
 }

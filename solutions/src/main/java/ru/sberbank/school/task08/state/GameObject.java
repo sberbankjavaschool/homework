@@ -3,16 +3,17 @@ package ru.sberbank.school.task08.state;
 import java.io.Serializable;
 import java.util.Objects;
 
+
 public class GameObject implements InstantiatableEntity, Serializable {
     private final Type type;
     private final Status status;
     private long hitPoints;
 
-    public GameObject() {
+    private GameObject() {
         type = null;
         status = null;
-        hitPoints = 0;
     }
+
 
     public GameObject(Type type, Status status, long hitPoints) {
         this.type = type;

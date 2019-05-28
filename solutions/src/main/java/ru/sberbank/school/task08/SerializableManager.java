@@ -1,12 +1,13 @@
 package ru.sberbank.school.task08;
 
-import lombok.NonNull;
 import ru.sberbank.school.task08.state.*;
-import ru.sberbank.school.util.Solution;
 
 import java.io.*;
 import java.util.List;
 import java.util.Objects;
+
+import lombok.NonNull;
+import ru.sberbank.school.util.Solution;
 
 @Solution(8)
 public class SerializableManager extends SaveGameManager<MapState<GameObject>, GameObject> {
@@ -28,9 +29,10 @@ public class SerializableManager extends SaveGameManager<MapState<GameObject>, G
         Objects.requireNonNull(gameState, "Parameter gameState must be not null!");
 
         String fullName = filesDirectory + "/" + filename;
-        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(fullName))) {
 
-            out.writeObject(gameState);
+        try (ObjectOutputStream output = new ObjectOutputStream(new FileOutputStream(fullName))) {
+
+            output.writeObject(gameState);
 
         } catch (FileNotFoundException e) {
             throw new SaveGameException(e.toString(), SaveGameException.Type.USER, gameState);
@@ -46,9 +48,9 @@ public class SerializableManager extends SaveGameManager<MapState<GameObject>, G
         Objects.requireNonNull(filename, "Parameter filename must be not null!");
 
         String fullName = filesDirectory + "/" + filename;
-        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(fullName))) {
+        try (ObjectInputStream input = new ObjectInputStream(new FileInputStream(fullName))) {
 
-            return (MapState<GameObject>) in.readObject();
+            return (MapState<GameObject>) input.readObject();
             
         } catch (FileNotFoundException e) {
             throw new SaveGameException(e.toString(), SaveGameException.Type.USER, null);
