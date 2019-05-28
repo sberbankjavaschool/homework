@@ -7,7 +7,7 @@ import ru.sberbank.school.util.Solution;
 import java.util.List;
 
 @Solution(8)
-public class SerializableManager extends SaveGameManager {
+public class SerializableManager extends SaveGameManager<MapState<GameObject>, GameObject> {
     /**
      * Конструктор не меняйте.
      */
@@ -21,12 +21,13 @@ public class SerializableManager extends SaveGameManager {
     }
 
     @Override
-    public void saveGame(String filename, Savable gameState) throws SaveGameException {
+    public void saveGame(@NonNull String filename, @NonNull MapState<GameObject> gameState)
+        throws SaveGameException {
         throw new UnsupportedOperationException("Implement me!");
     }
 
     @Override
-    public Savable loadGame(String filename) throws SaveGameException {
+    public MapState<GameObject> loadGame(String filename) throws SaveGameException {
         throw new UnsupportedOperationException("Implement me!");
     }
 
@@ -38,7 +39,7 @@ public class SerializableManager extends SaveGameManager {
     }
 
     @Override
-    public Savable createSavable(String name, List entities) {
+    public MapState<GameObject> createSavable(String name, List<GameObject> entities) {
         return new MapState<>(name, entities);
     }
 

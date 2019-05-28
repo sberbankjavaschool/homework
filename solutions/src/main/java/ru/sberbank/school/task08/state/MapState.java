@@ -25,8 +25,12 @@ public class MapState<T extends InstantiatableEntity> implements Savable<T> {
     }
 
     public boolean equals(final Object o) {
-        if (o == this) return true;
-        if (!(o instanceof MapState)) return false;
+        if (o == this) {
+            return true;
+        }
+        if (!(o instanceof MapState)) {
+            return false;
+        }
         final MapState other = (MapState) o;
         final Object this$gameObjects = this.getGameObjects();
         final Object other$gameObjects = other.getGameObjects();
