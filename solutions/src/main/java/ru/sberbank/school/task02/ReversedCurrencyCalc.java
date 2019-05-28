@@ -96,8 +96,8 @@ public class ReversedCurrencyCalc extends CurrencyCalc implements ExtendedFxConv
             current = new ReversedQuote(iter.next(), direction);
             currentVolume = current.getQ().getVolume();
 
-            if (compare(currentVolume, leftVolume) >= 0 &&
-                compare(currentVolume, rightVolume) <= 0) {
+            if (compare(currentVolume, leftVolume) >= 0
+             && compare(currentVolume, rightVolume) <= 0) {
 
                 current.setLowerBound(leftVolume);
                 right.setLowerBound(currentVolume);
@@ -310,7 +310,7 @@ public class ReversedCurrencyCalc extends CurrencyCalc implements ExtendedFxConv
         BOTTOM
     }
 
-    private int compare(Volume v1, Volume v2){
+    private int compare(Volume v1, Volume v2) {
 
         if (v1.isInfinity()) {
             return 1;
