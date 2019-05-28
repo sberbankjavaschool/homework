@@ -63,8 +63,8 @@ public class JacksonManager extends SaveGameManager<MapState<GameObject>, GameOb
 
     @Override
     public GameObject createEntity(InstantiatableEntity.Type type,
-                                             InstantiatableEntity.Status status,
-                                             long hitPoints) {
+                                   InstantiatableEntity.Status status,
+                                   long hitPoints) {
         return new GameObject(type, status, hitPoints);
     }
 
