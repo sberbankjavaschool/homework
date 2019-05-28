@@ -1,5 +1,6 @@
 package ru.sberbank.school.task02;
 
+import lombok.NonNull;
 import org.apache.commons.cli.Options;
 import ru.sberbank.school.task02.exception.*;
 import ru.sberbank.school.task02.util.*;
@@ -32,11 +33,7 @@ public class ClientController implements FxClientController {
     }
 
     @Override
-    public FxResponse fetchResult(FxRequest requests) {
-
-        if (requests == null) {
-            throw new ConverterConfigurationException("invalid request");
-        }
+    public FxResponse fetchResult(@NonNull FxRequest requests) {
 
         String symbol;
         String direction;
@@ -48,8 +45,8 @@ public class ClientController implements FxClientController {
             symbol = checkSymbol(requests.getSymbol());
             direction = checkDirection(requests.getDirection());
             amount = checkDecimal(requests.getAmount());
-        } catch (NullPointerException npe) {
-            throw new ConverterConfigurationException("one or more arguments missing");
+        } catch (ConverterConfigurationException | NullPointerException cce) {
+            throw new ConverterConfigurationException(cce.getMessage());
         }
 
         try {
@@ -86,21 +83,15 @@ public class ClientController implements FxClientController {
 
         try {
 
-            Options options = new Options();
-
-            options.addRequiredOption("s", "symbol", true, "Currency symbol");
-            options.addRequiredOption("d", "direction", true, "Desired operation");
-            options.addRequiredOption("a", "amount", true, "Desired amount");
-
-            Map<String, String> parsedArgs = new ArgumentParser(options).parseArgs(args);
+            Map<String, String> parsedArgs = new ArgumentParser(provideOptions()).parseArgs(args);
 
             return new FxRequest(parsedArgs.get("s"), parsedArgs.get("d"), parsedArgs.get("a"));
-        } catch (NullPointerException npe) {
-            throw new ConverterConfigurationException("one or more arguments missing");
+        } catch (NullPointerException | ConverterConfigurationException e) {
+            throw new ConverterConfigurationException(e.getMessage());
         }
     }
 
-    private String checkSymbol(String symbol) {
+    private String checkSymbol(@NonNull String symbol) {
 
         symbol = symbol.replace("/", "_");
 
@@ -109,27 +100,27 @@ public class ClientController implements FxClientController {
         } else if (symbol.equalsIgnoreCase("USD_RUB")) {
             return "USD_RUB";
         } else {
-            throw new WrongSymbolException("invalid symbol");
+            throw new WrongSymbolException("invalid symbol: specify currency (USD/RUB, RUB/USD, etc.)");
         }
     }
 
-    private String checkDirection(String direction) {
+    private String checkDirection(@NonNull String direction) {
 
         if (direction.equalsIgnoreCase("BUY")) {
             return "BUY";
         } else if (direction.equalsIgnoreCase("SELL")) {
             return "SELL";
         } else {
-            throw new ConverterConfigurationException("invalid operation");
+            throw new ConverterConfigurationException("invalid operation: choose 'BUY' or 'SELL'");
         }
     }
 
-    private String checkDecimal(String value) {
+    private String checkDecimal(@NonNull String value) {
 
         try {
             return new BigDecimal(value).setScale(2, BigDecimal.ROUND_HALF_UP).toString();
         } catch (NumberFormatException nfe) {
-            throw new ConverterConfigurationException("incorrect value");
+            throw new ConverterConfigurationException("incorrect value: should be positive decimal");
         }
     }
 
@@ -139,5 +130,16 @@ public class ClientController implements FxClientController {
 
     private ClientOperation getDirection(String direction) {
         return direction.equals("SELL") ? ClientOperation.SELL : ClientOperation.BUY;
+    }
+
+    public Options provideOptions() {
+
+        Options o = new Options();
+
+        o.addOption("s", "symbol", true, "Currency symbol");
+        o.addRequiredOption("d", "direction", true, "Desired operation");
+        o.addRequiredOption("a", "amount", true, "Desired amount");
+
+        return o;
     }
 }

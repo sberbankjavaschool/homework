@@ -10,12 +10,10 @@ public class ArgumentParser {
 
     private final Options options;
     private final CommandLineParser parser;
-    private final HelpFormatter helpFormatter;
 
     public ArgumentParser() {
 
         parser = new DefaultParser();
-        helpFormatter = new HelpFormatter();
         options = new Options();
     }
 
@@ -42,17 +40,16 @@ public class ArgumentParser {
         } catch (ParseException pe) {
 
             System.err.println(pe.getMessage());
-            helpFormatter.printHelp("Client", options);
-            throw new ConverterConfigurationException("try again");
+            return new HashMap<>();
         } catch (NullPointerException npe) {
-            throw new ConverterConfigurationException("something went wrong");
+            throw new ConverterConfigurationException(npe.getMessage());
         }
     }
 
-    public void addOptions(Options options) {
+    public void addOptions(Options opts) {
 
-        for (Option option : options.getOptions()) {
-            this.options.addOption(option);
+        for (Option opt : opts.getOptions()) {
+            options.addOption(opt);
         }
     }
 }
