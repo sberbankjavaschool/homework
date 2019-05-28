@@ -8,18 +8,10 @@ import java.util.Map;
 
 /**
  * Интерфейс мапы, которая ведет подсчёт вхождений элемента в контейнер.
- * <p>
- * <p>
  * Пример(без дженериков):
- * <p>
  * CountMap map = new ... ();
- * <p>
  * map.add("Some word");
- * <p>
  * map.add("Some word");
- * <p>
- * <p>
- * <p>
  * ==> map{"Some word" : 2}
  */
 public class CountMapImpl implements CountMap<Player> {
