@@ -1,9 +1,13 @@
 package ru.sberbank.school.task08.state;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
 import java.io.Serializable;
 import java.util.List;
 
-public class MapState<T extends InstantiatableEntity> implements Savable<T>, Serializable {
+//@JsonInclude(JsonInclude.Include.NON_NULL)
+public class MapState<T extends GameObject> implements Savable<T>, Serializable {
     private final String name;
     private final List<T> gameObjects;
 
