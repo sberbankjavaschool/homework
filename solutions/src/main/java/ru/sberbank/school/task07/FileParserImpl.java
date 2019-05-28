@@ -23,10 +23,10 @@ public class FileParserImpl implements FileParser {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(
                 new FileInputStream(pathToFile), "windows-1251"))) {
 
-            while (reader.ready()){
+            while (reader.ready()) {
                 list.add(reader.readLine());
             }
-        } catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
