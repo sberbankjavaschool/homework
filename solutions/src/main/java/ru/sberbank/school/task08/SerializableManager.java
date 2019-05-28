@@ -33,7 +33,7 @@ public class SerializableManager extends SaveGameManager<MapState<GameObject>, G
     }
 
     @Override
-    public MapState<GameObject> loadGame(String filename) throws SaveGameException {
+    public MapState<GameObject> loadGame(@NonNull String filename) throws SaveGameException {
         try (FileInputStream fis = new FileInputStream(filesDirectory + File.separator + filename);
              ObjectInputStream in = new ObjectInputStream(fis)) {
             return (MapState<GameObject>) in.readObject();

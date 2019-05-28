@@ -46,9 +46,11 @@ public class JacksonManager extends SaveGameManager<MapState<GameObject>, GameOb
     }
 
     @Override
-    public MapState<GameObject> loadGame(String filename) throws SaveGameException {
+    public MapState<GameObject> loadGame(@NonNull String filename) throws SaveGameException {
         try {
             return mapper.readValue(new File(filesDirectory + File.separator + filename), MapState.class);
+        } catch (NullPointerException exc) {
+            exc.printStackTrace();
         } catch (JsonGenerationException exc) {
             exc.printStackTrace();
         } catch (JsonMappingException exc) {
