@@ -42,9 +42,9 @@ public class JacksonManager extends SaveGameManager<MapState<GameObject>, GameOb
         try (FileOutputStream output = new FileOutputStream(fullName)) {
             mapper.writeValue(output, gameState);
         } catch (FileNotFoundException e) {
-            throw new SaveGameException(e.toString(), SaveGameException.Type.USER, null);
+            throw new SaveGameException(e.toString(), SaveGameException.Type.USER, gameState);
         } catch (IOException e) {
-            throw new SaveGameException(e.toString(), SaveGameException.Type.IO, null);
+            throw new SaveGameException(e.toString(), SaveGameException.Type.IO, gameState);
         }
 
     }
@@ -67,7 +67,8 @@ public class JacksonManager extends SaveGameManager<MapState<GameObject>, GameOb
     }
 
     @Override
-    public InstantiatableEntity createEntity(InstantiatableEntity.Type type, InstantiatableEntity.Status status, long hitPoints) {
+    public InstantiatableEntity createEntity(InstantiatableEntity.Type type,
+                                             InstantiatableEntity.Status status, long hitPoints) {
         return new GameObject(type, status, hitPoints);
     }
 

@@ -5,13 +5,12 @@ import java.util.Objects;
 
 
 public class GameObject implements InstantiatableEntity, Serializable {
-    private final Type type;
-    private final Status status;
+    private Type type;
+    private Status status;
     private long hitPoints;
 
     private GameObject() {
-        type = null;
-        status = null;
+
     }
 
 
@@ -35,6 +34,14 @@ public class GameObject implements InstantiatableEntity, Serializable {
 
     public void setHitPoints(long hitPoints) {
         this.hitPoints = hitPoints;
+    }
+
+    public void setType(Type type) {
+        this.type = type;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
     }
 
     @Override

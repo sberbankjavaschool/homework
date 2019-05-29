@@ -1,6 +1,7 @@
 package ru.sberbank.school.task08;
 
 import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.KryoException;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 import java.io.FileInputStream;
@@ -47,8 +48,8 @@ public class KryoManager extends SaveGameManager<MapState<GameObject>, GameObjec
             kryo.writeObject(output, gameState);
         } catch (FileNotFoundException e) {
             throw new SaveGameException(e.toString(), SaveGameException.Type.USER, gameState);
-        } catch (IOException e) {
-            throw new SaveGameException(e.toString(), SaveGameException.Type.IO, null);
+        } catch (KryoException e) {
+            throw new SaveGameException(e.toString(), SaveGameException.Type.SYSTEM, gameState);
         }
 
     }
@@ -63,8 +64,8 @@ public class KryoManager extends SaveGameManager<MapState<GameObject>, GameObjec
             return kryo.readObject(input, MapState.class);
         } catch (FileNotFoundException e) {
             throw new SaveGameException(e.toString(), SaveGameException.Type.USER, null);
-        } catch (IOException e) {
-            throw new SaveGameException(e.toString(), SaveGameException.Type.IO, null);
+        } catch (KryoException e) {
+            throw new SaveGameException(e.toString(), SaveGameException.Type.SYSTEM, null);
         }
 
     }

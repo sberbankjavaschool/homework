@@ -2,10 +2,12 @@ package ru.sberbank.school.task08.state;
 
 import java.io.Serializable;
 import java.util.List;
+import javax.xml.bind.annotation.*;
 
-public class MapState<T extends InstantiatableEntity> implements Savable<T>, Serializable {
-    private final String name;
-    private final List<T> gameObjects;
+@XmlRootElement(name = "MapState")
+public class MapState<T extends GameObject> implements Savable<T>, Serializable {
+    private String name;
+    private List<T> gameObjects;
 
     private MapState() {
         gameObjects = null;
@@ -14,6 +16,14 @@ public class MapState<T extends InstantiatableEntity> implements Savable<T>, Ser
 
     public MapState(String name, List<T> gameObjects) {
         this.name = name;
+        this.gameObjects = gameObjects;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setGameObjects(List<T> gameObjects) {
         this.gameObjects = gameObjects;
     }
 
