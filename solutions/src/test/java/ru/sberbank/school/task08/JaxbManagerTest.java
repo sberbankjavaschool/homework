@@ -34,11 +34,11 @@ public class JaxbManagerTest {
                 InstantiatableEntity.Status.KILLED, 0);
 
         List<GameObject> objects = new ArrayList<>();
-        objects.add(hospital);
-        objects.add(princess);
-        objects.add(axe);
-        objects.add(dragon);
-        mapState = new MapState<>("level 1", objects);
+//        objects.add(hospital);
+//        objects.add(princess);
+//        objects.add(axe);
+//        objects.add(dragon);
+        mapState = new MapState<>("", objects);
         filename = mapState.getName() + ".jaxb";
 
     }

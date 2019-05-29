@@ -4,6 +4,7 @@ import lombok.NonNull;
 import ru.sberbank.school.task08.state.GameObject;
 import ru.sberbank.school.task08.state.InstantiatableEntity;
 import ru.sberbank.school.task08.state.MapState;
+import ru.sberbank.school.util.Solution;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -13,6 +14,7 @@ import java.io.File;
 import java.util.List;
 import java.util.Objects;
 
+@Solution(8)
 public class JaxbManager extends SaveGameManager<MapState<GameObject>, GameObject> {
 
     private JAXBContext context;

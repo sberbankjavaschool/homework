@@ -23,6 +23,7 @@ public class MapState<T extends GameObject> implements Savable<T>, Serializable 
         this.name = name;
     }
 
+    @XmlElementWrapper(name = "gameObjects")
     public void setGameObjects(List<T> gameObjects) {
         this.gameObjects = gameObjects;
     }

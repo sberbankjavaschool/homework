@@ -13,7 +13,6 @@ public class GameObject implements InstantiatableEntity, Serializable {
 
     }
 
-
     public GameObject(Type type, Status status, long hitPoints) {
         this.type = type;
         this.status = status;

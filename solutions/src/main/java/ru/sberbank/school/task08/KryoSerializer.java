@@ -29,7 +29,6 @@ public class KryoSerializer extends Serializer<MapState<GameObject>> {
             }
         }
 
-
     }
 
     @Override
