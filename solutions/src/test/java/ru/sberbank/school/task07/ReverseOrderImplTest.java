@@ -2,7 +2,6 @@ package ru.sberbank.school.task07;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.mockito.Matchers;
 import org.mockito.Mockito;
 
 import java.io.FileNotFoundException;
@@ -24,7 +23,7 @@ class ReverseOrderImplTest {
         strings.add("one");
         strings.add("two");
         strings.add("three");
-        Mockito.when(fileParser.parse(Matchers.anyString())).thenReturn(strings);
+        Mockito.when(fileParser.parse(Mockito.anyString())).thenReturn(strings);
 
         List<String> straightOrder = fileParser.parse("some path");
         Collections.reverse(straightOrder);
