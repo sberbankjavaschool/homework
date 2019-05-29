@@ -3,7 +3,7 @@ package ru.sberbank.school.task07;
 import java.io.*;
 import java.util.*;
 
-public class DifferentWordsImpl implements DifferentWords<List<String>> {
+public class DifferentWordsImpl implements DifferentWords<Set<String>> {
     private FileParser fileParser;
 
     public DifferentWordsImpl(FileParser fileParser) {
@@ -11,18 +11,14 @@ public class DifferentWordsImpl implements DifferentWords<List<String>> {
     }
 
     @Override
-    public List<String> findSortedDifferentWords(String pathToFile) throws FileNotFoundException {
+    public Set<String> findSortedDifferentWords(String pathToFile) throws FileNotFoundException {
         Objects.requireNonNull(pathToFile, "No file name provided");
 
         List<String> source = fileParser.parse(pathToFile);
-        List<String> strings = new ArrayList<>();
-        source.forEach(string -> Arrays.asList(string.split("\\P{Alpha}+")).forEach(word -> {
-            if (!strings.contains(word)) {
-                strings.add(word);
-            }
-        }));
+        Set<String> strings = new TreeSet<>(new CompareMeAllWayTrough());
+//        Set<String> strings = new TreeSet<>();
+        source.forEach(string -> strings.addAll(Arrays.asList(string.split("\\P{Alpha}+"))));
 
-        strings.sort(new CompareMeAllWayTrough());
         return strings;
     }
 
