@@ -2,7 +2,6 @@ package ru.sberbank.school.task07;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.mockito.Matchers;
 import org.mockito.Mockito;
 
 import java.io.FileNotFoundException;
@@ -23,7 +22,7 @@ class WordsFrequencyImplTest {
         strings.add("one two three");
         strings.add("two three");
         strings.add("three");
-        Mockito.when(fileParser.parse(Matchers.anyString())).thenReturn(strings);
+        Mockito.when(fileParser.parse(Mockito.anyString())).thenReturn(strings);
 
         Map<String, Integer> expected = new HashMap<>();
         expected.put("three", 4);
