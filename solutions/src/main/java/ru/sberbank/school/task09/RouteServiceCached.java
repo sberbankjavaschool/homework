@@ -3,7 +3,9 @@ package ru.sberbank.school.task09;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
+import com.esotericsoftware.kryo.util.DefaultInstantiatorStrategy;
 import lombok.NonNull;
+import org.objenesis.strategy.StdInstantiatorStrategy;
 
 import java.io.*;
 import java.time.LocalDate;
@@ -24,6 +26,7 @@ public class RouteServiceCached extends RouteService<City, Route<City>> {
         kryo.register(LinkedList.class);
         kryo.register(ArrayList.class);
         kryo.register(HashMap.class);
+        kryo.setInstantiatorStrategy(new DefaultInstantiatorStrategy(new StdInstantiatorStrategy()));
     }
 
     @Override
