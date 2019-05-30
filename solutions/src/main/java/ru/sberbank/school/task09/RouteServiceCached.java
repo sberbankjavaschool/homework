@@ -31,13 +31,16 @@ public class RouteServiceCached extends RouteService<City, Route<City>> {
 
     @Override
     public Route<City> getRoute(@NonNull String from, @NonNull String to) {
+        if (from.equals("") || (to.equals(""))) {
+            throw new IllegalArgumentException();
+        }
         String key = from + "_" + to;
-        Route route = null;
+        Route route;
         if (routes.contains(key)) {
             route = loadRoute(key);
         } else {
-            routes.add(key);
             route = saveRoute(key, from, to);
+            routes.add(key);
         }
         return route;
     }
