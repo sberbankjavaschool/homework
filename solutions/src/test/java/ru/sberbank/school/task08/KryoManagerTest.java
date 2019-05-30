@@ -10,7 +10,7 @@ import java.util.List;
 class KryoManagerTest {
     private static KryoManager kryoManager;
     private static MapState<GameObject> mapState;
-    private static String directoryPath = System.getenv("directoryPath");
+    private static String directoryPath = "C:\\Users\\1357028\\Desktop\\Save";
     private String fileName = "Hospital.txt";
     private static List<GameObject> objects;
 

@@ -9,7 +9,7 @@ import java.util.List;
 class JaxbManagerTest {
     private static JaxbManager jaxbManager;
     private static JaxbMapState<GameObject> mapState;
-    private static String directoryPath = System.getenv("directoryPath");
+    private static String directoryPath = "C:\\Users\\1357028\\Desktop\\Save";
     private String fileName = "Hospital.txt";
     private static List<GameObject> objects;
 
