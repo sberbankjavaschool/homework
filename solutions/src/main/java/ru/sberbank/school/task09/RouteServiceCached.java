@@ -26,7 +26,7 @@ public class RouteServiceCached extends RouteService<City, Route<City>> {
         kryo.register(LinkedList.class);
         kryo.register(ArrayList.class);
         kryo.register(HashMap.class);
-        kryo.setInstantiatorStrategy(new DefaultInstantiatorStrategy(new StdInstantiatorStrategy()));
+        kryo.setInstantiatorStrategy(new StdInstantiatorStrategy());
     }
 
     @Override
