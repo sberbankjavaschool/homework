@@ -3,6 +3,7 @@ package ru.sberbank.school.task09;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
+import lombok.NonNull;
 
 import java.io.*;
 import java.time.LocalDate;
@@ -26,7 +27,7 @@ public class RouteServiceCached extends RouteService<City, Route<City>> {
     }
 
     @Override
-    public Route<City> getRoute(String from, String to) {
+    public Route<City> getRoute(@NonNull String from, @NonNull String to) {
         String key = from + "_" + to;
         Route route = null;
         if (routes.contains(key)) {
@@ -84,7 +85,7 @@ public class RouteServiceCached extends RouteService<City, Route<City>> {
      * @return готовый маршрут
      */
     @Override
-    protected Route<City> createRoute(List<City> cities) {
+    protected Route<City> createRoute(@NonNull List<City> cities) {
         return new Route<>(UUID.randomUUID().toString(), cities);
     }
 }

@@ -28,7 +28,7 @@ class RouteServiceCachedTest {
 
     @Test
     @DisplayName("Timecheck")
-    void TimeCheck() {
+    void timeCheck() {
         long startTime = System.nanoTime();
         System.out.println("Start_time " + startTime);
         Route<City> route_2 = routeServiceCached.getRoute("Chelyabinsk", "Moscow");
