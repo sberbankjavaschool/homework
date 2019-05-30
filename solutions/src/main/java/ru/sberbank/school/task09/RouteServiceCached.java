@@ -86,6 +86,9 @@ public class RouteServiceCached extends RouteService<City, Route<City>> {
      */
     @Override
     protected Route<City> createRoute(@NonNull List<City> cities) {
+        if (cities.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
         return new Route<>(UUID.randomUUID().toString(), cities);
     }
 }
