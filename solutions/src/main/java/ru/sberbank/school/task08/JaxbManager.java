@@ -14,6 +14,9 @@ import java.util.Objects;
 
 @Solution(8)
 public class JaxbManager extends SaveGameManager<JaxbMapState<GameObject>, GameObject> {
+    private JAXBContext context;
+    private Marshaller marshaller;
+    private Unmarshaller unmarshaller;
 
     /**
      * Класс-наследник должен иметь конструктор эквивалентный этому.
@@ -26,22 +29,23 @@ public class JaxbManager extends SaveGameManager<JaxbMapState<GameObject>, GameO
 
     @Override
     public void initialize() {
-
+        try {
+            context = JAXBContext.newInstance(JaxbMapState.class);
+            marshaller = context.createMarshaller();
+            unmarshaller = context.createUnmarshaller();
+        } catch (JAXBException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void saveGame(String filename, JaxbMapState<GameObject> gameState) throws SaveGameException {
         Objects.requireNonNull(filename, "Имя файла не должно быть null");
         Objects.requireNonNull(gameState, "Сохраняемый объект не должен быть null");
-
         try {
-            JAXBContext context = JAXBContext.newInstance(gameState.getClass());
-            Marshaller marshaller = context.createMarshaller();
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-
             marshaller.marshal(gameState, new File(filesDirectory + File.separator + filename));
-
-        } catch (JAXBException e) {
+        } catch (NullPointerException | JAXBException e) {
             throw new SaveGameException("Возникла ошибка при записи объекта", e, SaveGameException.Type.IO, gameState);
         }
     }
@@ -52,11 +56,10 @@ public class JaxbManager extends SaveGameManager<JaxbMapState<GameObject>, GameO
         JaxbMapState savable = null;
 
         try {
-            JAXBContext context = JAXBContext.newInstance(JaxbMapState.class);
-            Unmarshaller unmarshaller = context.createUnmarshaller();
 
             savable = (JaxbMapState) unmarshaller.unmarshal(
                     new File(filesDirectory + File.separator + filename));
+
         } catch (JAXBException e) {
             throw new SaveGameException("Возникла ошибка при считывании объекта", e,
                     SaveGameException.Type.IO, savable);
@@ -69,19 +72,12 @@ public class JaxbManager extends SaveGameManager<JaxbMapState<GameObject>, GameO
     public GameObject createEntity(InstantiatableEntity.Type type,
                                              InstantiatableEntity.Status status,
                                              long hitPoints) {
-//        Objects.requireNonNull(type, "Тип не должен быть null");
-//        Objects.requireNonNull(status, "Статус не должен быть null");
-//        if (hitPoints < 0) {
-//            throw new IllegalArgumentException("Урон не может быть меньше 0");
-//        }
 
         return new GameObject(type, status, hitPoints);
     }
 
     @Override
     public JaxbMapState<GameObject> createSavable(String name, List<GameObject> entities) {
-//        Objects.requireNonNull(name, "Название локации не должено быть null");
-//        Objects.requireNonNull(entities, "Список объектов не должен быть null");
 
         return new JaxbMapState<>(name, entities);
     }
