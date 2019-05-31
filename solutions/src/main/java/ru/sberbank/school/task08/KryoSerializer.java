@@ -23,11 +23,13 @@ public class KryoSerializer extends Serializer<MapState<GameObject>> {
 
     @Override
     public MapState<GameObject> read(Kryo kryo, @NonNull Input input, Class<? extends MapState<GameObject>> type) {
+        MapState<GameObject> mapState = kryo.newInstance(type);
+        kryo.reference(mapState);
 
-        String name = input.readString();
-        List<GameObject> list = (ArrayList<GameObject>) kryo.readObjectOrNull(input, ArrayList.class);
+        mapState.setName(input.readString());
+        mapState.setGameObjects(kryo.readObjectOrNull(input, ArrayList.class));
 
-        return new MapState<>(name, list);
+        return mapState;
     }
 }
 

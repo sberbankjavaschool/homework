@@ -10,20 +10,24 @@ import ru.sberbank.school.task09.Route;
 import java.util.LinkedList;
 import java.util.List;
 
-public class KryoSerializer extends Serializer<Route<City>> {
+public class RouteSerializer extends Serializer<Route<City>> {
 
     @Override
     public void write(Kryo kryo, Output output, Route<City> object) {
         output.writeString(object.getRouteName());
-        kryo.writeObject(output, object.getCities());
+        kryo.writeObjectOrNull(output, object.getCities(), LinkedList.class);
     }
 
     @Override
     public Route<City> read(Kryo kryo, Input input, Class<? extends Route<City>> type) {
         String name = input.readString();
-        List<City> cities = (LinkedList<City>) kryo.readObject(input, LinkedList.class);
+        LinkedList<City> cities = kryo.readObjectOrNull(input, LinkedList.class);
 
-        return new Route<>(name, cities);
+        Route<City> route = kryo.newInstance(type);
+        kryo.reference(route);
+        route.setRouteName(name);
+        route.setCities(cities);
+        return route;
     }
 
 }

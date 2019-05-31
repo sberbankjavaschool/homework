@@ -22,7 +22,7 @@ public class KryoManager implements RouteSerializeManager<Route<City>, City> {
 
     public KryoManager(String directoryPath) {
         this.kryo = new Kryo();
-        kryo.register(Route.class, new KryoSerializer());
+        kryo.register(Route.class, new RouteSerializer());
         kryo.register(City.class);
         kryo.register(LinkedList.class);
         kryo.register(ArrayList.class);
