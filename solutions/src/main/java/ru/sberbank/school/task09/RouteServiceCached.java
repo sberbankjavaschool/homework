@@ -42,7 +42,8 @@ public class RouteServiceCached extends RouteService<City, Route<City>> {
         if (routes.contains(key)) {
             route = loadRoute(key);
         } else {
-            route = saveRoute(key, from, to);
+            route = super.getRouteInner(from, to);
+            saveRoute(key, route);
             routes.add(key);
         }
         return route;
@@ -61,9 +62,9 @@ public class RouteServiceCached extends RouteService<City, Route<City>> {
         return null;
     }
 
-    private Route<City> saveRoute(String key, String from, String to) {
+    private void saveRoute(String key, Route route) {
         String file = path + File.separator + key + ".txt";
-        Route route = super.getRouteInner(from, to);
+        //Route route = super.getRouteInner(from, to);
         try (FileOutputStream fos = new FileOutputStream(file);
              Output out = new Output(fos)) {
             kryo.writeObject(out, route);
@@ -72,7 +73,6 @@ public class RouteServiceCached extends RouteService<City, Route<City>> {
         } catch (IOException ex) {
             ex.printStackTrace();
         }
-        return route;
     }
 
     /**
