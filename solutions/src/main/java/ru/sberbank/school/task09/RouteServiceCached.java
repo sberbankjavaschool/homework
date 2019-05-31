@@ -54,7 +54,7 @@ public class RouteServiceCached extends RouteService<City, Route<City>> {
         String file = path + File.separator + key + ".txt";
         try (FileInputStream fis = new FileInputStream(file);
              Input in = new Input(fis)) {
-            return (Route<City>) kryo.readObject(in, Route.class);
+            return (Route<City>) kryo.readClassAndObject(in);
         } catch (FileNotFoundException ex) {
             ex.printStackTrace();
         } catch (IOException ex) {
@@ -67,7 +67,7 @@ public class RouteServiceCached extends RouteService<City, Route<City>> {
         String file = path + File.separator + key + ".txt";
         try (FileOutputStream fos = new FileOutputStream(file);
              Output out = new Output(fos)) {
-            kryo.writeObject(out, route);
+            kryo.writeClassAndObject(out, route);
         } catch (NullPointerException | FileNotFoundException ex) {
             ex.printStackTrace();
         } catch (IOException ex) {

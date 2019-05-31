@@ -22,6 +22,7 @@ class RouteServiceCachedTest {
         Route<City> route = routeServiceCached.getRoute("Chelyabinsk", "Moscow");
         Route<City> route_2 = routeServiceCached.getRoute("Chelyabinsk", "Moscow");
         Assertions.assertEquals(route.getRouteName(), route_2.getRouteName());
+        Assertions.assertEquals(route.getCities().get(0), route_2.getCities().get(0));
         Assertions.assertIterableEquals(route.getCities(), route_2.getCities());
     }
 
