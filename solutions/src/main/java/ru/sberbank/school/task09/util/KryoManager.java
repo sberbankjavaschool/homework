@@ -36,7 +36,7 @@ public class KryoManager implements RouteSerializeManager<Route<City>, City> {
     public void saveRoute(@NonNull String fileName, @NonNull Route<City> route) {
         try (Output output = new Output(new FileOutputStream(directoryPath + File.separator + fileName))) {
 
-            kryo.writeObject(output, route);
+            kryo.writeObjectOrNull(output, route, Route.class);
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -47,7 +47,7 @@ public class KryoManager implements RouteSerializeManager<Route<City>, City> {
         Route<City> route = null;
         try (Input input = new Input(new FileInputStream(directoryPath + File.separator + fileName))) {
 
-            route = (Route<City>) kryo.readObject(input, Route.class);
+            route = (Route<City>) kryo.readObjectOrNull(input, Route.class);
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();

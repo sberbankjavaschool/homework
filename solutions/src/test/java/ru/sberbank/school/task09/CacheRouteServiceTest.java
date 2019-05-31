@@ -50,6 +50,7 @@ class CacheRouteServiceTest {
     }
 
     @Test
+    @Disabled
     @DisplayName("Тест на сравнение производительности стандартной сериализации")
     void otherManager() {
         cacheRouteService = new CacheRouteService(directoryPath, new SerializeManager(directoryPath));

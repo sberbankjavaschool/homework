@@ -1,14 +1,18 @@
 package ru.sberbank.school.task09;
 
+import lombok.NonNull;
 import ru.sberbank.school.task09.util.KryoManager;
 import ru.sberbank.school.task09.util.RouteSerializeManager;
 import ru.sberbank.school.util.Solution;
 
 import java.io.File;
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 @Solution(9)
-public class CacheRouteService extends InMemoryRouteService {
+public class CacheRouteService extends RouteService<City, Route<City>> {
 
     private File cacheDirectory;
     private RouteSerializeManager serializeManager;
@@ -78,4 +82,18 @@ public class CacheRouteService extends InMemoryRouteService {
         return route;
     }
 
+    @Override
+    protected City createCity(int id, @NonNull String cityName, @NonNull LocalDate foundDate,
+                              long numberOfInhabitants) {
+        return new City(id, cityName, foundDate, numberOfInhabitants);
+    }
+
+    @Override
+    protected Route<City> createRoute(List<City> cities) {
+        Objects.requireNonNull(cities, "Список городов не должен быть null");
+        if (cities.isEmpty()) {
+            throw new IllegalArgumentException("Список городов не должен быть пустым");
+        }
+        return new Route<>(UUID.randomUUID().toString(), cities);
+    }
 }
