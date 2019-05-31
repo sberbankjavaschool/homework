@@ -42,18 +42,12 @@ public class CacheRouteService extends RouteService<City, Route<City>> {
         Objects.requireNonNull(from, "Город отправления не должен быть null");
         Objects.requireNonNull(to, "Город прибытия не должен быть null");
 
-        String fileName = from + "_" + to + ".txt";
+        String fileName = from + "_" + to;
         Route<City> route = loadRouteFromCache(fileName);
 
-        try {
-
-            if (route == null) {
-                route = super.getRouteInner(from, to);
-                serializeManager.saveRoute(fileName, route);
-            }
-
-        } catch (UnknownCityException e) {
-            throw new RouteFetchException(e);
+        if (route == null) {
+            route = super.getRouteInner(from, to);
+            serializeManager.saveRoute(fileName, route);
         }
 
         return route;
