@@ -3,6 +3,7 @@ package ru.sberbank.school.task09.util;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
+import com.esotericsoftware.kryo.serializers.TimeSerializers;
 import lombok.NonNull;
 import ru.sberbank.school.task09.City;
 import ru.sberbank.school.task09.Route;
@@ -27,6 +28,7 @@ public class KryoManager implements RouteSerializeManager<Route<City>, City> {
         kryo.register(LinkedList.class);
         kryo.register(ArrayList.class);
         kryo.register(LocalDate.class);
+        TimeSerializers.addDefaultSerializers(kryo);
 
         kryo.setReferences(true);
 
@@ -36,7 +38,7 @@ public class KryoManager implements RouteSerializeManager<Route<City>, City> {
     public void saveRoute(@NonNull String fileName, @NonNull Route<City> route) {
         try (Output output = new Output(new FileOutputStream(directoryPath + File.separator + fileName))) {
 
-            kryo.writeObjectOrNull(output, route, Route.class);
+            kryo.writeClassAndObject(output, route);
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -47,7 +49,7 @@ public class KryoManager implements RouteSerializeManager<Route<City>, City> {
         Route<City> route = null;
         try (Input input = new Input(new FileInputStream(directoryPath + File.separator + fileName))) {
 
-            route = (Route<City>) kryo.readObjectOrNull(input, Route.class);
+            route = (Route<City>) kryo.readClassAndObject(input);
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();

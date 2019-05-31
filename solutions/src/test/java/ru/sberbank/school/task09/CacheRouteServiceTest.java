@@ -33,6 +33,8 @@ class CacheRouteServiceTest {
 
         Assertions.assertNotSame(route, otherRoute);
         Assertions.assertEquals(route.toString(), otherRoute.toString());
+
+        Assertions.assertEquals(route.getCities().toString(), otherRoute.getCities().toString());
     }
 
     @Test
