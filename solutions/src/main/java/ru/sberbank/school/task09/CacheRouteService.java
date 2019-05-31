@@ -46,7 +46,7 @@ public class CacheRouteService extends RouteService<City, Route<City>> {
         Route<City> route = loadRouteFromCache(fileName);
 
         if (route == null) {
-            route = super.getRouteInner(from, to);
+            route = getRouteInner(from, to);
             serializeManager.saveRoute(fileName, route);
         }
 

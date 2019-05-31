@@ -17,7 +17,7 @@ public class FixedThreadPool implements ThreadPool {
     @Override
     public void start() {
         for (int i = 0; i < count; i++) {
-            threads[i] = new ThreadExecute("ThreadPoolWorker-" + i);
+            threads[i] = new ThreadWorker("ThreadPoolWorker-" + i);
             threads[i].start();
         }
     }
@@ -25,9 +25,7 @@ public class FixedThreadPool implements ThreadPool {
     @Override
     public void stopNow() {
         synchronized (tasks) {
-            for (Runnable r : tasks) {
-                tasks.remove(r);
-            }
+            tasks.clear();
         }
 
         for (int i = 0; i < count; i++) {
@@ -40,12 +38,12 @@ public class FixedThreadPool implements ThreadPool {
     public void execute(Runnable runnable) {
         synchronized (tasks) {
             tasks.addLast(runnable);
-            tasks.notifyAll();
+            tasks.notify();
         }
     }
     
-    private class ThreadExecute extends Thread {
-        ThreadExecute(String name) {
+    private class ThreadWorker extends Thread {
+        ThreadWorker(String name) {
             super(name);
         }
 
@@ -54,6 +52,10 @@ public class FixedThreadPool implements ThreadPool {
             Runnable r;
 
             while (true) {
+
+                if (Thread.interrupted()) {
+                    break;
+                }
 
                 synchronized (tasks) {
                     while (tasks.isEmpty()) {
@@ -70,4 +72,5 @@ public class FixedThreadPool implements ThreadPool {
             }
         }
     }
+
 }

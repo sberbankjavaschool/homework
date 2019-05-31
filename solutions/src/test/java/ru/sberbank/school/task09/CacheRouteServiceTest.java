@@ -19,7 +19,7 @@ class CacheRouteServiceTest {
 
     @AfterEach
     void deleteFile () {
-        File file = new File(directoryPath + File.separator + "Saint-Petersburg_New-York.txt");
+        File file = new File(directoryPath + File.separator + "Saint-Petersburg_New-York");
         if (file.exists()) {
             file.delete();
         }
@@ -45,8 +45,8 @@ class CacheRouteServiceTest {
     @Test
     @DisplayName("Тест на выброс UnknownCity при аргументах заданных пустой строкой")
     void throwUnknownCity() {
-        Assertions.assertThrows(RouteFetchException.class, () -> cacheRouteService.getRoute("Saint-Petersburg", ""));
-        Assertions.assertThrows(RouteFetchException.class, () -> cacheRouteService.getRoute("", "New-York"));
+        Assertions.assertThrows(UnknownCityException.class, () -> cacheRouteService.getRoute("Saint-Petersburg", ""));
+        Assertions.assertThrows(UnknownCityException.class, () -> cacheRouteService.getRoute("", "New-York"));
     }
 
     @Test
