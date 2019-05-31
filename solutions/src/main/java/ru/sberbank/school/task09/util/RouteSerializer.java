@@ -4,58 +4,30 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
-import com.esotericsoftware.kryo.util.Generics;
+import ru.sberbank.school.task09.City;
 import ru.sberbank.school.task09.Route;
 
-import java.util.List;
+import java.util.LinkedList;
 
-public class RouteSerializer extends Serializer<Route> {
-    private final Generics.GenericsHierarchy genericsHierarchy;
-
-    public RouteSerializer() {
-        genericsHierarchy = new Generics.GenericsHierarchy(Route.class);
-    }
+public class RouteSerializer extends Serializer<Route<City>> {
 
     @Override
-    public void write(Kryo kryo, Output output, Route object) {
-        Generics generics = kryo.getGenerics();
-        int pop = 0;
-        Generics.GenericType[] genericTypes = generics.nextGenericTypes();
-        if (genericTypes != null) {
-            pop = generics.pushTypeVariables(genericsHierarchy, genericTypes);
-        }
-
+    public void write(Kryo kryo, Output output, Route<City> object) {
         output.writeString(object.getRouteName());
-
-        kryo.writeClassAndObject(output, object.getCities());
-
-        if (pop > 0) {
-            generics.popTypeVariables(pop);
-        }
-        generics.popGenericType();
+        kryo.writeObjectOrNull(output, object.getCities(), LinkedList.class);
     }
 
     @Override
-    public Route read(Kryo kryo, Input input, Class<? extends Route> type) {
-        Generics generics = kryo.getGenerics();
-        int pop = 0;
-        Generics.GenericType[] genericTypes = generics.nextGenericTypes();
-        if (genericTypes != null) {
-            pop = generics.pushTypeVariables(genericsHierarchy, genericTypes);
-        }
+    public Route<City> read(Kryo kryo, Input input, Class<? extends Route<City>> type) {
 
-        Route object = new Route();
-        kryo.reference(object);
+        Route<City> route = kryo.newInstance(type);
 
+        String name = input.readString();
+        LinkedList<City> cities = kryo.readObjectOrNull(input, LinkedList.class);
 
-        object.setRouteName(input.readString());
-
-        object.setCities((List) kryo.readClassAndObject(input));
-
-        if (pop > 0) {
-            generics.popTypeVariables(pop);
-        }
-        generics.popGenericType();
-        return object;
+        route.setRouteName(name);
+        route.setCities(cities);
+        return route;
     }
+
 }
