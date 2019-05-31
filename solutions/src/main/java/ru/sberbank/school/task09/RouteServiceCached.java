@@ -6,11 +6,13 @@ import com.esotericsoftware.kryo.io.Output;
 import com.esotericsoftware.kryo.util.DefaultInstantiatorStrategy;
 import lombok.NonNull;
 import org.objenesis.strategy.StdInstantiatorStrategy;
+import ru.sberbank.school.util.Solution;
 
 import java.io.*;
 import java.time.LocalDate;
 import java.util.*;
 
+@Solution(9)
 public class RouteServiceCached extends RouteService<City, Route<City>> {
     private Kryo kryo;
     private String filesDirectory = "C:\\Users\\Anastasia\\Desktop\\Java\\task09Ser\\";
@@ -31,9 +33,6 @@ public class RouteServiceCached extends RouteService<City, Route<City>> {
 
     @Override
     public Route<City> getRoute(@NonNull String from, @NonNull String to) {
-        if (from.equals("") || (to.equals(""))) {
-            throw new IllegalArgumentException();
-        }
         String key = from + "_" + to;
         Route route;
         if (routes.contains(key)) {
