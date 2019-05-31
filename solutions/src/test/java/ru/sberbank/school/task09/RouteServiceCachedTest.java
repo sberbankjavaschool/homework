@@ -17,7 +17,7 @@ class RouteServiceCachedTest {
     }
 
     @Test
-    @DisplayName("Test equals")
+    @DisplayName("Test Route equals")
     public void equalsRoutesTest() {
         Route<City> route = routeServiceCached.getRoute("Chelyabinsk", "Moscow");
         Route<City> route_2 = routeServiceCached.getRoute("Chelyabinsk", "Moscow");

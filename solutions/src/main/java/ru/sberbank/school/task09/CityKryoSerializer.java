@@ -23,11 +23,19 @@ public class CityKryoSerializer extends Serializer<City> {
 
     @Override
     public City read(Kryo kryo, @NonNull Input input, Class<? extends City> type) {
-        Integer id = input.readInt();
-        String name = input.readString();
-        LocalDate date = kryo.readObjectOrNull(input, LocalDate.class);
-        Long inhabitans = input.readLong();
-        List<City> nearcityObjects = kryo.readObjectOrNull(input, ArrayList.class);
-        return new City(id, name, date, inhabitans, nearcityObjects);
+        City city = new City();
+        kryo.reference(city);
+        city.setId(input.readInt());
+        city.setCityName(input.readString());
+        city.setFoundDate(kryo.readObjectOrNull(input, LocalDate.class));
+        city.setNumberOfInhabitants(input.readLong());
+        city.setNearCities(kryo.readObjectOrNull(input, ArrayList.class));
+        return city;
+//        Integer id = input.readInt();
+//        String name = input.readString();
+//        LocalDate date = kryo.readObjectOrNull(input, LocalDate.class);
+//        Long inhabitants = input.readLong();
+//        List<City> nearCityObjects = kryo.readObjectOrNull(input, ArrayList.class);
+//        return new City(id, name, date, inhabitants, nearCityObjects);
     }
 }
