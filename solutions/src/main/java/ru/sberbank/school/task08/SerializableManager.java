@@ -4,6 +4,7 @@ import lombok.NonNull;
 import ru.sberbank.school.task08.state.*;
 import ru.sberbank.school.util.Solution;
 
+import java.io.*;
 import java.util.List;
 
 @Solution(8)
@@ -17,22 +18,38 @@ public class SerializableManager extends SaveGameManager<MapState<GameObject>, G
 
     @Override
     public void initialize() {
-        throw new UnsupportedOperationException("Implement me!");
     }
 
     @Override
     public void saveGame(@NonNull String filename, @NonNull MapState<GameObject> gameState)
         throws SaveGameException {
-        throw new UnsupportedOperationException("Implement me!");
+        try (FileOutputStream fos = new FileOutputStream(filesDirectory + File.separator + filename);
+             ObjectOutputStream out = new ObjectOutputStream(fos)) {
+            out.writeObject(gameState);
+        } catch (IOException ex) {
+            throw new SaveGameException("Ошибка записи", ex, SaveGameException.Type.IO, gameState);
+        }
     }
 
     @Override
-    public MapState<GameObject> loadGame(String filename) throws SaveGameException {
-        throw new UnsupportedOperationException("Implement me!");
+    public MapState<GameObject> loadGame(@NonNull String filename) throws SaveGameException {
+        MapState<GameObject> gameState = null;
+
+        try (FileInputStream fis = new FileInputStream(filesDirectory + File.separator + filename);
+             ObjectInputStream in = new ObjectInputStream(fis)) {
+            gameState = (MapState<GameObject>) in.readObject();
+        } catch (FileNotFoundException ex) {
+            throw new SaveGameException("Файл не найден", ex, SaveGameException.Type.USER, gameState);
+        } catch (IOException ex) {
+            throw new SaveGameException("Ошибка чтения", ex, SaveGameException.Type.IO, gameState);
+        } catch (ClassNotFoundException ex) {
+            throw new SaveGameException("Класс не найден", ex, SaveGameException.Type.SYSTEM, gameState);
+        }
+        return gameState;
     }
 
     @Override
-    public InstantiatableEntity createEntity(InstantiatableEntity.Type type,
+    public GameObject createEntity(InstantiatableEntity.Type type,
                                              InstantiatableEntity.Status status,
                                              long hitPoints) {
         return new GameObject(type, status, hitPoints);
