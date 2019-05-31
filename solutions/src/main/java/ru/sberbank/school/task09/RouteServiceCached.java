@@ -15,10 +15,10 @@ import java.util.*;
 @Solution(9)
 public class RouteServiceCached extends RouteService<City, Route<City>> {
     private Kryo kryo;
-    private String filesDirectory = "C:\\Users\\Anastasia\\Desktop\\Java\\task09Ser\\";
     private List<String> routes = new ArrayList<>();
 
-    public RouteServiceCached() {
+    public RouteServiceCached(@NonNull String path) {
+        super(path);
         kryo = new Kryo();
         RouteKryoSerializer kryoSerializer = new RouteKryoSerializer();
         kryo.register(Route.class, kryoSerializer);
@@ -30,6 +30,10 @@ public class RouteServiceCached extends RouteService<City, Route<City>> {
         kryo.register(HashMap.class);
         kryo.setInstantiatorStrategy(new StdInstantiatorStrategy());
     }
+
+//    private void initialization() {
+//
+//    }
 
     @Override
     public Route<City> getRoute(@NonNull String from, @NonNull String to) {
@@ -45,7 +49,8 @@ public class RouteServiceCached extends RouteService<City, Route<City>> {
     }
 
     private Route<City> loadRoute(String key) {
-        try (FileInputStream fis = new FileInputStream(filesDirectory + key + ".txt");
+        String file = path + File.separator + key + ".txt";
+        try (FileInputStream fis = new FileInputStream(file);
              Input in = new Input(fis)) {
             return (Route<City>) kryo.readObject(in, Route.class);
         } catch (FileNotFoundException ex) {
@@ -57,8 +62,9 @@ public class RouteServiceCached extends RouteService<City, Route<City>> {
     }
 
     private Route<City> saveRoute(String key, String from, String to) {
+        String file = path + File.separator + key + ".txt";
         Route route = super.getRouteInner(from, to);
-        try (FileOutputStream fos = new FileOutputStream(filesDirectory + key + ".txt");
+        try (FileOutputStream fos = new FileOutputStream(file);
              Output out = new Output(fos)) {
             kryo.writeObject(out, route);
         } catch (NullPointerException | FileNotFoundException ex) {

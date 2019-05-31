@@ -11,10 +11,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class RouteServiceCachedTest {
     private static RouteServiceCached routeServiceCached;
+    private static String path = "C:\\Users\\Anastasia\\Desktop\\Java\\task09Ser";
 
     @BeforeAll
     public static void initialization() {
-        routeServiceCached = new RouteServiceCached();
+        routeServiceCached = new RouteServiceCached(path);
     }
 
     @Test
