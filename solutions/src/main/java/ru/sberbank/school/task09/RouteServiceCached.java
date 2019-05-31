@@ -20,20 +20,21 @@ public class RouteServiceCached extends RouteService<City, Route<City>> {
     public RouteServiceCached(@NonNull String path) {
         super(path);
         kryo = new Kryo();
-        RouteKryoSerializer kryoSerializer = new RouteKryoSerializer();
-        kryo.register(Route.class, kryoSerializer);
+        initialization();
+    }
+
+    private void initialization() {
+        RouteKryoSerializer kryoRouteSerializer = new RouteKryoSerializer();
+        CityKryoSerializer cityKryoSerializer = new CityKryoSerializer();
+        kryo.register(Route.class, kryoRouteSerializer);
         kryo.setReferences(true);
-        kryo.register(City.class);
+        kryo.register(City.class, cityKryoSerializer);
         kryo.register(LocalDate.class);
         kryo.register(LinkedList.class);
         kryo.register(ArrayList.class);
         kryo.register(HashMap.class);
         kryo.setInstantiatorStrategy(new StdInstantiatorStrategy());
     }
-
-//    private void initialization() {
-//
-//    }
 
     @Override
     public Route<City> getRoute(@NonNull String from, @NonNull String to) {
@@ -64,7 +65,6 @@ public class RouteServiceCached extends RouteService<City, Route<City>> {
 
     private void saveRoute(String key, Route route) {
         String file = path + File.separator + key + ".txt";
-        //Route route = super.getRouteInner(from, to);
         try (FileOutputStream fos = new FileOutputStream(file);
              Output out = new Output(fos)) {
             kryo.writeObject(out, route);
