@@ -18,6 +18,7 @@ public class CacheRouteService extends RouteService<City, Route<City>> {
     private RouteSerializeManager serializeManager;
 
     public CacheRouteService(String directoryPath, RouteSerializeManager serializeManager) {
+        super(directoryPath);
         Objects.requireNonNull(directoryPath, "Путь к папке с файлами сохранения не должен быть null");
 
         if (directoryPath.isEmpty()) {
@@ -48,13 +49,7 @@ public class CacheRouteService extends RouteService<City, Route<City>> {
 
             if (route == null) {
                 route = super.getRouteInner(from, to);
-
-                System.out.print("Save objects: ");
-                long start = System.currentTimeMillis();
-
                 serializeManager.saveRoute(fileName, route);
-
-                System.out.println(System.currentTimeMillis() - start);
             }
 
         } catch (UnknownCityException e) {
@@ -67,16 +62,10 @@ public class CacheRouteService extends RouteService<City, Route<City>> {
     private Route<City> loadRouteFromCache(String fileName) {
         Route<City> route = null;
 
-        File file = new File(cacheDirectory.getPath() + File.separator + fileName);
+        File file = new File(path + File.separator + fileName);
 
         if (file.exists()) {
-            System.out.print("Load objects: ");
-            long start = System.currentTimeMillis();
-
             route = serializeManager.loadRoute(fileName);
-
-            System.out.println(System.currentTimeMillis() - start);
-            System.out.println("File size: " + file.length());
         }
 
         return route;
