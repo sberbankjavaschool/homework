@@ -19,8 +19,13 @@ public class RouteKryoSerializer extends Serializer<Route<City>> {
 
     @Override
     public Route<City> read(Kryo kryo, @NonNull Input input, Class<? extends Route<City>> type) {
-        String name = input.readString();
-        List<City> cityObjects = kryo.readObjectOrNull(input, LinkedList.class);
-        return new Route<>(name, cityObjects);
+        Route route = kryo.newInstance(type);
+        kryo.reference(route);
+        route.setRouteName(input.readString());
+        route.setCities(kryo.readObjectOrNull(input, LinkedList.class));
+        return route;
+//        String name = input.readString();
+//        List<City> cityObjects = kryo.readObjectOrNull(input, LinkedList.class);
+//        return new Route<>(name, cityObjects);
     }
 }
