@@ -1,7 +1,8 @@
-package ru.sberbank.school.task09;
+package ru.sberbank.school.task09.util;
 
 import lombok.NonNull;
-import ru.sberbank.school.task09.util.RouteSerializeManager;
+import ru.sberbank.school.task09.City;
+import ru.sberbank.school.task09.Route;
 
 import java.io.*;
 
