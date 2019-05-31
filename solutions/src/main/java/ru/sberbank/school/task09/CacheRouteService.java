@@ -2,10 +2,12 @@ package ru.sberbank.school.task09;
 
 import ru.sberbank.school.task09.util.KryoManager;
 import ru.sberbank.school.task09.util.RouteSerializeManager;
+import ru.sberbank.school.util.Solution;
 
 import java.io.File;
 import java.util.Objects;
 
+@Solution(9)
 public class CacheRouteService extends InMemoryRouteService {
 
     private File cacheDirectory;
