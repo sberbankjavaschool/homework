@@ -25,10 +25,10 @@ public class RouteServiceCached extends RouteService<City, Route<City>> {
 
     private void initialization() {
         RouteKryoSerializer kryoRouteSerializer = new RouteKryoSerializer();
-        CityKryoSerializer cityKryoSerializer = new CityKryoSerializer();
+        //CityKryoSerializer cityKryoSerializer = new CityKryoSerializer();
         kryo.register(Route.class, kryoRouteSerializer);
         kryo.setReferences(true);
-        kryo.register(City.class, cityKryoSerializer);
+        kryo.register(City.class);
         kryo.register(LocalDate.class);
         kryo.register(LinkedList.class);
         kryo.register(ArrayList.class);

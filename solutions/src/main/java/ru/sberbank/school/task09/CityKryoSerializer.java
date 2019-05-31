@@ -10,7 +10,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CityKryoSerializer extends Serializer<City>{
+public class CityKryoSerializer extends Serializer<City> {
 
     @Override
     public void write(Kryo kryo, @NonNull Output output, @NonNull City object) {
