@@ -2,6 +2,7 @@ package ru.sberbank.school.task09;
 
 import org.junit.jupiter.api.*;
 import ru.sberbank.school.task09.util.KryoManager;
+import ru.sberbank.school.task09.util.SerializeManager;
 
 import java.io.File;
 
@@ -49,7 +50,7 @@ class CacheRouteServiceTest {
     }
 
     @Test
-    @DisplayName("")
+    @DisplayName("Тест на сравнение производительности стандартной сериализации")
     void otherManager() {
         cacheRouteService = new CacheRouteService(directoryPath, new SerializeManager(directoryPath));
 
