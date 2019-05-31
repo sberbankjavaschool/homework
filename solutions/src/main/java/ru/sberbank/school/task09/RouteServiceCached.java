@@ -42,7 +42,7 @@ public class RouteServiceCached extends RouteService<City, Route<City>> {
         if (routes.contains(key)) {
             route = loadRoute(key);
         } else {
-            route = super.getRouteInner(from, to);
+            route = getRouteInner(from, to);
             saveRoute(key, route);
             routes.add(key);
         }
