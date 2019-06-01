@@ -1,15 +1,20 @@
 package ru.sberbank.school.task08;
 
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import ru.sberbank.school.task08.state.GameObject;
 import ru.sberbank.school.task08.state.InstantiatableEntity;
 import ru.sberbank.school.task08.state.MapState;
+import ru.sberbank.school.task08.state.Savable;
 
 import java.util.ArrayList;
 import java.util.List;
 
-class JacksonManagerTest {
-    private static JacksonManager jacksonManager;
+
+class SerializeManagerTest {
+    private static SerializableManager serializableManager;
     private static MapState<GameObject> mapState;
     private static String directoryPath = "C:\\Users\\1357028\\Desktop\\Save";
     private String fileName = "Hospital.txt";
@@ -17,42 +22,42 @@ class JacksonManagerTest {
 
     @BeforeAll
     static void init() {
-        jacksonManager = new JacksonManager(directoryPath);
-        jacksonManager.initialize();
+        serializableManager = new SerializableManager(directoryPath);
+        serializableManager.initialize();
 
         objects = new ArrayList<>();
-        objects.add(jacksonManager.createEntity(InstantiatableEntity.Type.BUILDING,
+        objects.add(serializableManager.createEntity(InstantiatableEntity.Type.BUILDING,
                 InstantiatableEntity.Status.DESPAWNED, 10));
-        objects.add(jacksonManager.createEntity(InstantiatableEntity.Type.BUILDING,
+        objects.add(serializableManager.createEntity(InstantiatableEntity.Type.BUILDING,
                 InstantiatableEntity.Status.KILLED, 500));
-        objects.add(jacksonManager.createEntity(InstantiatableEntity.Type.NPC,
+        objects.add(serializableManager.createEntity(InstantiatableEntity.Type.NPC,
                 InstantiatableEntity.Status.SPAWNED, 0));
-        objects.add(jacksonManager.createEntity(InstantiatableEntity.Type.ENEMY,
+        objects.add(serializableManager.createEntity(InstantiatableEntity.Type.ENEMY,
                 InstantiatableEntity.Status.SPAWNED, 0));
 
-        mapState = jacksonManager.createSavable("Госпиталь", objects);
+        mapState = serializableManager.createSavable("Госпиталь", objects);
     }
 
     @Test
     @DisplayName("Проверка на выброс NullPointerException")
     void saveGameNull() {
-        Assertions.assertThrows(NullPointerException.class, () -> jacksonManager.saveGame(null, mapState));
-        Assertions.assertThrows(NullPointerException.class, () -> jacksonManager.saveGame(fileName, null));
+        Assertions.assertThrows(NullPointerException.class, () -> serializableManager.saveGame(null, mapState));
+        Assertions.assertThrows(NullPointerException.class, () -> serializableManager.saveGame(fileName, null));
     }
 
     @Test
     @DisplayName("Проверка на выброс SaveGameException при некорректном пути к файлам сохранений")
     void saveGameFileNotFound() {
-        jacksonManager = new JacksonManager("");
-        Assertions.assertThrows(SaveGameException.class, () -> jacksonManager.saveGame(fileName, mapState));
-        jacksonManager = new JacksonManager(directoryPath);
+        serializableManager = new SerializableManager("");
+        Assertions.assertThrows(SaveGameException.class, () -> serializableManager.saveGame(fileName, mapState));
+        serializableManager = new SerializableManager(directoryPath);
     }
 
     @Test
     @DisplayName("Проверка на эквивалентность и неидентичность объектов")
     void equalsSaveLoadObjects() throws SaveGameException {
-        jacksonManager.saveGame(fileName, mapState);
-        MapState<GameObject> otherMapState = jacksonManager.loadGame(fileName);
+        serializableManager.saveGame(fileName, mapState);
+        Savable otherMapState = serializableManager.loadGame(fileName);
 
         Assertions.assertNotSame(mapState, otherMapState);
         Assertions.assertEquals(mapState, otherMapState);
@@ -61,27 +66,26 @@ class JacksonManagerTest {
     @Test
     @DisplayName("Проверка на эквивалентность и неиндетичность объектов при пустом списке")
     void emptyListObjects() throws SaveGameException {
-        mapState = jacksonManager.createSavable("Пустой список", new ArrayList<>());
-        jacksonManager.saveGame(fileName, mapState);
-        MapState<GameObject> otherMapState = jacksonManager.loadGame(fileName);
+        mapState = serializableManager.createSavable("Пустой список", new ArrayList<>());
+        serializableManager.saveGame(fileName, mapState);
+        MapState<GameObject> otherMapState = serializableManager.loadGame(fileName);
 
         Assertions.assertNotSame(mapState, otherMapState);
         Assertions.assertEquals(mapState, otherMapState);
 
-        mapState = jacksonManager.createSavable("Госпиталь", objects);
+        mapState = serializableManager.createSavable("Госпиталь", objects);
     }
 
     @Test
     @DisplayName("Проверка на эквивалентность и неиндетичность объектов при null списке")
     void nullListObjects() throws SaveGameException {
-        mapState = jacksonManager.createSavable("Пустой список", null);
-        jacksonManager.saveGame(fileName, mapState);
-        MapState<GameObject> otherMapState = jacksonManager.loadGame(fileName);
+        mapState = serializableManager.createSavable("Пустой список", null);
+        serializableManager.saveGame(fileName, mapState);
+        MapState<GameObject> otherMapState = serializableManager.loadGame(fileName);
 
         Assertions.assertNotSame(mapState, otherMapState);
         Assertions.assertEquals(mapState, otherMapState);
 
-        mapState = jacksonManager.createSavable("Госпиталь", objects);
+        mapState = serializableManager.createSavable("Госпиталь", objects);
     }
-
 }

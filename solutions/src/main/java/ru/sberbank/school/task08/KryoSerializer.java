@@ -18,37 +18,18 @@ public class KryoSerializer extends Serializer<MapState<GameObject>> {
     @Override
     public void write(Kryo kryo, @NonNull Output output, @NonNull MapState<GameObject> object) {
         output.writeString(object.getName());
-        List<GameObject> objects = object.getGameObjects();
-        int size = objects != null ? objects.size() : -1;
-
-        output.writeInt(size);
-
-        if (size != -1) {
-            for (GameObject g : object.getGameObjects()) {
-                output.writeString(g.getType().name());
-                output.writeString(g.getStatus().name());
-                output.writeLong(g.getHitPoints());
-            }
-        }
+        kryo.writeObjectOrNull(output, object.getGameObjects(), ArrayList.class);
     }
 
     @Override
     public MapState<GameObject> read(Kryo kryo, @NonNull Input input, Class<? extends MapState<GameObject>> type) {
-        String name = input.readString();
-        int size = input.readInt();
+        MapState<GameObject> mapState = kryo.newInstance(type);
+        kryo.reference(mapState);
 
-        if (size == -1) {
-            return new MapState<>(name, null);
-        }
+        mapState.setName(input.readString());
+        mapState.setGameObjects(kryo.readObjectOrNull(input, ArrayList.class));
 
-        List<GameObject> list = new ArrayList<>();
-        for (int i = 0; i < size; i++) {
-            InstantiatableEntity.Type t = InstantiatableEntity.Type.valueOf(input.readString());
-            InstantiatableEntity.Status s = InstantiatableEntity.Status.valueOf(input.readString());
-            long l = input.readLong();
-            list.add(new GameObject(t, s, l));
-        }
-
-        return new MapState<>(name, list);
+        return mapState;
     }
 }
+
