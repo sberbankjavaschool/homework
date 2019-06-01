@@ -1,6 +1,7 @@
 package ru.sberbank.school.task08;
 
 import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.NonNull;
@@ -43,7 +44,8 @@ public class JacksonManager extends SaveGameManager<MapState<GameObject>, GameOb
         MapState<GameObject> gameState = null;
 
         try {
-            gameState = mapper.readValue(new File(filesDirectory +  File.separator + filename), MapState.class);
+            gameState = mapper.readValue(new File(filesDirectory +  File.separator + filename),
+                new TypeReference<MapState<GameObject>>(){});
         } catch (JsonParseException e) {
             throw new SaveGameException("Ошибка парсера Jakson", e, SaveGameException.Type.IO, gameState);
         } catch (JsonMappingException e) {

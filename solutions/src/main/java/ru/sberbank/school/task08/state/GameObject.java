@@ -51,8 +51,8 @@ public class GameObject implements InstantiatableEntity, Serializable {
             return false;
         }
         GameObject that = (GameObject) o;
-        return type == that.type &&
-                status == that.status;
+        return type == that.type
+            && status == that.status;
     }
 
     @Override

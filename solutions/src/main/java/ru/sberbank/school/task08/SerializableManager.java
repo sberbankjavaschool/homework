@@ -24,7 +24,7 @@ public class SerializableManager extends SaveGameManager<MapState<GameObject>, G
     public void saveGame(@NonNull String filename, @NonNull MapState<GameObject> gameState)
         throws SaveGameException {
         try (FileOutputStream fos = new FileOutputStream(filesDirectory + File.separator + filename);
-             ObjectOutputStream out = new ObjectOutputStream(fos)) {
+                ObjectOutputStream out = new ObjectOutputStream(fos)) {
             out.writeObject(gameState);
         } catch (IOException ex) {
             throw new SaveGameException("Ошибка записи", ex, SaveGameException.Type.IO, gameState);
@@ -36,7 +36,7 @@ public class SerializableManager extends SaveGameManager<MapState<GameObject>, G
         MapState<GameObject> gameState = null;
 
         try (FileInputStream fis = new FileInputStream(filesDirectory + File.separator + filename);
-             ObjectInputStream in = new ObjectInputStream(fis)) {
+                ObjectInputStream in = new ObjectInputStream(fis)) {
             gameState = (MapState<GameObject>) in.readObject();
         } catch (FileNotFoundException ex) {
             throw new SaveGameException("Файл не найден", ex, SaveGameException.Type.USER, gameState);
@@ -50,8 +50,8 @@ public class SerializableManager extends SaveGameManager<MapState<GameObject>, G
 
     @Override
     public GameObject createEntity(InstantiatableEntity.Type type,
-                                             InstantiatableEntity.Status status,
-                                             long hitPoints) {
+                                   InstantiatableEntity.Status status,
+                                   long hitPoints) {
         return new GameObject(type, status, hitPoints);
     }
 

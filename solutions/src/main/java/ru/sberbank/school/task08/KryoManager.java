@@ -35,16 +35,16 @@ public class KryoManager extends SaveGameManager<MapState<GameObject>, GameObjec
 
     @Override
     public void saveGame(@NonNull String filename, @NonNull MapState<GameObject> gameState)
-            throws SaveGameException {
+        throws SaveGameException {
 
-            try (FileOutputStream fos = new FileOutputStream(filesDirectory + File.separator + filename);
-                 Output out = new Output(fos)) {
-                kryo.writeObject(out, gameState);
-            } catch (FileNotFoundException ex) {
-                throw new SaveGameException("Файл не найден", ex, SaveGameException.Type.USER, gameState);
-            } catch (IOException ex) {
-                throw new SaveGameException("Ошибка записи", ex, SaveGameException.Type.IO, gameState);
-            }
+        try (FileOutputStream fos = new FileOutputStream(filesDirectory + File.separator + filename);
+             Output out = new Output(fos)) {
+            kryo.writeObject(out, gameState);
+        } catch (FileNotFoundException ex) {
+            throw new SaveGameException("Файл не найден", ex, SaveGameException.Type.USER, gameState);
+        } catch (IOException ex) {
+            throw new SaveGameException("Ошибка записи", ex, SaveGameException.Type.IO, gameState);
+        }
     }
 
     @Override
@@ -64,8 +64,8 @@ public class KryoManager extends SaveGameManager<MapState<GameObject>, GameObjec
 
     @Override
     public GameObject createEntity(InstantiatableEntity.Type type,
-                                             InstantiatableEntity.Status status,
-                                             long hitPoints) {
+                                   InstantiatableEntity.Status status,
+                                   long hitPoints) {
         return new GameObject(type, status, hitPoints);
     }
 

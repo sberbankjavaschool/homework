@@ -10,7 +10,7 @@ import ru.sberbank.school.task08.state.MapState;
 import java.util.ArrayList;
 import java.util.List;
 
-public class KryoManagerTest extends ManagerTest{
+public class KryoManagerTest extends ManagerTest {
 
     private static KryoManager manager;
     private static MapState<GameObject> mapState;
@@ -22,13 +22,13 @@ public class KryoManagerTest extends ManagerTest{
 
         List<GameObject> gameObjects = new ArrayList<>();
         gameObjects.add(manager.createEntity(InstantiatableEntity.Type.BUILDING,
-            InstantiatableEntity.Status.SPAWNED, 100));
+                InstantiatableEntity.Status.SPAWNED, 100));
         gameObjects.add(manager.createEntity(InstantiatableEntity.Type.ENEMY,
-            InstantiatableEntity.Status.SPAWNED, 300));
+                InstantiatableEntity.Status.SPAWNED, 300));
         gameObjects.add(manager.createEntity(InstantiatableEntity.Type.ITEM,
-            InstantiatableEntity.Status.KILLED, 20));
+                InstantiatableEntity.Status.KILLED, 20));
         gameObjects.add(manager.createEntity(InstantiatableEntity.Type.NPC,
-            InstantiatableEntity.Status.DESPAWNED, 500));
+                InstantiatableEntity.Status.DESPAWNED, 500));
         mapState = manager.createSavable("Test", gameObjects);
     }
 

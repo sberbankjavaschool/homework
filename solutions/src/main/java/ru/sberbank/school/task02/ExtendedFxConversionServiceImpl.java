@@ -20,7 +20,8 @@ public class ExtendedFxConversionServiceImpl extends FxConversionServiceImpl imp
     }
 
     @Override
-    public Optional<BigDecimal> convertReversed(ClientOperation operation, Symbol symbol, BigDecimal amount, double delta, Beneficiary beneficiary) {
+    public Optional<BigDecimal> convertReversed(ClientOperation operation, Symbol symbol,
+                                                BigDecimal amount, double delta, Beneficiary beneficiary) {
         if (amount.compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("Amount меньше или равно нулю");
         }

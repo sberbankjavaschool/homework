@@ -21,8 +21,16 @@ public class MapState<T extends InstantiatableEntity> implements Savable<T>, Ser
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public List<T> getGameObjects() {
         return this.gameObjects;
+    }
+
+    public void setGameObjects(List<T> gameObjects) {
+        this.gameObjects = gameObjects;
     }
 
     public boolean equals(final Object o) {
