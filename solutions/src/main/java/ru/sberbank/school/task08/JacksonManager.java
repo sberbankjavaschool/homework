@@ -33,9 +33,9 @@ public class JacksonManager extends SaveGameManager<MapState<GameObject>, GameOb
         try {
             mapper.writeValue(new File(filesDirectory + File.separator + filename), gameState);
         } catch (FileNotFoundException ex) {
-            throw new SaveGameException("Файл не найден", ex, SaveGameException.Type.USER, gameState);
+            throw new SaveGameException("File not found", ex, SaveGameException.Type.USER, gameState);
         } catch (IOException ex) {
-            throw new SaveGameException("Ошибка записи", ex, SaveGameException.Type.IO, gameState);
+            throw new SaveGameException("Write error", ex, SaveGameException.Type.IO, gameState);
         }
     }
 
@@ -47,11 +47,11 @@ public class JacksonManager extends SaveGameManager<MapState<GameObject>, GameOb
             gameState = mapper.readValue(new File(filesDirectory +  File.separator + filename),
                 new TypeReference<MapState<GameObject>>(){});
         } catch (JsonParseException e) {
-            throw new SaveGameException("Ошибка парсера Jakson", e, SaveGameException.Type.IO, gameState);
+            throw new SaveGameException("Parser jakson error", e, SaveGameException.Type.IO, gameState);
         } catch (JsonMappingException e) {
-            throw new SaveGameException("Ошибка мапинга Jakson", e, SaveGameException.Type.IO, gameState);
+            throw new SaveGameException("Mapping jakson error", e, SaveGameException.Type.IO, gameState);
         } catch (IOException ex) {
-            throw new SaveGameException("Ошибка чтения", ex, SaveGameException.Type.IO, gameState);
+            throw new SaveGameException("Read error", ex, SaveGameException.Type.IO, gameState);
         }
         return gameState;
     }

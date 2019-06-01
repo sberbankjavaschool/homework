@@ -38,12 +38,12 @@ public class KryoManager extends SaveGameManager<MapState<GameObject>, GameObjec
         throws SaveGameException {
 
         try (FileOutputStream fos = new FileOutputStream(filesDirectory + File.separator + filename);
-             Output out = new Output(fos)) {
+                Output out = new Output(fos)) {
             kryo.writeObject(out, gameState);
         } catch (FileNotFoundException ex) {
-            throw new SaveGameException("Файл не найден", ex, SaveGameException.Type.USER, gameState);
+            throw new SaveGameException("File not found", ex, SaveGameException.Type.USER, gameState);
         } catch (IOException ex) {
-            throw new SaveGameException("Ошибка записи", ex, SaveGameException.Type.IO, gameState);
+            throw new SaveGameException("Write error", ex, SaveGameException.Type.IO, gameState);
         }
     }
 
@@ -52,12 +52,12 @@ public class KryoManager extends SaveGameManager<MapState<GameObject>, GameObjec
         MapState<GameObject> gameState = null;
 
         try (FileInputStream fis = new FileInputStream(filesDirectory + File.separator + filename);
-             Input in = new Input(fis)) {
+                Input in = new Input(fis)) {
             gameState = kryo.readObjectOrNull(in, MapState.class);
         } catch (FileNotFoundException ex) {
-            throw new SaveGameException("Файл не найден", ex, SaveGameException.Type.USER, gameState);
+            throw new SaveGameException("File not found", ex, SaveGameException.Type.USER, gameState);
         } catch (IOException ex) {
-            throw new SaveGameException("Ошибка чтения", ex, SaveGameException.Type.IO, gameState);
+            throw new SaveGameException("Read error", ex, SaveGameException.Type.IO, gameState);
         }
         return gameState;
     }

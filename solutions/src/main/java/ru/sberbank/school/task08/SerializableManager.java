@@ -27,7 +27,7 @@ public class SerializableManager extends SaveGameManager<MapState<GameObject>, G
                 ObjectOutputStream out = new ObjectOutputStream(fos)) {
             out.writeObject(gameState);
         } catch (IOException ex) {
-            throw new SaveGameException("Ошибка записи", ex, SaveGameException.Type.IO, gameState);
+            throw new SaveGameException("Write error", ex, SaveGameException.Type.IO, gameState);
         }
     }
 
@@ -39,11 +39,11 @@ public class SerializableManager extends SaveGameManager<MapState<GameObject>, G
                 ObjectInputStream in = new ObjectInputStream(fis)) {
             gameState = (MapState<GameObject>) in.readObject();
         } catch (FileNotFoundException ex) {
-            throw new SaveGameException("Файл не найден", ex, SaveGameException.Type.USER, gameState);
+            throw new SaveGameException("File not found", ex, SaveGameException.Type.USER, gameState);
         } catch (IOException ex) {
-            throw new SaveGameException("Ошибка чтения", ex, SaveGameException.Type.IO, gameState);
+            throw new SaveGameException("Read error", ex, SaveGameException.Type.IO, gameState);
         } catch (ClassNotFoundException ex) {
-            throw new SaveGameException("Класс не найден", ex, SaveGameException.Type.SYSTEM, gameState);
+            throw new SaveGameException("Class not found", ex, SaveGameException.Type.SYSTEM, gameState);
         }
         return gameState;
     }

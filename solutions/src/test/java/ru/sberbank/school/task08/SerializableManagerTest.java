@@ -36,6 +36,8 @@ class SerializableManagerTest extends ManagerTest {
         manager.saveGame(FILENAME, mapState);
         MapState<GameObject> loadedMapState = manager.loadGame(FILENAME);
 
+        Assertions.assertNotNull(mapState);
+        Assertions.assertNotNull(loadedMapState);
         Assertions.assertEquals(mapState, loadedMapState);
         Assertions.assertNotSame(mapState, loadedMapState);
     }
