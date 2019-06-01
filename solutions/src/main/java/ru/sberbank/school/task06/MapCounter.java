@@ -7,35 +7,29 @@ import java.util.Map;
  * Created by Mart
  * 25.05.2019
  **/
-public class MapCounter <K> implements CountMap {
-    private Map <K, Integer> map = new HashMap<>();
+public class MapCounter implements CountMap<Employee> {
+    private Map<Employee, Integer> map = new HashMap<>();
 
     @Override
-    public void add(Object o) {
-        if (map.containsKey(o)) {
-            map.put((K) o, map.get(o) + 1);
-        } else {
-            map.put((K) o, 1);
-        }
+    public void add(Employee emp) {
+        Integer value = map.getOrDefault(emp, 0);
+        map.put(emp, ++value);
     }
 
-    private void add(Object o, int counter) {
-        if (map.containsKey(o)) {
-            map.put((K) o, map.get(o) + counter);
-        } else {
-            map.put((K) o, counter);
-        }
+    private void add(Employee emp, int counter) {
+        Integer value = map.getOrDefault(emp, 0);
+        map.put(emp, value + counter);
     }
 
     @Override
-    public int getCount(Object o) {
-        return map.get(o);
+    public int getCount(Employee emp) {
+        return map.get(emp);
     }
 
     @Override
-    public int remove(Object o) {
-        int count = map.get(o);
-        map.remove(o);
+    public int remove(Employee emp) {
+        int count = map.get(emp);
+        map.remove(emp);
         return count;
     }
 
@@ -45,24 +39,23 @@ public class MapCounter <K> implements CountMap {
     }
 
     @Override
-    public void addAll(CountMap source) {
-        Map sourceMap = source.toMap();
-        for (Object o : sourceMap.keySet()) {
-            this.add(o, (Integer) sourceMap.get(o));
+    public void addAll(CountMap<? extends Employee> source) {
+        for (Employee e : source.toMap().keySet()) {
+           add(e);
         }
     }
 
     @Override
-    public Map<? extends K, Integer> toMap() {
-        return map;
+    public Map<Employee, Integer> toMap() {
+        Map<Employee, Integer> clone = new HashMap<>();
+        toMap(clone);
+        return clone;
     }
 
     @Override
-    public void toMap(Map destination) {
-        MapCounter destMap = (MapCounter) destination;
-        for (Object o : map.keySet()) {
-            destMap.add(o, map.get(o));
+    public void toMap(Map<? super Employee, Integer> destination) {
+        for (Employee emp : map.keySet() ) {
+            destination.put(new Employee(emp), map.get(emp));
         }
     }
-
 }

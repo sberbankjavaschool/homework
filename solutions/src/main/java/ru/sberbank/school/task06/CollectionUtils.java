@@ -53,7 +53,7 @@ public class CollectionUtils {
      * @param dest коллекция, в которую необходимо вставить элемент
      * @param o    элемент
      */
-    public static <T> void add(List< ? super T > dest, T o) {
+    public static <T> void add(List<? super T> dest, T o) {
         dest.add(o);
     }
 
@@ -64,7 +64,7 @@ public class CollectionUtils {
      * @param removeFrom коллекция, из которой удалять элементы
      * @param toRemove   коллекция, в которой лежат элементы для удаления из коллекции removeFrom
      */
-    public static <T> void removeAll(List<? super T> removeFrom, List<? super T> toRemove) {
+    public static <T> void removeAll(List<? super T> removeFrom, List<? extends T> toRemove) {
             removeFrom.removeAll(toRemove);
     }
 
@@ -75,7 +75,7 @@ public class CollectionUtils {
      * @param c2 вторая коллекция
      * @return true, если все элементы коллекции c2 содержатся в c1
      */
-    public static <T> boolean containsAll(List<? extends T> c1, List<? super T> c2) {
+    public static boolean containsAll(List<?> c1, List<?> c2) {
         return c1.containsAll(c2);
     }
 
@@ -105,24 +105,14 @@ public class CollectionUtils {
      * @param max  максимальнео значение
      * @return отфильрованный по минимальному и максимальному значению список
      */
-    public static <T extends Object & Comparable<? super T>> List<T> range(List<? extends T> list, T min, T max) {
+    public static <T extends Comparable<? super T>> List<T> range(List<? extends T> list, T min, T max) {
         List<T> resultList = new ArrayList<>();
 
         for (T elem : list) {
             if (elem.compareTo(min) >= 0 && elem.compareTo(max) <= 0) {
                 if (!resultList.isEmpty()) {
-                    int index = resultList.size();
-                    if (elem.compareTo(resultList.get(index - 1)) <= 0) {
-                        for (T current : resultList) {
-                            if (elem.compareTo(current) <= 0) {
-                                index = resultList.indexOf(current);
-                                break;
-                            }
-                        }
-                        resultList.add(index, elem);
-                    } else {
-                        resultList.add(elem);
-                    }
+                    int index = findIndex(resultList, elem);
+                    resultList.add(index, elem);
                 } else {
                     resultList.add(elem);
                 }
@@ -141,29 +131,45 @@ public class CollectionUtils {
      * @param max  максимальнео значение
      * @return отфильрованный по минимальному и максимальному значению список
      */
-    public static<T> List<T> range(List<? extends T> list, T min, T max, Comparator<? super T> comparator) {
+    public static <T> List<T> range(List<? extends T> list, T min, T max, Comparator<? super T> comparator) {
         List<T> resultList = new ArrayList<>();
 
         for (T elem : list) {
             if (comparator.compare(elem, min) >= 0 && comparator.compare(elem, max) <= 0) {
                 if (!resultList.isEmpty()) {
-                    int index = resultList.size();
-                    if (comparator.compare(elem, resultList.get(index - 1)) <= 0) {
-                        for (T current : resultList) {
-                            if (comparator.compare(elem, current) <= 0) {
-                                index = resultList.indexOf(current);
-                                break;
-                            }
-                        }
-                        resultList.add(index,elem);
-                    } else {
-                        resultList.add(elem);
-                    }
+                    int index = findIndex(resultList, elem, comparator);
+                    resultList.add(index, elem);
                 } else {
                     resultList.add(elem);
                 }
             }
         }
         return resultList;
+    }
+
+    private static <T extends Comparable<? super T>> int findIndex(List<T> list, T elem) {
+        int index = list.size();
+        if (elem.compareTo(list.get(index - 1)) <= 0) {  //if false - is already sorted
+            for (T current : list) {
+                if (elem.compareTo(current) <= 0) {
+                    index = list.indexOf(current);
+                    break;
+                }
+            }
+        }
+        return index;
+    }
+
+    private static <T> int findIndex(List<T> list, T elem, Comparator<? super T> comparator) {
+        int index = list.size();
+        if (comparator.compare(elem, list.get(index - 1)) <= 0) {  //if false - is already sorted
+            for (T current : list) {
+                if (comparator.compare(elem, current) <= 0) {
+                    index = list.indexOf(current);
+                    break;
+                }
+            }
+        }
+        return index;
     }
 }
