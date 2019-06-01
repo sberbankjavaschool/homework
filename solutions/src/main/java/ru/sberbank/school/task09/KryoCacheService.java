@@ -17,10 +17,6 @@ public class KryoCacheService extends CacheService {
 
     public KryoCacheService(String filesDirectory) {
         super(filesDirectory);
-    }
-
-    @Override
-    public void initialize() {
         kryo.setReferences(true);
         kryo.register(Route.class, new RouteKryoSerializer());
         kryo.register(ArrayList.class);

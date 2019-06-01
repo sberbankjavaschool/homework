@@ -12,7 +12,6 @@ class RouteServiceImplTest {
     @Test
     void workingTest() {
         CacheService service = new KryoCacheService("f:/temp");
-        service.initialize();
         RouteService<City, Route<City>> rs = new RouteServiceImpl(service);
         Route<City> route =  rs.getRoute("Moscow", "Saint-Petersburg");
         Route<City> routeLoaded =  rs.getRoute("Moscow", "Saint-Petersburg");

@@ -12,8 +12,6 @@ public abstract class CacheService {
         this.filesDirectory = filesDirectoryPath;
     }
 
-    public abstract void initialize();
-
     public abstract void save(String filename, Route<City> route);
 
     public abstract Optional<Route<City>> load(String filename);
