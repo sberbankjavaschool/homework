@@ -40,11 +40,12 @@ public class KryoManager extends SaveGameManager<MapState<GameObject>, GameObjec
         Objects.requireNonNull(filename, "Имя файла не может быть null");
         Objects.requireNonNull(gameState, "Состояние не может быть null");
 
-        try (OutputStream os = new FileOutputStream(filesDirectory + File.separator + filename);
-            Output output = new Output(os)) {
+        try (OutputStream os = new FileOutputStream(filesDirectory + File.separator + filename)) {
+            try (Output output = new Output(os)) {
 
-            kryo.writeObjectOrNull(output, gameState, MapState.class);
+                kryo.writeObjectOrNull(output, gameState, MapState.class);
 
+            }
         } catch (FileNotFoundException e) {
             throw new SaveGameException("Отсутсвует файл", e, SaveGameException.Type.USER, gameState);
         } catch (IOException e) {
