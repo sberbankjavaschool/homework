@@ -1,14 +1,15 @@
 package ru.sberbank.school.task08.state;
 
+import java.io.Serializable;
 import java.util.List;
+import java.util.Objects;
 
-public class MapState<T extends InstantiatableEntity> implements Savable<T> {
-    private final String name;
-    private final List<T> gameObjects;
+public class MapState<T extends InstantiatableEntity> implements Savable<T>, Serializable {
+    private String name;
+    private List<T> gameObjects;
 
-    private MapState() {
-        gameObjects = null;
-        name = null;
+    public MapState() {
+
     }
 
     public MapState(String name, List<T> gameObjects) {
@@ -20,17 +21,29 @@ public class MapState<T extends InstantiatableEntity> implements Savable<T> {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public List<T> getGameObjects() {
         return this.gameObjects;
     }
 
+    public void setGameObjects(List<T> gameObjects) {
+        this.gameObjects = gameObjects;
+    }
+
     public boolean equals(final Object o) {
-        if (o == this) return true;
-        if (!(o instanceof MapState)) return false;
+        if (o == this) {
+            return true;
+        }
+        if (!(o instanceof MapState)) {
+            return false;
+        }
         final MapState other = (MapState) o;
         final Object this$gameObjects = this.getGameObjects();
         final Object other$gameObjects = other.getGameObjects();
-        return this$gameObjects == null ? other$gameObjects == null : this$gameObjects.equals(other$gameObjects);
+        return Objects.equals(this$gameObjects, other$gameObjects);
     }
 
     public int hashCode() {
