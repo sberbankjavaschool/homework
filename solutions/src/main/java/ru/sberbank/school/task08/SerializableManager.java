@@ -26,7 +26,7 @@ public class SerializableManager extends SaveGameManager<MapState<GameObject>, G
         Objects.requireNonNull(gameState, "Состояние не может быть null");
 
         try (OutputStream os = new FileOutputStream(filesDirectory + File.separator + filename);
-             ObjectOutputStream oos = new ObjectOutputStream(os)) {
+                                                   ObjectOutputStream oos = new ObjectOutputStream(os)) {
 
             oos.writeObject(gameState);
 
@@ -42,12 +42,11 @@ public class SerializableManager extends SaveGameManager<MapState<GameObject>, G
         Objects.requireNonNull(filename, "Имя файла не может быть null");
         MapState<GameObject> gameState = null;
 
-        try (InputStream is = new FileInputStream(filesDirectory + File.separator + filename)) {
-            try (ObjectInputStream ois = new ObjectInputStream(is)) {
+        try (InputStream is = new FileInputStream(filesDirectory + File.separator + filename);
+                                                  ObjectInputStream ois = new ObjectInputStream(is)) {
 
-                gameState = (MapState<GameObject>) ois.readObject();
+            gameState = (MapState<GameObject>) ois.readObject();
 
-            }
         } catch (FileNotFoundException e) {
             throw new SaveGameException("Отсутсвует файл", e, SaveGameException.Type.USER, gameState);
         } catch (IOException e) {
