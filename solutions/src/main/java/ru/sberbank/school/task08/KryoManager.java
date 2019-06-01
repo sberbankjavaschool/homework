@@ -27,10 +27,10 @@ public class KryoManager extends SaveGameManager<MapState<GameObject>, GameObjec
         kryo = new Kryo();
 
         kryo.register(MapState.class, new KryoSerializer());
-        kryo.register(ArrayList.class);
-        kryo.register(GameObject.class);
         kryo.register(InstantiatableEntity.Status.class);
         kryo.register(InstantiatableEntity.Type.class);
+        kryo.register(ArrayList.class);
+        kryo.register(GameObject.class);
     }
 
     @Override
@@ -39,7 +39,7 @@ public class KryoManager extends SaveGameManager<MapState<GameObject>, GameObjec
 
         try (FileOutputStream fos = new FileOutputStream(filesDirectory + File.separator + filename);
                 Output out = new Output(fos)) {
-            kryo.writeObject(out, gameState);
+            kryo.writeObjectOrNull(out, gameState, MapState.class);
         } catch (FileNotFoundException ex) {
             throw new SaveGameException("File not found", ex, SaveGameException.Type.USER, gameState);
         } catch (IOException ex) {
