@@ -21,6 +21,7 @@ public class RouteSerializer extends Serializer<Route<City>> {
     public Route<City> read(Kryo kryo, Input input, Class<? extends Route<City>> type) {
 
         Route<City> route = kryo.newInstance(type);
+        kryo.reference(route);
 
         String name = input.readString();
         LinkedList<City> cities = kryo.readObjectOrNull(input, LinkedList.class);
