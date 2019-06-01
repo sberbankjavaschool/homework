@@ -6,8 +6,8 @@ import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class MapState<T extends GameObject> implements Savable<T>, Serializable {
-    private final String name;
-    private final List<T> gameObjects;
+    private String name;
+    private List<T> gameObjects;
 
     private MapState() {
         gameObjects = null;
@@ -21,6 +21,14 @@ public class MapState<T extends GameObject> implements Savable<T>, Serializable 
 
     public String getName() {
         return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setGameObjects(List<T> gameObjects) {
+        this.gameObjects = gameObjects;
     }
 
     public List<T> getGameObjects() {
