@@ -66,19 +66,12 @@ public class SerializableManager extends SaveGameManager<MapState<GameObject>, G
     public GameObject createEntity(InstantiatableEntity.Type type,
                                    InstantiatableEntity.Status status,
                                    long hitPoints) {
-//        Objects.requireNonNull(type, "Тип не должен быть null");
-//        Objects.requireNonNull(status, "Статус не должен быть null");
-//        if (hitPoints < 0) {
-//            throw new IllegalArgumentException("Урон не может быть меньше 0");
-//        }
 
         return new GameObject(type, status, hitPoints);
     }
 
     @Override
     public MapState<GameObject> createSavable(String name, List<GameObject> entities) {
-//        Objects.requireNonNull(name, "Название локации не должено быть null");
-//        Objects.requireNonNull(entities, "Список объектов не должен быть null");
 
         return new MapState<>(name, entities);
     }
