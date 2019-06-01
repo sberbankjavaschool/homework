@@ -12,6 +12,10 @@ public class RouteServiceImpl extends RouteService<City, Route<City>> {
 
     private CacheService cacheService;
 
+    public RouteServiceImpl(String folderToSave) {
+        cacheService = new KryoCacheService(folderToSave);
+    }
+
     public RouteServiceImpl(CacheService cacheService) {
         this.cacheService = cacheService;
     }
