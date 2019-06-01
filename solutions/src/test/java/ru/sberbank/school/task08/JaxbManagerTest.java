@@ -9,7 +9,7 @@ import java.util.List;
 class JaxbManagerTest {
     private static JaxbManager jaxbManager;
     private static JaxbMapState<GameObject> mapState;
-    private static String directoryPath = System.getenv("directoryPath");
+    private static String directoryPath = "C:\\Users\\1357028\\Desktop\\Save";
     private String fileName = "Hospital.txt";
     private static List<GameObject> objects;
 
@@ -60,6 +60,19 @@ class JaxbManagerTest {
     @DisplayName("Проверка на эквивалентность и неиндетичность объектов при пустом списке")
     void emptyListObjects() throws SaveGameException {
         mapState = jaxbManager.createSavable("Пустой список", new ArrayList<>());
+        jaxbManager.saveGame(fileName, mapState);
+        JaxbMapState<GameObject> otherMapState = jaxbManager.loadGame(fileName);
+
+        Assertions.assertNotSame(mapState, otherMapState);
+        Assertions.assertEquals(mapState, otherMapState);
+
+        mapState = jaxbManager.createSavable("Госпиталь", objects);
+    }
+
+    @Test
+    @DisplayName("Проверка на эквивалентность и неиндетичность объектов при null списке")
+    void nullListObjects() throws SaveGameException {
+        mapState = jaxbManager.createSavable("Пустой список", null);
         jaxbManager.saveGame(fileName, mapState);
         JaxbMapState<GameObject> otherMapState = jaxbManager.loadGame(fileName);
 

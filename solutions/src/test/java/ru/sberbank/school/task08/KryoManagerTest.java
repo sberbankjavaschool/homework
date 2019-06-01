@@ -1,9 +1,6 @@
 package ru.sberbank.school.task08;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import ru.sberbank.school.task08.state.*;
 
 import java.util.ArrayList;
@@ -13,7 +10,7 @@ import java.util.List;
 class KryoManagerTest {
     private static KryoManager kryoManager;
     private static MapState<GameObject> mapState;
-    private static String directoryPath = System.getenv("directoryPath");
+    private static String directoryPath = "C:\\Users\\1357028\\Desktop\\Save";
     private String fileName = "Hospital.txt";
     private static List<GameObject> objects;
 
@@ -54,6 +51,7 @@ class KryoManagerTest {
     @DisplayName("Проверка на эквивалентность и неидентичность объектов")
     void equalsSaveLoadObjects() throws SaveGameException {
         kryoManager.saveGame(fileName, mapState);
+
         Savable otherMapState = kryoManager.loadGame(fileName);
 
         Assertions.assertNotSame(mapState, otherMapState);
