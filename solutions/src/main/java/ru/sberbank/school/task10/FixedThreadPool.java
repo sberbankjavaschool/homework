@@ -19,7 +19,6 @@ public class FixedThreadPool implements ThreadPool {
         threads = new Thread[countThreads];
         tasks = new LinkedList<>();
         count = countThreads;
-        start();
     }
 
     @Override
@@ -59,7 +58,7 @@ public class FixedThreadPool implements ThreadPool {
         public void run() {
             Runnable r;
 
-            while (true) {
+            while (!Thread.interrupted()) {
 
                 if (Thread.interrupted()) {
                     break;
@@ -71,13 +70,17 @@ public class FixedThreadPool implements ThreadPool {
                         try {
                             tasks.wait();
                         } catch (InterruptedException e) {
-                            e.printStackTrace();
+                            Thread.currentThread().interrupt();
                         }
                     }
                     r = tasks.removeFirst();
                 }
 
-                r.run();
+                try {
+                    r.run();
+                } catch (RuntimeException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }

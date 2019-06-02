@@ -12,7 +12,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ScalableThreadPool implements ThreadPool {
     private final LinkedList<Runnable> tasks;
     private List<ThreadWorker> threads;
-    private volatile AtomicInteger freeThreads;
+    private final List<ThreadWorker> freeThreads;
     private int min;
     private int max;
     private int count;
@@ -27,10 +27,9 @@ public class ScalableThreadPool implements ThreadPool {
 
         this.min = min;
         this.max = max;
-        this.freeThreads = new AtomicInteger(0);
+        this.freeThreads = new ArrayList<>(min);
         tasks = new LinkedList<>();
         threads = new ArrayList<>(min);
-        start();
     }
 
     @Override
@@ -53,17 +52,18 @@ public class ScalableThreadPool implements ThreadPool {
         }
 
         threads = new ArrayList<>(min);
-        freeThreads = new AtomicInteger(0);
-        start();
+        freeThreads.clear();
     }
 
     @Override
     public void execute(@NonNull Runnable runnable) {
         synchronized (tasks) {
-            if (freeThreads.get() == 0 && threads.size() < max) {
-                addThread();
-            } else if (tasks.isEmpty() && threads.size() > min) {
-                deleteThreads();
+            synchronized (freeThreads) {
+                if (freeThreads.size() == 0 && threads.size() < max) {
+                    addThread();
+                } else if (tasks.isEmpty() && threads.size() > min) {
+                    deleteThreads();
+                }
             }
 
             tasks.addLast(runnable);
@@ -72,7 +72,6 @@ public class ScalableThreadPool implements ThreadPool {
     }
 
     private class ThreadWorker extends Thread {
-        private volatile boolean isFree = true;
 
         ThreadWorker(@NonNull String name) {
             super(name);
@@ -82,43 +81,39 @@ public class ScalableThreadPool implements ThreadPool {
         public void run() {
             Runnable r;
 
-            while (true) {
-
-                if (Thread.currentThread().isInterrupted()) {
-                    break;
-                }
+            while (!Thread.interrupted()) {
 
                 synchronized (tasks) {
-                    isFree = true;
-                    freeThreads.incrementAndGet();
+                    synchronized (freeThreads) {
+                        freeThreads.add(this);
+                    }
 
                     while (tasks.isEmpty()) {
                         try {
                             tasks.wait();
                         } catch (InterruptedException e) {
-                            e.printStackTrace();
+                            Thread.currentThread().interrupt();
                         }
                     }
                     r = tasks.removeFirst();
                 }
 
-                isFree = false;
-                freeThreads.decrementAndGet();
+                synchronized (freeThreads) {
+                    freeThreads.remove(this);
+                }
 
-                r.run();
+                try {
+                    r.run();
+                } catch (RuntimeException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
 
     private void deleteThreads() {
-        for (int i = 0; i < threads.size(); i++) {
-            if (threads.size() == min) {
-                break;
-            }
-            if (threads.get(i).isFree) {
-                threads.get(i).interrupt();
-                threads.remove(threads.get(i));
-            }
+        while (threads.size() > min && freeThreads.size() > 0) {
+            freeThreads.remove(0);
         }
     }
 
@@ -127,4 +122,5 @@ public class ScalableThreadPool implements ThreadPool {
         threads.add(t);
         t.start();
     }
+
 }
