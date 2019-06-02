@@ -10,6 +10,7 @@ class FixedThreadPoolTest {
     @BeforeAll
     static void init() {
         threadPool = new FixedThreadPool(3);
+        threadPool.start();
     }
 
     @Test

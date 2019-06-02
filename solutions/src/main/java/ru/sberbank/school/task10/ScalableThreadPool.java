@@ -52,7 +52,10 @@ public class ScalableThreadPool implements ThreadPool {
         }
 
         threads = new ArrayList<>(min);
-        freeThreads.clear();
+
+        synchronized (freeThreads) {
+            freeThreads.clear();
+        }
     }
 
     @Override
