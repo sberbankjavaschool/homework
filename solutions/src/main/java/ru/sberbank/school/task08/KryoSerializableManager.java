@@ -42,11 +42,10 @@ public class KryoSerializableManager extends SaveGameManager {
 
 
     @Override
-    public void saveGame(@NonNull String filename,@NonNull Savable gameState) throws SaveGameException {
-
-            try (OutputStream outputStream = new FileOutputStream(filesDirectory + filename);
+    public void saveGame(@NonNull String filename, @NonNull Savable gameState) throws SaveGameException {
+        try (OutputStream outputStream = new FileOutputStream(filesDirectory + filename);
              Output output = new Output(outputStream)) {
-            kryo.writeObject(output, gameState);
+                kryo.writeObject(output, gameState);
         } catch (IOException e) {
             throw new SaveGameException("I/O operation has been failed", SaveGameException.Type.IO, gameState);
         }
@@ -57,9 +56,9 @@ public class KryoSerializableManager extends SaveGameManager {
 
         MapState mapState = null;
 
-            try (InputStream inputStream = new FileInputStream(filesDirectory + filename);
+        try (InputStream inputStream = new FileInputStream(filesDirectory + filename);
              Input input = new Input(inputStream)) {
-            mapState = kryo.readObject(input, MapState.class);
+                mapState = kryo.readObject(input, MapState.class);
         } catch (IOException e) {
             throw new SaveGameException("I/O operation has been failed", SaveGameException.Type.IO, mapState);
         }
