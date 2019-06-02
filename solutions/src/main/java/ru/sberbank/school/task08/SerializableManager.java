@@ -1,9 +1,11 @@
 package ru.sberbank.school.task08;
 
+import com.esotericsoftware.kryo.io.Input;
 import lombok.NonNull;
 import ru.sberbank.school.task08.state.*;
 import ru.sberbank.school.util.Solution;
 
+import java.io.*;
 import java.util.List;
 
 @Solution(8)
@@ -17,17 +19,29 @@ public class SerializableManager extends SaveGameManager {
 
     @Override
     public void initialize() {
-        throw new UnsupportedOperationException("Implement me!");
+
     }
 
     @Override
-    public void saveGame(String filename, Savable gameState) throws SaveGameException {
-        throw new UnsupportedOperationException("Implement me!");
+    public void saveGame(String filename, Savable gameState) {
+        try (FileOutputStream fos = new FileOutputStream(filesDirectory + filename);
+             ObjectOutputStream out = new ObjectOutputStream(fos)) {
+            out.writeObject(gameState);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
     }
 
     @Override
-    public Savable loadGame(String filename) throws SaveGameException {
-        throw new UnsupportedOperationException("Implement me!");
+    public Savable loadGame(String filename) {
+
+        try (FileInputStream fis = new FileInputStream(filesDirectory + filename);
+             ObjectInputStream mapState = new ObjectInputStream(fis)) {
+            return (MapState) mapState.readObject();
+        } catch (IOException | ClassNotFoundException ex) {
+            ex.printStackTrace();
+        }
+        return null;
     }
 
     @Override
