@@ -1,16 +1,30 @@
 package ru.sberbank.school.task08.state;
 
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.io.Serializable;
 import java.util.Objects;
 
-public class GameObject implements InstantiatableEntity {
-    private final Type type;
-    private final Status status;
+public class GameObject implements InstantiatableEntity, Serializable {
+
+    private Type type;
+    private Status status;
     private long hitPoints;
 
-    public GameObject(Type type, Status status, long hitPoints) {
+    @JsonCreator
+    public GameObject(@JsonProperty("type")Type type,
+                      @JsonProperty("status") Status status,
+                      @JsonProperty("hitPoints") long hitPoints) {
         this.type = type;
         this.status = status;
         this.hitPoints = hitPoints;
+    }
+
+    public GameObject() {
+        this.type = null;
+        this.status = null;
     }
 
     public Type getType() {
