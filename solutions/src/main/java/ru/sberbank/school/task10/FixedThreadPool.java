@@ -47,18 +47,18 @@ public class FixedThreadPool implements ThreadPool {
         synchronized (tasks) {
             tasks.clear();
         }
-        for (Thread t : threads) {
-            if (!t.isInterrupted()) {
-                t.interrupt();
+        synchronized (threads) {
+            for (Thread t : threads) {
+                if (!t.isInterrupted()) {
+                    t.interrupt();
+                }
+//                Thread.State curState = t.getState();
+//                if (curState == Thread.State.RUNNABLE) {
+//                    t.interrupt();
+//                }
+//                t = null;
             }
-            t = null;
         }
-//        for (int i = 0; i < countOfThreads; i++) {
-//            if (!threads[i].isInterrupted()) {
-//                threads[i].interrupt();
-//            }
-//            threads[i] = null;
-//        }
 
     }
 
@@ -73,6 +73,16 @@ public class FixedThreadPool implements ThreadPool {
         synchronized (tasks) {
             tasks.addLast(runnable);
             tasks.notify();
+        }
+    }
+
+    public void checkThreads() throws IllegalStateException {
+        for (Thread t : threads) {
+            Thread.State currState = t.getState();
+            System.out.println(currState);
+//            if (currState == Thread.State.RUNNABLE)  {
+//                throw new IllegalStateException();
+//            }
         }
     }
 
@@ -91,13 +101,19 @@ public class FixedThreadPool implements ThreadPool {
                         try {
                             tasks.wait();
                         } catch (InterruptedException e) {
-                            e.printStackTrace();
+                            Thread.currentThread().interrupt();
+                            //e.printStackTrace();
                         }
                     }
                     System.out.println(Thread.currentThread().getName() + " is running");
                     task = tasks.removeFirst();
                 }
-                task.run();
+                try {
+                    task.run();
+                } catch (RuntimeException e) {
+                    e.printStackTrace();
+                }
+
             }
 
         }

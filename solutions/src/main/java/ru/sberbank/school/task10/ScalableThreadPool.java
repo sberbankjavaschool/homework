@@ -38,20 +38,20 @@ public class ScalableThreadPool implements ThreadPool {
     }
 
     /**
-     * Отменяет запланированные задачи, останавливает запущенные задачи, останавливает потоки, переходит в начальное состояние.
+     * Отменяет запланированные задачи, останавливает запущенные задачи, останавливает потоки,
+     * переходит в начальное состояние.
      */
     @Override
     public void stopNow() {
+        synchronized (tasks) {
+            tasks.clear();
+        }
         for (Thread t : threads) {
             if (!t.isInterrupted()) {
                 t.interrupt();
             }
-            t = null;
         }
         freeThreads = minCountThreads;
-        synchronized (tasks) {
-            tasks.clear();
-        }
     }
 
     /**
@@ -63,17 +63,31 @@ public class ScalableThreadPool implements ThreadPool {
     @Override
     public void execute(Runnable runnable) {
         synchronized (tasks) {
-            if ((threads.size() < maxCountThreads) && (freeThreads == 0)) {
+            if ((threads.size() < maxCountThreads) && (freeThreads <= 0)) {
                 threads.add(new ThreadWorker(threads.size()));
-                threads.get(threads.size()-1).start();
+                threads.get(threads.size() - 1).start();
             } else if ((threads.size() > minCountThreads) && tasks.isEmpty()) {
-                threads.remove(0);
+                while (threads.size() > minCountThreads) {
+                    threads.remove(0);
+                }
+                freeThreads = minCountThreads + 1;
             }
-            if (freeThreads > 0) {
-                freeThreads--;
-            }
+            freeThreads--;
+//            if (freeThreads > 0) {
+//                freeThreads--;
+//            }
             tasks.addLast(runnable);
             tasks.notify();
+        }
+    }
+
+    public void checkThreads() throws IllegalStateException {
+        for (Thread t : threads) {
+            Thread.State currState = t.getState();
+            System.out.println(currState);
+//            if (currState == Thread.State.RUNNABLE)  {
+//                throw new IllegalStateException();
+//            }
         }
     }
 
@@ -92,13 +106,18 @@ public class ScalableThreadPool implements ThreadPool {
                         try {
                             tasks.wait();
                         } catch (InterruptedException e) {
-                            e.printStackTrace();
+                            Thread.currentThread().interrupt();
+                            //e.printStackTrace();
                         }
                     }
+                    System.out.println(Thread.currentThread().getName() + " is runing");
                     task = tasks.removeFirst();
                 }
-                System.out.println(Thread.currentThread().getName() + " is running");
-                task.run();
+                try {
+                    task.run();
+                } catch (RuntimeException e) {
+                    e.printStackTrace();
+                }
             }
 
         }

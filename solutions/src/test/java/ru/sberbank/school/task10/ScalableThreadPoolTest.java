@@ -1,6 +1,8 @@
 package ru.sberbank.school.task10;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -14,18 +16,24 @@ class ScalableThreadPoolTest {
         scalableThreadPool.start();
     }
 
-    @Test
     void start() {
         for (int i = 0; i < 6; i++) {
             scalableThreadPool.execute(() -> {
-                        try {
-                            Thread.sleep(1);
-                            System.out.println(Thread.currentThread().getName() + " is done");
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
+                        System.out.println(Thread.currentThread().getName() + " is done");
                     }
             );
         }
     }
+
+
+    @Test
+    @DisplayName("checkThreads")
+    void checkThreads() {
+        start();
+        scalableThreadPool.checkThreads();
+        scalableThreadPool.stopNow();
+        System.out.println("=======================");
+        scalableThreadPool.checkThreads();
+    }
+
 }
