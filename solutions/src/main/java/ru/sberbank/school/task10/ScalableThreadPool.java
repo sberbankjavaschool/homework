@@ -12,8 +12,8 @@ public class ScalableThreadPool implements ThreadPool {
     int maxCountThreads;
     int minCountThreads;
     private volatile int freeThreads;
-    ArrayList<Thread> threads;
-    LinkedList<Runnable> tasks;
+    private ArrayList<Thread> threads;
+    private LinkedList<Runnable> tasks;
 
     public ScalableThreadPool(int min, int max) {
         if (max < min || min <= 0) {
@@ -64,11 +64,10 @@ public class ScalableThreadPool implements ThreadPool {
     public void execute(Runnable runnable) {
         synchronized (tasks) {
             if ((threads.size() < maxCountThreads) && (freeThreads == 0)) {
-                ThreadWorker t = new ThreadWorker(threads.size());
-                threads.add(t);
+                threads.add(new ThreadWorker(threads.size()));
+                threads.get(threads.size()-1).start();
             } else if ((threads.size() > minCountThreads) && tasks.isEmpty()) {
                 threads.remove(0);
-                //freeThreads--;
             }
             if (freeThreads > 0) {
                 freeThreads--;

@@ -10,18 +10,17 @@ class ScalableThreadPoolTest {
 
     @BeforeAll
     public static void initialization() {
-        scalableThreadPool = new ScalableThreadPool(2, 5);
+        scalableThreadPool = new ScalableThreadPool(2, 4);
         scalableThreadPool.start();
     }
 
     @Test
     void start() {
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 6; i++) {
             scalableThreadPool.execute(() -> {
-                       // System.out.println(Thread.currentThread().getName() + " done");
                         try {
-                            Thread.sleep(100);
-                            System.out.println(Thread.currentThread().getName() + " is running");
+                            Thread.sleep(1);
+                            System.out.println(Thread.currentThread().getName() + " is done");
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }

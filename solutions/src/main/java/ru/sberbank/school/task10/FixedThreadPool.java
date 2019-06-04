@@ -22,6 +22,7 @@ public class FixedThreadPool implements ThreadPool {
         //threads = new Thread[countOfThreads];
         tasks = new LinkedList<>();
     }
+
     /**
      * Запускает потоки, которыые бездействуют, до тех пор пока не появится новое задание в очереди (см. execute)
      */
@@ -31,7 +32,7 @@ public class FixedThreadPool implements ThreadPool {
 //            threads[i] = (new ThreadWorker(i));
 //            threads[i].start();
 //        }
-        for (int i = 0; i<countOfThreads; i++) {
+        for (int i = 0; i < countOfThreads; i++) {
             threads.add(new ThreadWorker(i));
             threads.get(i).start();
         }
@@ -43,14 +44,14 @@ public class FixedThreadPool implements ThreadPool {
      */
     @Override
     public void stopNow() {
+        synchronized (tasks) {
+            tasks.clear();
+        }
         for (Thread t : threads) {
             if (!t.isInterrupted()) {
                 t.interrupt();
             }
             t = null;
-        }
-        synchronized(tasks) {
-            tasks.clear();
         }
 //        for (int i = 0; i < countOfThreads; i++) {
 //            if (!threads[i].isInterrupted()) {
@@ -79,7 +80,7 @@ public class FixedThreadPool implements ThreadPool {
         String name;
 
         ThreadWorker(int i) {
-            name = "ThreadPoolWorker-"+i;
+            name = "ThreadPoolWorker-" + i;
         }
 
         public void run() {

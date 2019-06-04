@@ -10,14 +10,16 @@ class FixedThreadPoolTest {
 
     @BeforeAll
     public static void initialization() {
-        fixedThreadPool = new FixedThreadPool(5);
+        fixedThreadPool = new FixedThreadPool(10);
         fixedThreadPool.start();
     }
 
     @Test
     void start() {
         for (int i = 0; i < 10; i++) {
-            fixedThreadPool.execute(() -> {});
+            fixedThreadPool.execute(() -> {
+                System.out.println(Thread.currentThread().getName() + " is done");
+            });
         }
     }
 }
