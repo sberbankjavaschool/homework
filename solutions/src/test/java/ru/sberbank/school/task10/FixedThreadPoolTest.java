@@ -24,14 +24,29 @@ class FixedThreadPoolTest {
         }
     }
 
+    @Test
+    @DisplayName("checkNullThreads")
+    void checkNullThreads() {
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> new FixedThreadPool(0));
+    }
 
     @Test
-    @DisplayName("checkThreads")
-    void checkThreads() {
+    @DisplayName("checkActiveThreads")
+    void checkActiveThreads() {
         start();
-        fixedThreadPool.checkThreads();
         fixedThreadPool.stopNow();
-        System.out.println("=======================");
-        fixedThreadPool.checkThreads();
+        synchronized (fixedThreadPool) {
+            boolean checkThreads = fixedThreadPool.checkThreads();
+            Assertions.assertEquals(checkThreads, true);
+        }
+    }
+
+    @Test
+    @DisplayName("checkCallAfterStop")
+    void checkCallAfterStop() {
+        synchronized (fixedThreadPool) {
+            Assertions.assertThrows(RuntimeException.class, () -> fixedThreadPool.execute(()->{}));
+        }
     }
 }

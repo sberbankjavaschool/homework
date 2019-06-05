@@ -9,7 +9,7 @@ import java.util.LinkedList;
 // (Должен быть конструктор с одним параметром типа int)
 public class FixedThreadPool implements ThreadPool {
     private int countOfThreads;
-    //private Thread[] threads;
+    private volatile boolean finish;
     private ArrayList<Thread> threads;
     private LinkedList<Runnable> tasks;
 
@@ -19,7 +19,6 @@ public class FixedThreadPool implements ThreadPool {
         }
         this.countOfThreads = countOfThreads;
         threads = new ArrayList<>(countOfThreads);
-        //threads = new Thread[countOfThreads];
         tasks = new LinkedList<>();
     }
 
@@ -28,10 +27,6 @@ public class FixedThreadPool implements ThreadPool {
      */
     @Override
     public void start() {
-//        for (int i = 0; i < countOfThreads; i++) {
-//            threads[i] = (new ThreadWorker(i));
-//            threads[i].start();
-//        }
         for (int i = 0; i < countOfThreads; i++) {
             threads.add(new ThreadWorker(i));
             threads.get(i).start();
@@ -46,17 +41,13 @@ public class FixedThreadPool implements ThreadPool {
     public void stopNow() {
         synchronized (tasks) {
             tasks.clear();
+            finish = true;
         }
         synchronized (threads) {
             for (Thread t : threads) {
                 if (!t.isInterrupted()) {
                     t.interrupt();
                 }
-//                Thread.State curState = t.getState();
-//                if (curState == Thread.State.RUNNABLE) {
-//                    t.interrupt();
-//                }
-//                t = null;
             }
         }
 
@@ -70,24 +61,28 @@ public class FixedThreadPool implements ThreadPool {
      */
     @Override
     public void execute(@NonNull Runnable runnable) {
+        if (finish) {
+            throw new RuntimeException("Work is already finished");
+        }
         synchronized (tasks) {
             tasks.addLast(runnable);
             tasks.notify();
         }
     }
 
-    public void checkThreads() throws IllegalStateException {
+    public boolean checkThreads() throws IllegalStateException {
         for (Thread t : threads) {
             Thread.State currState = t.getState();
-            System.out.println(currState);
-//            if (currState == Thread.State.RUNNABLE)  {
-//                throw new IllegalStateException();
-//            }
+            //System.out.println(currState);
+            if (currState == Thread.State.RUNNABLE)  {
+                return false;
+            }
         }
+        return true;
     }
 
     private class ThreadWorker extends Thread {
-        String name;
+        private String name;
 
         ThreadWorker(int i) {
             name = "ThreadPoolWorker-" + i;
@@ -102,7 +97,6 @@ public class FixedThreadPool implements ThreadPool {
                             tasks.wait();
                         } catch (InterruptedException e) {
                             Thread.currentThread().interrupt();
-                            //e.printStackTrace();
                         }
                     }
                     System.out.println(Thread.currentThread().getName() + " is running");
