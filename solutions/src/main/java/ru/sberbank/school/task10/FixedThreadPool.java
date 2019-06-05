@@ -60,10 +60,6 @@ public class FixedThreadPool implements ThreadPool {
 
             while (!Thread.interrupted()) {
 
-                if (Thread.interrupted()) {
-                    break;
-                }
-
                 synchronized (tasks) {
 
                     while (tasks.isEmpty()) {
