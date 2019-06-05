@@ -1,11 +1,17 @@
 package ru.sberbank.school.task08.state;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class GameObject implements InstantiatableEntity {
-    private final Type type;
-    private final Status status;
+
+public class GameObject implements InstantiatableEntity, Serializable {
+    private Type type;
+    private Status status;
     private long hitPoints;
+
+    private GameObject() {
+
+    }
 
     public GameObject(Type type, Status status, long hitPoints) {
         this.type = type;
@@ -29,13 +35,24 @@ public class GameObject implements InstantiatableEntity {
         this.hitPoints = hitPoints;
     }
 
+    public void setType(Type type) {
+        this.type = type;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof GameObject)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof GameObject)) {
+            return false;
+        }
         GameObject that = (GameObject) o;
-        return type == that.type &&
-                status == that.status;
+        return type == that.type && status == that.status;
     }
 
     @Override
