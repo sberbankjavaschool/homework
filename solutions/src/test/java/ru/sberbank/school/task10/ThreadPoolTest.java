@@ -49,7 +49,7 @@ public class ThreadPoolTest {
         initFixed(4);
         exFixed();
 
-        //задача еще Callable не успевает выполнится
+        //задача Callable не успевает выполнится
         try {
             f1.get(100, TimeUnit.MILLISECONDS);
         } catch (InterruptedException e) {
