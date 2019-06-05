@@ -32,8 +32,12 @@ class ScalableThreadPoolTest {
         start();
         scalableThreadPool.checkThreads();
         scalableThreadPool.stopNow();
-        System.out.println("=======================");
         scalableThreadPool.checkThreads();
+        scalableThreadPool.execute(() -> {
+            System.out.println(Thread.currentThread().getName() + " try");
+        });
+        //System.out.println("=======================");
+        //scalableThreadPool.checkThreads();
     }
 
 }

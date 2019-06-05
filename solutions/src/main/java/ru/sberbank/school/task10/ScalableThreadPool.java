@@ -11,6 +11,7 @@ import java.util.LinkedList;
 public class ScalableThreadPool implements ThreadPool {
     int maxCountThreads;
     int minCountThreads;
+    private volatile boolean finish;
     private volatile int freeThreads;
     private ArrayList<Thread> threads;
     private LinkedList<Runnable> tasks;
@@ -32,7 +33,7 @@ public class ScalableThreadPool implements ThreadPool {
     @Override
     public void start() {
         for (int i = 0; i < minCountThreads; i++) {
-            threads.add(new ThreadWorker(i));
+            threads.add(new ThreadWorker(i, ""));
             threads.get(i).start();
         }
     }
@@ -45,6 +46,7 @@ public class ScalableThreadPool implements ThreadPool {
     public void stopNow() {
         synchronized (tasks) {
             tasks.clear();
+            finish = true;
         }
         for (Thread t : threads) {
             if (!t.isInterrupted()) {
@@ -62,9 +64,17 @@ public class ScalableThreadPool implements ThreadPool {
      */
     @Override
     public void execute(Runnable runnable) {
+        if (finish) {
+            return;
+        }
         synchronized (tasks) {
             if ((threads.size() < maxCountThreads) && (freeThreads <= 0)) {
-                threads.add(new ThreadWorker(threads.size()));
+                if (threads.get(threads.size() - 1).getName() == "ThreadPoolWorker-5") {
+                    threads.add(new ThreadWorker(threads.size(), "m"));
+                } else {
+                    threads.add(new ThreadWorker(threads.size(), ""));
+                }
+
                 threads.get(threads.size() - 1).start();
             } else if ((threads.size() > minCountThreads) && tasks.isEmpty()) {
                 while (threads.size() > minCountThreads) {
@@ -85,17 +95,14 @@ public class ScalableThreadPool implements ThreadPool {
         for (Thread t : threads) {
             Thread.State currState = t.getState();
             System.out.println(currState);
-//            if (currState == Thread.State.RUNNABLE)  {
-//                throw new IllegalStateException();
-//            }
         }
     }
 
     private class ThreadWorker extends Thread {
         String name;
 
-        ThreadWorker(int i) {
-            name = "ThreadPoolWorker-" + i;
+        ThreadWorker(int i, String letter) {
+            name = "ThreadPoolWorker-" + letter + i;
         }
 
         public void run() {
@@ -110,7 +117,7 @@ public class ScalableThreadPool implements ThreadPool {
                             //e.printStackTrace();
                         }
                     }
-                    System.out.println(Thread.currentThread().getName() + " is runing");
+                    System.out.println(Thread.currentThread().getName() + " is running..");
                     task = tasks.removeFirst();
                 }
                 try {
