@@ -8,11 +8,11 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ScalableThreadPoolTest {
-    private static ScalableThreadPool scalableThreadPool;
+    private static final ScalableThreadPool scalableThreadPool = new ScalableThreadPool(2, 4);
 
     @BeforeAll
     public static void initialization() {
-        scalableThreadPool = new ScalableThreadPool(2, 4);
+        //scalableThreadPool = ;
         scalableThreadPool.start();
     }
 
@@ -27,17 +27,36 @@ class ScalableThreadPoolTest {
 
 
     @Test
-    @DisplayName("checkThreads")
-    void checkThreads() {
+    @DisplayName("checkIllegalArgumentException")
+    void checkNullThreads() {
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> new ScalableThreadPool(0, 1));
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> new ScalableThreadPool(2, 1));
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> new ScalableThreadPool(-1, 1));
+    }
+
+    @Test
+    @DisplayName("checkActiveThreads")
+    void checkActiveThreads() {
         start();
-        scalableThreadPool.checkThreads();
         scalableThreadPool.stopNow();
-        scalableThreadPool.checkThreads();
-        scalableThreadPool.execute(() -> {
-            System.out.println(Thread.currentThread().getName() + " try");
-        });
-        //System.out.println("=======================");
-        //scalableThreadPool.checkThreads();
+        synchronized (scalableThreadPool) {
+            boolean checkThreads = scalableThreadPool.checkScalableThreads();
+            Assertions.assertEquals(checkThreads, true);
+        }
+    }
+
+    @Test
+    @DisplayName("checkCallAfterStop")
+    void checkCallAfterStop() {
+//        start();
+//        scalableThreadPool.stopNow();
+        synchronized (scalableThreadPool) {
+            Assertions.assertThrows(RuntimeException.class, () -> scalableThreadPool.execute(() -> {
+            }));
+        }
     }
 
 }

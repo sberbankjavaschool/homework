@@ -56,6 +56,17 @@ public class ScalableThreadPool implements ThreadPool {
         freeThreads = minCountThreads;
     }
 
+    public boolean checkScalableThreads() throws IllegalStateException {
+        for (Thread t : threads) {
+            Thread.State currState = t.getState();
+            //System.out.println(currState);
+            if (currState == Thread.State.RUNNABLE) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     /**
      * Складывает задание в очередь. Освободившийся поток должен выполнить это задание.
      * Каждое задание должны быть выполнено ровно 1 раз
@@ -65,7 +76,7 @@ public class ScalableThreadPool implements ThreadPool {
     @Override
     public void execute(Runnable runnable) {
         if (finish) {
-            return;
+            throw new RuntimeException("Work is already finished");
         }
         synchronized (tasks) {
             if ((threads.size() < maxCountThreads) && (freeThreads <= 0)) {
