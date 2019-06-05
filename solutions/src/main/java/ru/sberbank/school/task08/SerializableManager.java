@@ -4,6 +4,7 @@ import lombok.NonNull;
 import ru.sberbank.school.task08.state.*;
 import ru.sberbank.school.util.Solution;
 
+import java.io.*;
 import java.util.List;
 
 @Solution(8)
@@ -22,12 +23,24 @@ public class SerializableManager extends SaveGameManager {
 
     @Override
     public void saveGame(String filename, Savable gameState) throws SaveGameException {
-        throw new UnsupportedOperationException("Implement me!");
+        try (FileOutputStream fos = new FileOutputStream(filesDirectory + filename);
+            ObjectOutputStream out = new ObjectOutputStream(fos)){
+            out.writeObject(gameState); }
+        catch (IOException ex){
+            ex.printStackTrace();
+        }
     }
 
     @Override
     public Savable loadGame(String filename) throws SaveGameException {
-        throw new UnsupportedOperationException("Implement me!");
+        try (FileInputStream fis = new FileInputStream(filesDirectory + filename);
+             ObjectInputStream in = new ObjectInputStream(fis)) {
+            return (Savable) in.readObject();
+        }
+        catch (IOException | ClassNotFoundException ex) {
+            ex.printStackTrace();
+        }
+        return null;
     }
 
     @Override
@@ -43,3 +56,4 @@ public class SerializableManager extends SaveGameManager {
     }
 
 }
+

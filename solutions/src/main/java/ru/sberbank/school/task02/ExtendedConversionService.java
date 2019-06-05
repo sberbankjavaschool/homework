@@ -60,8 +60,7 @@ public class ExtendedConversionService extends ConversionService implements Exte
                                            Beneficiary beneficiary) {
         return (beneficiary == beneficiary.CLIENT && operation == operation.SELL
                 || beneficiary == beneficiary.BANK && operation == operation.BUY)
-                ? Collections.max(foundPrices) : Collections.min(foundPrices);
+                ? Collections.max(foundPrices)
+                : Collections.min(foundPrices);
     }
-
-
 }
