@@ -13,7 +13,10 @@ public enum SchoolTask {
     GENERICS_06("Generics", 6),
     COLLECTIONS_07("Коллекции", 7),
     SERIALIZATION_BASE("Базовая сериализация", 8),
-    SERIALIZATION_ADVANCED("Продвинутая сериализация", 9);
+    SERIALIZATION_ADVANCED("Продвинутая сериализация", 9),
+    THREAD_POOL_FIXED("Продвинутая сериализация", 10),
+    THREAD_POOL_("Продвинутая сериализация", 11),
+    END("Продвинутая сериализация", 99);
 
     private final String name;
     private final int code;
