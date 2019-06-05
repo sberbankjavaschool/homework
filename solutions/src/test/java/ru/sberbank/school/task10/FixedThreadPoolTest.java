@@ -46,7 +46,8 @@ class FixedThreadPoolTest {
     @DisplayName("checkCallAfterStop")
     void checkCallAfterStop() {
         synchronized (fixedThreadPool) {
-            Assertions.assertThrows(RuntimeException.class, () -> fixedThreadPool.execute(()->{}));
+            Assertions.assertThrows(RuntimeException.class, () -> fixedThreadPool.execute(() -> {
+            }));
         }
     }
 }
