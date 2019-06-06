@@ -9,11 +9,11 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
-class FixedThreadPoolTest {
+class ScalableThreadPoolTest {
 
     @Test
     void workingTestRunnable() throws InterruptedException {
-        FixedThreadPool pool = new FixedThreadPool(10);
+        ScalableThreadPool pool = new ScalableThreadPool(10, 20);
         pool.start();
         for (int i = 0; i < 100; i++) {
             pool.execute(() -> {
@@ -30,13 +30,13 @@ class FixedThreadPoolTest {
 
     @Test
     void workingTestFuture() throws InterruptedException, ExecutionException {
-        FixedThreadPool pool = new FixedThreadPool(10);
+        ScalableThreadPool pool = new ScalableThreadPool(10, 20);
         pool.start();
         List<Future<String>> results = new ArrayList<>();
         for (int i = 0; i < 100; i++) {
             Callable<String> callable = () -> {
-                    TimeUnit.SECONDS.sleep(1);
-                    return "Thread " + Thread.currentThread().getName() + " is working";
+                TimeUnit.SECONDS.sleep(1);
+                return "Thread " + Thread.currentThread().getName() + " is working";
             };
             results.add(pool.execute(callable));
         }
@@ -47,7 +47,7 @@ class FixedThreadPoolTest {
 
     @Test
     void workingTestInterrupts() throws InterruptedException {
-        FixedThreadPool pool = new FixedThreadPool(10);
+        ScalableThreadPool pool = new ScalableThreadPool(10, 20);
         pool.start();
         for (int i = 0; i < 100; i++) {
             pool.execute(() -> {

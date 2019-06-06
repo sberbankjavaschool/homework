@@ -1,59 +1,54 @@
 package ru.sberbank.school.task10;
 
-import java.util.concurrent.ArrayBlockingQueue;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Queue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.FutureTask;
 
-public class FixedThreadPool implements ThreadPool, ThreadCompleteListener {
+public class FixedThreadPool implements ThreadPool {
 
-    private final ArrayBlockingQueue<Thread> runnedThreads;
-    private final LinkedBlockingQueue<Runnable> waitingRunnables = new LinkedBlockingQueue<>();
-    private boolean isInterrupted = false;
+    private final List<Thread> threadPool;
+    private final Queue<Runnable> runnableQueue = new LinkedList<>();
+    private final int poolSize;
 
     public FixedThreadPool(int poolSize) {
-        runnedThreads = new ArrayBlockingQueue<>(poolSize);
+        this.poolSize = poolSize;
+        threadPool = new ArrayList<>(poolSize);
     }
 
     @Override
     public void start() {
-        new Thread(() -> {
-            while (!isInterrupted) {
-                try {
-                    Runnable runnable = waitingRunnables.take();
-                    Thread thread = new ThreadPoolWorker(runnable, FixedThreadPool.this);
-                    runnedThreads.put(thread);
-                    thread.start();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
+        while (threadPool.size() < poolSize) {
+            Thread thread = new ThreadPoolWorker(runnableQueue, threadPool.size());
+            threadPool.add(thread);
+            thread.start();
+        }
     }
 
     @Override
     public void stopNow() {
-        isInterrupted = true;
+        threadPool.forEach(Thread::interrupt);
+        runnableQueue.clear();
     }
 
     @Override
     public void execute(Runnable runnable) {
-        try {
-            waitingRunnables.put(runnable);
-        } catch (InterruptedException e) {
-            //Shouldn't happen ever, coz waitingRunnables have no upper bound
-            e.printStackTrace();
+        Objects.requireNonNull(runnable);
+        synchronized (runnableQueue) {
+            runnableQueue.offer(runnable);
+            runnableQueue.notifyAll();
         }
     }
 
     @Override
     public <T> Future<T> execute(Callable<T> callable) {
-        return null;
-    }
-
-    @Override
-    public void notifyOfThreadComplete(Thread thread) {
-        System.out.println("Removing thread " + thread.getName());
-        runnedThreads.remove(thread);
+        Objects.requireNonNull(callable);
+        FutureTask<T> futureTask = new FutureTask<>(callable);
+        execute(futureTask);
+        return futureTask;
     }
 }
