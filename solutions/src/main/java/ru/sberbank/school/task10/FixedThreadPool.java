@@ -66,7 +66,8 @@ public class FixedThreadPool implements ThreadPool {
                         try {
                             tasks.wait();
                         } catch (InterruptedException e) {
-                            Thread.currentThread().interrupt();
+                            //Thread.currentThread().interrupt();
+                            return;
                         }
                     }
                     r = tasks.removeFirst();
@@ -74,7 +75,7 @@ public class FixedThreadPool implements ThreadPool {
 
                 try {
                     r.run();
-                } catch (RuntimeException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
