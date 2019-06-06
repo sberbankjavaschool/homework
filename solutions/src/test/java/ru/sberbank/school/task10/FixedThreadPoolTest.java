@@ -35,8 +35,8 @@ class FixedThreadPoolTest {
         List<Future<String>> results = new ArrayList<>();
         for (int i = 0; i < 100; i++) {
             Callable<String> callable = () -> {
-                    TimeUnit.SECONDS.sleep(1);
-                    return "Thread " + Thread.currentThread().getName() + " is working";
+                TimeUnit.SECONDS.sleep(1);
+                return "Thread " + Thread.currentThread().getName() + " is working";
             };
             results.add(pool.execute(callable));
         }
