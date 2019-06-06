@@ -9,7 +9,7 @@ import java.util.LinkedList;
 public class FixedThreadPool implements ThreadPool {
     private Thread[] threads;
     private final LinkedList<Runnable> tasks;
-    private int count;
+    private boolean isExist;
 
     public FixedThreadPool(int countThreads) {
         if (countThreads <= 0) {
@@ -18,12 +18,18 @@ public class FixedThreadPool implements ThreadPool {
 
         threads = new Thread[countThreads];
         tasks = new LinkedList<>();
-        count = countThreads;
+        isExist = false;
     }
 
     @Override
     public void start() {
-        for (int i = 0; i < count; i++) {
+        if (isExist) {
+            throw new IllegalStateException("Пул уже был запущен");
+        }
+
+        isExist = true;
+
+        for (int i = 0; i < threads.length; i++) {
             threads[i] = new ThreadWorker("ThreadPoolWorker-" + i);
             threads[i].start();
         }
@@ -35,7 +41,7 @@ public class FixedThreadPool implements ThreadPool {
             tasks.clear();
         }
 
-        for (int i = 0; i < count; i++) {
+        for (int i = 0; i < threads.length; i++) {
             threads[i].interrupt();
             threads[i] = null;
         }
@@ -43,6 +49,10 @@ public class FixedThreadPool implements ThreadPool {
 
     @Override
     public void execute(Runnable runnable) {
+        if (!isExist) {
+            throw new IllegalStateException("Перед началом работы с пулом нужно вызвать start()");
+        }
+
         synchronized (tasks) {
             tasks.addLast(runnable);
             tasks.notify();

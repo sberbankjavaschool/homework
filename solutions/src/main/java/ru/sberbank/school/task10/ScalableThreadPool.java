@@ -34,6 +34,10 @@ public class ScalableThreadPool implements ThreadPool {
 
     @Override
     public void start() {
+        if (threads.size() >= min) {
+            throw new IllegalStateException("Пул уже был запущен");
+        }
+
         for (count = 0; count < min; count++) {
             ThreadWorker t = new ThreadWorker("ThreadPoolWorker-" + count);
             threads.add(t);
@@ -60,6 +64,11 @@ public class ScalableThreadPool implements ThreadPool {
 
     @Override
     public void execute(@NonNull Runnable runnable) {
+
+        if (threads.isEmpty()) {
+            throw new IllegalStateException("Перед началом работы с пулом нужно вызвать start()");
+        }
+
         synchronized (tasks) {
             synchronized (freeThreads) {
                 if (freeThreads.size() == 0 && threads.size() < max) {
