@@ -42,6 +42,11 @@ class ScalableThreadPoolTest {
     void checkActiveThreads() {
         start();
         scalableThreadPool.stopNow();
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         synchronized (scalableThreadPool) {
             boolean checkThreads = scalableThreadPool.checkScalableThreads();
             Assertions.assertEquals(checkThreads, true);

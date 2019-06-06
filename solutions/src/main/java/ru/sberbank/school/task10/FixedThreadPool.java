@@ -96,7 +96,7 @@ public class FixedThreadPool implements ThreadPool {
                         try {
                             tasks.wait();
                         } catch (InterruptedException e) {
-                            Thread.currentThread().interrupt();
+                            return;
                         }
                     }
                     System.out.println(Thread.currentThread().getName() + " is running");

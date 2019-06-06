@@ -9,8 +9,8 @@ import java.util.LinkedList;
 //        При отсутствии задания в очереди, количество потоков опять должно быть уменьшено до значения min.
 //        (Должен быть конструктор с двумя параметрами типа int)
 public class ScalableThreadPool implements ThreadPool {
-    int maxCountThreads;
-    int minCountThreads;
+    private int maxCountThreads;
+    private int minCountThreads;
     private volatile boolean finish;
     private volatile int freeThreads;
     private ArrayList<Thread> threads;
@@ -80,7 +80,7 @@ public class ScalableThreadPool implements ThreadPool {
         }
         synchronized (tasks) {
             if ((threads.size() < maxCountThreads) && (freeThreads <= 0)) {
-                if (threads.get(threads.size() - 1).getName() == "ThreadPoolWorker-5") {
+                if (threads.get(threads.size() - 1).getName() == ("ThreadPoolWorker-" + maxCountThreads)) {
                     threads.add(new ThreadWorker(threads.size(), "m"));
                 } else {
                     threads.add(new ThreadWorker(threads.size(), ""));
@@ -124,8 +124,7 @@ public class ScalableThreadPool implements ThreadPool {
                         try {
                             tasks.wait();
                         } catch (InterruptedException e) {
-                            Thread.currentThread().interrupt();
-                            //e.printStackTrace();
+                            return;
                         }
                     }
                     System.out.println(Thread.currentThread().getName() + " is running..");
