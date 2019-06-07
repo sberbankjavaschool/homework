@@ -12,6 +12,7 @@ import java.util.concurrent.FutureTask;
 public class ScalableThreadPool implements ThreadPool {
     private final List<Thread> threadPool;
     private final Queue<Runnable> runnableQueue = new LinkedList<>();
+    private int threadUniqueNumber;
     private final int minPoolSize;
     private final int maxPoolSize;
 
@@ -22,7 +23,7 @@ public class ScalableThreadPool implements ThreadPool {
     }
 
     private void startNewThread() {
-        Thread thread = new MortalThreadPoolWorker(runnableQueue, threadPool.size(), this);
+        Thread thread = new MortalThreadPoolWorker(runnableQueue, threadUniqueNumber++, this);
         threadPool.add(thread);
         thread.start();
     }

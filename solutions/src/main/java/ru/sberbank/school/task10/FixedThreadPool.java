@@ -13,6 +13,7 @@ public class FixedThreadPool implements ThreadPool {
 
     private final List<Thread> threadPool;
     private final Queue<Runnable> runnableQueue = new LinkedList<>();
+    private int threadUniqueNumber;
     private final int poolSize;
 
     public FixedThreadPool(int poolSize) {
@@ -23,7 +24,7 @@ public class FixedThreadPool implements ThreadPool {
     @Override
     public void start() {
         while (threadPool.size() < poolSize) {
-            Thread thread = new ThreadPoolWorker(runnableQueue, threadPool.size());
+            Thread thread = new ThreadPoolWorker(runnableQueue, threadUniqueNumber++);
             threadPool.add(thread);
             thread.start();
         }
