@@ -1,35 +1,32 @@
 package ru.sberbank.school.task08;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.NonNull;
 import ru.sberbank.school.task08.state.GameObject;
 import ru.sberbank.school.task08.state.InstantiatableEntity;
 import ru.sberbank.school.task08.state.MapState;
-import ru.sberbank.school.task08.state.Savable;
 import ru.sberbank.school.util.Solution;
 
 import java.io.*;
 import java.util.List;
 
 @Solution(8)
-public class JacksonSerializeableManager extends SaveGameManager {
+public class JacksonSerializeableManager extends SaveGameManager<MapState<GameObject>, GameObject> {
 
     public JacksonSerializeableManager(@NonNull String filesDirectoryPath) {
         super(filesDirectoryPath);
     }
 
+    private ObjectMapper objectMapper;
+
     @Override
     public void initialize() {
-
+        objectMapper = new ObjectMapper();
     }
 
     @Override
-    public void saveGame(String filename, Savable gameState) throws SaveGameException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.enableDefaultTyping();
-        objectMapper.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL);
-        objectMapper.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_CONCRETE_AND_ARRAYS);
-        objectMapper.enableDefaultTyping(ObjectMapper.DefaultTyping.JAVA_LANG_OBJECT);
+    public void saveGame(String filename, MapState gameState) throws SaveGameException {
         try {
             File file = new File(filesDirectory + filename);
             objectMapper.writeValue(file, gameState);
@@ -39,16 +36,12 @@ public class JacksonSerializeableManager extends SaveGameManager {
     }
 
     @Override
-    public Savable loadGame(String filename) throws SaveGameException {
-        MapState mapState = null;
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.enableDefaultTyping();
-        objectMapper.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL);
-        objectMapper.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_CONCRETE_AND_ARRAYS);
-        objectMapper.enableDefaultTyping(ObjectMapper.DefaultTyping.JAVA_LANG_OBJECT);
+    public MapState<GameObject> loadGame(String filename) throws SaveGameException {
+        MapState<GameObject> mapState = null;
         try {
             File file = new File(filesDirectory + filename);
-            mapState = objectMapper.readValue(file, MapState.class);
+            TypeReference<MapState<GameObject>> tRef = new TypeReference<MapState<GameObject>>() {};
+            mapState = objectMapper.readValue(file, tRef);
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         }
@@ -56,13 +49,13 @@ public class JacksonSerializeableManager extends SaveGameManager {
     }
 
     @Override
-    public InstantiatableEntity createEntity(InstantiatableEntity.Type type, InstantiatableEntity.Status status, long hitPoints) {
+    public GameObject createEntity(InstantiatableEntity.Type type, InstantiatableEntity.Status status, long hitPoints) {
         return new GameObject(type, status, hitPoints);
     }
 
     @Override
-    public Savable createSavable(String name, List entities) {
-        return new MapState(name, entities);
+    public MapState<GameObject> createSavable(String name, List entities) {
+        return new MapState<GameObject>(name, entities);
     }
 }
     /*ObjectMapper objectMapper = new ObjectMapper();

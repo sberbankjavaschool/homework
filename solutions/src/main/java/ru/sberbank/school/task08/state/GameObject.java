@@ -8,6 +8,11 @@ public class GameObject implements InstantiatableEntity, Serializable {
     private final Status status;
     private long hitPoints;
 
+    private GameObject() {
+        type = null;
+        status = null;
+    }
+
     public GameObject(Type type, Status status, long hitPoints) {
         this.type = type;
         this.status = status;

@@ -17,9 +17,7 @@ public class SerializableManager extends SaveGameManager {
     }
 
     @Override
-    public void initialize() {
-        throw new UnsupportedOperationException("Implement me!");
-    }
+    public void initialize() {}
 
     @Override
     public void saveGame(String filename, Savable gameState) throws SaveGameException {
@@ -52,7 +50,7 @@ public class SerializableManager extends SaveGameManager {
 
     @Override
     public Savable createSavable(String name, List entities) {
-        return new MapState<>(name, entities);
+        return new MapState<GameObject>(name, entities);
     }
 
 }
