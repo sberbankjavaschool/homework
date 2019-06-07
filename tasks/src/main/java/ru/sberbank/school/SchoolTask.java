@@ -16,6 +16,7 @@ public enum SchoolTask {
     SERIALIZATION_ADVANCED("Продвинутая сериализация", 9),
     THREAD_POOL_FIXED("Продвинутая сериализация", 10),
     THREAD_POOL_("Продвинутая сериализация", 11),
+    STREAM_API("Stream API", 12),
     END("Продвинутая сериализация", 99);
 
     private final String name;
