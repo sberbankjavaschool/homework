@@ -18,12 +18,13 @@ public class KryoSerializerMapState extends Serializer<MapState> {
     public void write(Kryo kryo, Output output, MapState object) {
         List<GameObject> list = object.getGameObjects();
         output.writeString(object.getName());
-        if (list == null) {return;}
-        output.write(list.size());
-        for (GameObject gameObject : list) {
-            kryo.writeClassAndObject(output, gameObject.getType());
-            kryo.writeClassAndObject(output, gameObject.getStatus());
-            output.writeLong(gameObject.getHitPoints());
+        if (list != null) {
+            output.write(list.size());
+            for (GameObject gameObject : list) {
+                kryo.writeClassAndObject(output, gameObject.getType());
+                kryo.writeClassAndObject(output, gameObject.getStatus());
+                output.writeLong(gameObject.getHitPoints());
+            }
         }
     }
 

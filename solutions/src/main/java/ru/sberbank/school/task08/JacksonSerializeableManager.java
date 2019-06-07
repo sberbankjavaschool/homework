@@ -31,21 +31,21 @@ public class JacksonSerializeableManager extends SaveGameManager<MapState<GameOb
             File file = new File(filesDirectory + filename);
             objectMapper.writeValue(file, gameState);
         } catch (IOException ex) {
-
+            throw new SaveGameException("IO error", ex, SaveGameException.Type.IO, gameState);
         }
     }
 
     @Override
     public MapState<GameObject> loadGame(String filename) throws SaveGameException {
-        MapState<GameObject> mapState = null;
+        MapState<GameObject> load = null;
         try {
             File file = new File(filesDirectory + filename);
             TypeReference<MapState<GameObject>> tRef = new TypeReference<MapState<GameObject>>() {};
-            mapState = objectMapper.readValue(file, tRef);
+            load = objectMapper.readValue(file, tRef);
         } catch (IOException ex) {
-            System.out.println(ex.getMessage());
+            throw new SaveGameException("IO error", ex, SaveGameException.Type.IO, load);
         }
-        return mapState;
+        return load;
     }
 
     @Override

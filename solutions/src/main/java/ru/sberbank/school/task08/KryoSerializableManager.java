@@ -40,20 +40,25 @@ public class KryoSerializableManager extends SaveGameManager {
         try(OutputStream out = new FileOutputStream(filesDirectory + filename);
             Output output = new Output(out)){
             kryo.writeClassAndObject(output, gameState);
+        } catch (FileNotFoundException ex) {
+            throw new SaveGameException("File not found", ex, SaveGameException.Type.USER, gameState);
         } catch (IOException ex) {
-
+            throw new SaveGameException("IO error", ex, SaveGameException.Type.IO, gameState);
         }
     }
 
     @Override
     public Savable loadGame(String filename) throws SaveGameException {
+        Savable load = null;
         try(InputStream in = new FileInputStream(filesDirectory + filename);
             Input input = new Input(in)){
-                   return (Savable) kryo.readClassAndObject(input);
+            load = (Savable) kryo.readClassAndObject(input);
+        } catch (FileNotFoundException ex) {
+            throw new SaveGameException("File not found", ex, SaveGameException.Type.USER, load);
         } catch (IOException ex) {
-
+            throw new SaveGameException("IO error", ex, SaveGameException.Type.IO, load);
         }
-        return null;
+        return load;
     }
 
     @Override
