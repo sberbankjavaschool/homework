@@ -37,8 +37,9 @@ public class ScalableThreadPool implements ThreadPool {
     }
 
     void canBeKilled(MortalThreadPoolWorker thread) {
-        if (threadPool.size() > minPoolSize) {
+        if (threadPool.size() > minPoolSize && threadPool.contains(thread)) {
             thread.interrupt();
+            threadPool.remove(thread);
         }
     }
 
