@@ -33,6 +33,7 @@ public class FixedThreadPool implements ThreadPool {
     @Override
     public void stopNow() {
         threadPool.forEach(Thread::interrupt);
+        threadPool.clear();
         runnableQueue.clear();
     }
 

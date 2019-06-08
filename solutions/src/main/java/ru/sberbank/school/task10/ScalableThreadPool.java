@@ -1,5 +1,7 @@
 package ru.sberbank.school.task10;
 
+import com.sun.javafx.iio.ImageLoadListener;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -17,6 +19,9 @@ public class ScalableThreadPool implements ThreadPool {
     private final int maxPoolSize;
 
     public ScalableThreadPool(int minPoolSize, int maxPoolSize) {
+        if (minPoolSize > maxPoolSize) {
+            throw new IllegalArgumentException("Max pool size shouldn't be less than min pool size");
+        }
         this.minPoolSize = minPoolSize;
         this.maxPoolSize = maxPoolSize;
         threadPool = new ArrayList<>(minPoolSize);
@@ -55,6 +60,7 @@ public class ScalableThreadPool implements ThreadPool {
     @Override
     public void stopNow() {
         threadPool.forEach(Thread::interrupt);
+        threadPool.clear();
         runnableQueue.clear();
     }
 
