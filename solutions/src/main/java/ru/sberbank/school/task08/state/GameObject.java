@@ -1,10 +1,16 @@
 package ru.sberbank.school.task08.state;
 
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.io.Serializable;
 import java.util.Objects;
 
-public class GameObject implements InstantiatableEntity {
-    private final Type type;
-    private final Status status;
+@Setter
+@NoArgsConstructor
+public class GameObject implements InstantiatableEntity, Serializable {
+    private Type type = null;
+    private Status status = null;
     private long hitPoints;
 
     public GameObject(Type type, Status status, long hitPoints) {
@@ -44,7 +50,7 @@ public class GameObject implements InstantiatableEntity {
     }
 
     public String toString() {
-        return "GameObject(type=" + this.getType() + ", status=" + this.getStatus() + ")";
+        return "GameObject(type=" + this.getType() + ", status=" + this.getStatus() + ", hits=" + getHitPoints() + ")";
     }
 
 }
