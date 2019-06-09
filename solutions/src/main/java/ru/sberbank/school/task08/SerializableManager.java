@@ -4,6 +4,7 @@ import lombok.NonNull;
 import ru.sberbank.school.task08.state.*;
 import ru.sberbank.school.util.Solution;
 
+import java.io.*;
 import java.util.List;
 
 @Solution(8)
@@ -16,18 +17,34 @@ public class SerializableManager extends SaveGameManager {
     }
 
     @Override
-    public void initialize() {
-        throw new UnsupportedOperationException("Implement me!");
-    }
+    public void initialize() {}
 
     @Override
     public void saveGame(String filename, Savable gameState) throws SaveGameException {
-        throw new UnsupportedOperationException("Implement me!");
+        try (FileOutputStream fos = new FileOutputStream(filesDirectory + filename);
+                ObjectOutputStream out = new ObjectOutputStream(fos)) {
+            out.writeObject(gameState);
+        } catch (FileNotFoundException ex) {
+            throw new SaveGameException("File not found", ex, SaveGameException.Type.USER, gameState);
+        } catch (IOException ex) {
+            throw new SaveGameException("IO error", ex, SaveGameException.Type.IO, gameState);
+        }
     }
 
     @Override
     public Savable loadGame(String filename) throws SaveGameException {
-        throw new UnsupportedOperationException("Implement me!");
+        Savable load = null;
+        try (FileInputStream fis = new FileInputStream(filesDirectory + filename);
+                ObjectInputStream in = new ObjectInputStream(fis)) {
+            load = (Savable) in.readObject();
+        } catch (FileNotFoundException ex) {
+            throw new SaveGameException("File not found", ex, SaveGameException.Type.USER, load);
+        } catch (IOException ex) {
+            throw new SaveGameException("IO error", ex, SaveGameException.Type.IO, load);
+        } catch (ClassNotFoundException ex) {
+            throw new SaveGameException("desirialize class not found", ex, SaveGameException.Type.SYSTEM, load);
+        }
+        return load;
     }
 
     @Override
@@ -39,7 +56,8 @@ public class SerializableManager extends SaveGameManager {
 
     @Override
     public Savable createSavable(String name, List entities) {
-        return new MapState<>(name, entities);
+        return new MapState<GameObject>(name, entities);
     }
 
 }
+
