@@ -1,65 +1,46 @@
 package ru.sberbank.school.task10;
 
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Random;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 class ScalableThreadPoolTest {
 
     @Test
-    void workingTestRunnable() throws InterruptedException {
-        ScalableThreadPool pool = new ScalableThreadPool(10, 20);
+    void assertThatTemporaryThreadsWasCreatedAndTerminated() throws InterruptedException {
+        CountDownLatch latch = new CountDownLatch(120);
+        ScalableThreadPool pool = new ScalableThreadPool(3, 10);
         pool.start();
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 120; i++) {
+            TimeUnit.MILLISECONDS.sleep((long) (10 * Math.log(i)));
             pool.execute(() -> {
                 try {
-                    System.out.println("Thread " + Thread.currentThread().getName() + " is working");
-                    TimeUnit.SECONDS.sleep(1);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                    int timeout = new Random().nextInt(3);
+                    TimeUnit.SECONDS.sleep(timeout);
+                    latch.countDown();
+                } catch (InterruptedException ignored) {}
             });
         }
-        TimeUnit.SECONDS.sleep(15);
+        latch.await();
+        Queue<Integer> expected = new LinkedList<>(Arrays.asList(3, 4, 5, 6, 7, 8, 9));
+
+        Assertions.assertAll(() -> {
+            Assertions.assertTrue(expected.containsAll(pool.getThreadNumbers()));
+            Assertions.assertTrue(pool.getThreadNumbers().containsAll(expected));
+        });
     }
 
     @Test
-    void workingTestFuture() throws InterruptedException, ExecutionException {
-        ScalableThreadPool pool = new ScalableThreadPool(10, 20);
-        pool.start();
-        List<Future<String>> results = new ArrayList<>();
-        for (int i = 0; i < 100; i++) {
-            Callable<String> callable = () -> {
-                TimeUnit.SECONDS.sleep(1);
-                return "Thread " + Thread.currentThread().getName() + " is working";
-            };
-            results.add(pool.execute(callable));
-        }
-        for (Future<String> future : results) {
-            System.out.println(future.get());
-        }
+    void throwsExceptionWithWrongSizeArguments() {
+        Assertions.assertThrows(IllegalArgumentException.class, () -> new ScalableThreadPool(20, 10));
     }
 
-    @Test
-    void workingTestInterrupts() throws InterruptedException {
-        ScalableThreadPool pool = new ScalableThreadPool(10, 20);
-        pool.start();
-        for (int i = 0; i < 100; i++) {
-            pool.execute(() -> {
-                try {
-                    System.out.println("Thread " + Thread.currentThread().getName() + " is working");
-                    TimeUnit.SECONDS.sleep(1);
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                }
-            });
-        }
-        TimeUnit.SECONDS.sleep(3);
-        pool.stopNow();
-    }
 }
