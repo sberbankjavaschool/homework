@@ -1,38 +1,39 @@
 package ru.sberbank.school.task11;
 
-import org.testng.annotations.Test;
 
-public class StreamsImplTest {
+import org.junit.jupiter.api.Test;
+
+class StreamsImplTest {
 
     @Test
-    public void testOf() {
+    void testOf() {
     }
 
     @Test
-    public void testOf1() {
+    void testOf1() {
     }
 
     @Test
-    public void testFilter() {
+    void testFilter() {
     }
 
     @Test
-    public void testTransform() {
+    void testTransform() {
     }
 
     @Test
-    public void testSorted() {
+    void testSorted() {
     }
 
     @Test
-    public void testToMap() {
+    void testToMap() {
     }
 
     @Test
-    public void testToSet() {
+    void testToSet() {
     }
 
     @Test
-    public void testToList() {
+    void testToList() {
     }
 }
