@@ -22,12 +22,11 @@ public class SerializableManager extends SaveGameManager {
     @Override
     public void saveGame(String filename, Savable gameState) throws SaveGameException {
         try (FileOutputStream fos = new FileOutputStream(filesDirectory + filename);
-            ObjectOutputStream out = new ObjectOutputStream(fos)){
-            out.writeObject(gameState); }
-        catch (FileNotFoundException ex) {
+                ObjectOutputStream out = new ObjectOutputStream(fos)) {
+            out.writeObject(gameState);
+        } catch (FileNotFoundException ex) {
             throw new SaveGameException("File not found", ex, SaveGameException.Type.USER, gameState);
-        }
-        catch (IOException ex) {
+        } catch (IOException ex) {
             throw new SaveGameException("IO error", ex, SaveGameException.Type.IO, gameState);
         }
     }
@@ -36,16 +35,13 @@ public class SerializableManager extends SaveGameManager {
     public Savable loadGame(String filename) throws SaveGameException {
         Savable load = null;
         try (FileInputStream fis = new FileInputStream(filesDirectory + filename);
-             ObjectInputStream in = new ObjectInputStream(fis)) {
-             load = (Savable) in.readObject();
-        }
-        catch (FileNotFoundException ex) {
+                ObjectInputStream in = new ObjectInputStream(fis)) {
+            load = (Savable) in.readObject();
+        } catch (FileNotFoundException ex) {
             throw new SaveGameException("File not found", ex, SaveGameException.Type.USER, load);
-        }
-        catch (IOException ex) {
+        } catch (IOException ex) {
             throw new SaveGameException("IO error", ex, SaveGameException.Type.IO, load);
-        }
-        catch (ClassNotFoundException ex) {
+        } catch (ClassNotFoundException ex) {
             throw new SaveGameException("desirialize class not found", ex, SaveGameException.Type.SYSTEM, load);
         }
         return load;

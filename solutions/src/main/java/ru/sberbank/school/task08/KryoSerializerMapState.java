@@ -7,7 +7,6 @@ import com.esotericsoftware.kryo.io.Output;
 import ru.sberbank.school.task08.state.GameObject;
 import ru.sberbank.school.task08.state.InstantiatableEntity;
 import ru.sberbank.school.task08.state.MapState;
-import ru.sberbank.school.task08.state.Savable;
 
 import java.util.ArrayList;
 import java.util.List;

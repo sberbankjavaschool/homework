@@ -16,27 +16,48 @@ public class KryoSerializableManagerTest {
     private String path;
     private String fileName;
 
-    public KryoSerializableManagerTest () {
+    public KryoSerializableManagerTest() {
         path = "./src/test/java/ru/sberbank/school/task08";
         fileName = "game.bin";
     }
 
     @Before
-    public void initialize () {
+    public void initialize() {
         manager = new KryoSerializableManager(path);
         manager.initialize();
         List<GameObject> list = new ArrayList<>();
-        list.add((GameObject) manager.createEntity(InstantiatableEntity.Type.BUILDING, InstantiatableEntity.Status.DESPAWNED, 5000L));
-        list.add((GameObject) manager.createEntity(InstantiatableEntity.Type.ENEMY, InstantiatableEntity.Status.SPAWNED, 5000L));
-        list.add((GameObject) manager.createEntity(InstantiatableEntity.Type.ITEM, InstantiatableEntity.Status.SPAWNED, 5000L));
-        list.add((GameObject) manager.createEntity(InstantiatableEntity.Type.NPC, InstantiatableEntity.Status.SPAWNED, 5000L));
-        list.add((GameObject) manager.createEntity(InstantiatableEntity.Type.BUILDING, InstantiatableEntity.Status.KILLED, 5000L));
-        list.add((GameObject) manager.createEntity(InstantiatableEntity.Type.NPC, InstantiatableEntity.Status.DESPAWNED, 5000L));
-        list.add((GameObject) manager.createEntity(InstantiatableEntity.Type.ENEMY, InstantiatableEntity.Status.KILLED, 5000L));
+        list.add((GameObject) manager.createEntity(
+                InstantiatableEntity.Type.BUILDING,
+                InstantiatableEntity.Status.DESPAWNED,
+                5000L));
+        list.add((GameObject) manager.createEntity(
+                InstantiatableEntity.Type.ENEMY,
+                InstantiatableEntity.Status.SPAWNED,
+                5000L));
+        list.add((GameObject) manager.createEntity(
+                InstantiatableEntity.Type.ITEM,
+                InstantiatableEntity.Status.SPAWNED,
+                5000L));
+        list.add((GameObject) manager.createEntity(
+                InstantiatableEntity.Type.NPC,
+                InstantiatableEntity.Status.SPAWNED,
+                5000L));
+        list.add((GameObject) manager.createEntity(
+                InstantiatableEntity.Type.BUILDING,
+                InstantiatableEntity.Status.KILLED,
+                5000L));
+        list.add((GameObject) manager.createEntity(
+                InstantiatableEntity.Type.NPC,
+                InstantiatableEntity.Status.DESPAWNED,
+                5000L));
+        list.add((GameObject) manager.createEntity(
+                InstantiatableEntity.Type.ENEMY,
+                InstantiatableEntity.Status.KILLED,
+                5000L));
         mapState = manager.createSavable("Game", list);
     }
     @Test
-    public void serializeAndDeserialize () throws SaveGameException {
+    public void serializeAndDeserialize() throws SaveGameException {
         manager.saveGame(fileName, mapState);
         Savable loadMapState = manager.loadGame(fileName);
         Assert.assertNotNull(mapState);
@@ -46,7 +67,7 @@ public class KryoSerializableManagerTest {
     }
 
     @Test
-    public void serializeAndDeserializeEmptyList () throws SaveGameException {
+    public void serializeAndDeserializeEmptyList() throws SaveGameException {
         mapState = manager.createSavable("Game", null);
         manager.saveGame(fileName, mapState);
         Savable loadMapState = manager.loadGame(fileName);
@@ -55,5 +76,4 @@ public class KryoSerializableManagerTest {
         Assert.assertNotSame(mapState, loadMapState);
         Assert.assertEquals(mapState, loadMapState);
     }
-
 }

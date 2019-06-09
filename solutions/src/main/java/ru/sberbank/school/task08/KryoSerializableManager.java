@@ -37,8 +37,8 @@ public class KryoSerializableManager extends SaveGameManager {
 
     @Override
     public void saveGame(String filename, Savable gameState) throws SaveGameException {
-        try(OutputStream out = new FileOutputStream(filesDirectory + filename);
-            Output output = new Output(out)){
+        try (OutputStream out = new FileOutputStream(filesDirectory + filename);
+                Output output = new Output(out)) {
             kryo.writeClassAndObject(output, gameState);
         } catch (FileNotFoundException ex) {
             throw new SaveGameException("File not found", ex, SaveGameException.Type.USER, gameState);
@@ -50,8 +50,8 @@ public class KryoSerializableManager extends SaveGameManager {
     @Override
     public Savable loadGame(String filename) throws SaveGameException {
         Savable load = null;
-        try(InputStream in = new FileInputStream(filesDirectory + filename);
-            Input input = new Input(in)){
+        try (InputStream in = new FileInputStream(filesDirectory + filename);
+                Input input = new Input(in)) {
             load = (Savable) kryo.readClassAndObject(input);
         } catch (FileNotFoundException ex) {
             throw new SaveGameException("File not found", ex, SaveGameException.Type.USER, load);
@@ -62,7 +62,9 @@ public class KryoSerializableManager extends SaveGameManager {
     }
 
     @Override
-    public InstantiatableEntity createEntity(InstantiatableEntity.Type type, InstantiatableEntity.Status status, long hitPoints) {
+    public InstantiatableEntity createEntity(InstantiatableEntity.Type type,
+                                             InstantiatableEntity.Status status,
+                                             long hitPoints) {
         return new GameObject(type, status, hitPoints);
     }
 
