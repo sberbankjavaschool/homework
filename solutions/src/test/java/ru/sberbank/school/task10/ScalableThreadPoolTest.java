@@ -26,7 +26,9 @@ class ScalableThreadPoolTest {
                     int timeout = new Random().nextInt(3);
                     TimeUnit.SECONDS.sleep(timeout);
                     latch.countDown();
-                } catch (InterruptedException ignored) {}
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             });
         }
         latch.await();

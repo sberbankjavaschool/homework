@@ -2,7 +2,7 @@ package ru.sberbank.school.task10;
 
 import java.util.concurrent.BlockingQueue;
 
-public class ThreadPoolWorker extends Thread {
+class ThreadPoolWorker extends Thread {
     private final boolean temporary;
     private final BlockingQueue<Runnable> runnableQueue;
 

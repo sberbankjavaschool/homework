@@ -1,7 +1,7 @@
 package ru.sberbank.school.task10;
 
-public class HasNoWorkException extends RuntimeException {
-    public HasNoWorkException(String message) {
+class HasNoWorkException extends RuntimeException {
+    HasNoWorkException(String message) {
         super(message);
     }
 }
