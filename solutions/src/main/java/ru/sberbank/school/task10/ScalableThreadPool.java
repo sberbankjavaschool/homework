@@ -1,7 +1,10 @@
 package ru.sberbank.school.task10;
 
+import ru.sberbank.school.util.Solution;
+
 import java.util.Objects;
 
+@Solution(11)
 public class ScalableThreadPool extends FixedThreadPool {
     private final int maxPoolSize;
 

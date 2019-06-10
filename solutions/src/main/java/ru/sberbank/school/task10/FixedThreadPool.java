@@ -1,11 +1,14 @@
 package ru.sberbank.school.task10;
 
+import ru.sberbank.school.util.Solution;
+
 import java.util.LinkedList;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Queue;
 import java.util.concurrent.*;
 
+@Solution(11)
 public class FixedThreadPool implements ThreadPool {
 
     private final Queue<Thread> threadPool = new ConcurrentLinkedQueue<>();
