@@ -53,7 +53,7 @@ public class FixedThreadPool implements ThreadPool {
 
     void startNewThread(boolean temporary) {
         if ((!temporary && threadPool.size() >= poolSize)
-                || (temporary && getAvailablePoolCapacity() != 0)) {
+                || (temporary && (!isPoolFull() || !poolWorking))) {
             return;
         }
 
@@ -81,10 +81,8 @@ public class FixedThreadPool implements ThreadPool {
         return threadPool.size();
     }
 
-    private long getAvailablePoolCapacity() {
-        return threadPool.stream()
-                .filter(thread -> thread.getState() == Thread.State.WAITING)
-                .count();
+    private boolean isPoolFull() {
+        return threadPool.stream().noneMatch(thread -> thread.getState() == Thread.State.WAITING);
     }
 
     public Queue<Integer> getThreadNumbers() {
