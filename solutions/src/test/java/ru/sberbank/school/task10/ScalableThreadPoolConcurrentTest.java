@@ -14,7 +14,7 @@ class ScalableThreadPoolConcurrentTest {
         scalableThreadPoolConcurrent.start();
         for (int i = 0; i < 10; i++) {
             scalableThreadPoolConcurrent.execute(() -> {
-                System.out.println(Thread.currentThread().getName() + " is done");
+                System.out.println(Thread.currentThread().getName() + " is done.");
             });
         }
     }
