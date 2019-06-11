@@ -20,7 +20,10 @@ public class DifferentWordsImpl implements DifferentWords {
                 .map(s -> s.split("[^a-zA-Z]"))
                 .flatMap(Arrays::stream)
                 .filter(strings -> !strings.equals(""))
-                .sorted(Comparator.comparingInt(String::length))
+                .sorted(((o1, o2) -> {if (o1.length() == o2.length()) {
+                    return o1.compareTo(o2);
+                }
+                    return o1.length() - o2.length();}))
                 .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
