@@ -105,14 +105,14 @@ class ConcurrentScalablePoolTest {
         scalablePool.start();
 
         for (int i = 0; i < 15; i++) {
-            scalablePool.execute(() -> {
+            scalablePool.execute((Runnable) () -> {
                 try {
                     Thread.sleep(100);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
                 latch.countDown();
-                System.out.println(5 / 0);
+                throw new NullPointerException();
             });
         }
 

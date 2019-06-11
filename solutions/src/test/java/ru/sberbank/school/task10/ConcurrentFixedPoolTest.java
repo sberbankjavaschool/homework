@@ -79,9 +79,9 @@ class ConcurrentFixedPoolTest {
         fixedPool.start();
 
         for (int i = 0; i < 10; i++) {
-            fixedPool.execute(() -> {
+            fixedPool.execute((Runnable) () -> {
                 latch.countDown();
-                System.out.println(5/0);
+                throw new NullPointerException();
             });
         }
 
