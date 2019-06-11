@@ -155,8 +155,12 @@ public class StreamsImpl<T> {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         StreamsImpl<?> streams = (StreamsImpl<?>) o;
         return items.equals(streams.items);
     }
