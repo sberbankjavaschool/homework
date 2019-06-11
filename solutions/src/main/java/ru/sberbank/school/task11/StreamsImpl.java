@@ -145,7 +145,24 @@ public class StreamsImpl<T> {
      * @return List элементов
      */
     public List<T> toList() {
-        return null;
+        return new ArrayList<>(items);
     }
 
+    @Override
+    public String toString() {
+        return "StreamsImpl{" + "items=" + items + '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        StreamsImpl<?> streams = (StreamsImpl<?>) o;
+        return items.equals(streams.items);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(items);
+    }
 }
