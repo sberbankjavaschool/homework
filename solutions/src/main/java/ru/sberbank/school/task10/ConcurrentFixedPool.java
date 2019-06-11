@@ -3,22 +3,35 @@ package ru.sberbank.school.task10;
 import lombok.NonNull;
 import ru.sberbank.school.util.Solution;
 
-import java.util.LinkedList;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 
-@Solution(10)
-public class FixedThreadPool implements ThreadPool {
+@Solution(12)
+public class ConcurrentFixedPool implements ThreadPool {
     private Thread[] threads;
-    private final LinkedList<Runnable> tasks;
+    private final BlockingQueue<Runnable> tasks;
     private boolean isExist;
 
-    public FixedThreadPool(int countThreads) {
+    public ConcurrentFixedPool(int countThreads) {
         if (countThreads <= 0) {
             throw new IllegalArgumentException("Количество потоков должно быть больше 0");
         }
 
         threads = new Thread[countThreads];
-        tasks = new LinkedList<>();
+        tasks = new ArrayBlockingQueue<>(countThreads);
         isExist = false;
+    }
+
+    public Thread[] getThreads() {
+        return threads;
+    }
+
+    public int getTasksCount() {
+        return tasks.size();
+    }
+
+    public boolean isExist() {
+        return isExist;
     }
 
     @Override
@@ -37,9 +50,15 @@ public class FixedThreadPool implements ThreadPool {
 
     @Override
     public void stopNow() {
+        if (!isExist) {
+            throw new IllegalStateException("Пул не может быть остановлен, если он не был запущен");
+        }
+
         synchronized (tasks) {
             tasks.clear();
         }
+
+        isExist = false;
 
         for (int i = 0; i < threads.length; i++) {
             threads[i].interrupt();
@@ -53,12 +72,13 @@ public class FixedThreadPool implements ThreadPool {
             throw new IllegalStateException("Перед началом работы с пулом нужно вызвать start()");
         }
 
-        synchronized (tasks) {
-            tasks.addLast(runnable);
-            tasks.notify();
+        try {
+            tasks.put(runnable);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
-    
+
     private class ThreadWorker extends Thread {
         ThreadWorker(@NonNull String name) {
             super(name);
@@ -70,17 +90,11 @@ public class FixedThreadPool implements ThreadPool {
 
             while (!Thread.interrupted()) {
 
-                synchronized (tasks) {
-
-                    while (tasks.isEmpty()) {
-                        try {
-                            tasks.wait();
-                        } catch (InterruptedException e) {
-                            Thread.currentThread().interrupt();
-                            return;
-                        }
-                    }
-                    r = tasks.removeFirst();
+                try {
+                    r = tasks.take();
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    return;
                 }
 
                 try {
@@ -93,3 +107,4 @@ public class FixedThreadPool implements ThreadPool {
     }
 
 }
+
