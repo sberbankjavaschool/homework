@@ -13,7 +13,7 @@ public class FileParserImpl implements FileParser {
     public List<String> parse(String pathToFile) {
         List<String> list = null;
         try {
-           list = Files.lines(Paths.get(pathToFile), StandardCharsets.UTF_8)
+            list = Files.lines(Paths.get(pathToFile), StandardCharsets.UTF_8)
                    .map(String::toLowerCase)
                    .collect(Collectors.toList());
         } catch (IOException e) {

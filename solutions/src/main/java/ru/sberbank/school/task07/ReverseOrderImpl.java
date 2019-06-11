@@ -13,6 +13,7 @@ public class ReverseOrderImpl implements ReverseOrder {
     public ReverseOrderImpl(FileParser fileParser) {
         this.fileParser = fileParser;
     }
+
     @Override
     public Object getReverseOrderedStrings(String pathToFile) throws FileNotFoundException {
 
