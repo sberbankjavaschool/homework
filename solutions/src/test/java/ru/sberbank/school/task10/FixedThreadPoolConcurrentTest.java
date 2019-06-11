@@ -23,7 +23,7 @@ class FixedThreadPoolConcurrentTest {
         for (int i = 0; i < 100; i++) {
             fixedThreadPoolConcurrent.execute(() -> {
                 latch.countDown();
-                System.out.println(Thread.currentThread().getName() + " is done");
+                System.out.println(Thread.currentThread().getName() + " is done ");
             });
         }
         latch.await();
