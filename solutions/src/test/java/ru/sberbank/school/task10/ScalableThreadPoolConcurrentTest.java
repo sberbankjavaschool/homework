@@ -7,17 +7,6 @@ import org.junit.jupiter.api.Test;
 import java.util.concurrent.CountDownLatch;
 
 class ScalableThreadPoolConcurrentTest {
-    private static ScalableThreadPoolConcurrent scalableThreadPoolConcurrent;
-
-    void start() {
-        scalableThreadPoolConcurrent = new ScalableThreadPoolConcurrent(5, 10);
-        scalableThreadPoolConcurrent.start();
-        for (int i = 0; i < 10; i++) {
-            scalableThreadPoolConcurrent.execute(() -> {
-                System.out.println(Thread.currentThread().getName() + " is done.");
-            });
-        }
-    }
 
     @Test
     @DisplayName("checkIllegalArgument")
@@ -43,8 +32,7 @@ class ScalableThreadPoolConcurrentTest {
             });
         }
         latch.await();
-        Assertions.assertEquals(5, scalableThreadPoolConcurrent.getThreads().size());
-        //System.out.println(scalablePool.getThreads().size());
+        Assertions.assertEquals(5, scalableThreadPoolConcurrent.getThreadsSize());
     }
 
     @Test
@@ -55,35 +43,13 @@ class ScalableThreadPoolConcurrentTest {
         scalableThreadPoolConcurrent.start();
         for (int i = 0; i < 20; i++) {
             scalableThreadPoolConcurrent.execute(() -> {
-                        try {
-                            Thread.sleep(1000);
-                            latch.countDown();
-                            System.out.println(Thread.currentThread().getName() + " is done");
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
+                        latch.countDown();
+                        System.out.println(Thread.currentThread().getName() + " is done");
                     }
             );
         }
         latch.await();
-        Assertions.assertEquals(10, scalableThreadPoolConcurrent.getThreads().size());
-        //System.out.println(scalablePool.getThreads().size());
-    }
-
-    @Test
-    @DisplayName("checkIsActiveThreads")
-    void checkIsActiveThreads() {
-        start();
-        scalableThreadPoolConcurrent.stopNow();
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        synchronized (scalableThreadPoolConcurrent) {
-            boolean checkThreads = scalableThreadPoolConcurrent.checkScalableThreads();
-            Assertions.assertEquals(checkThreads, true);
-        }
+        Assertions.assertEquals(10, scalableThreadPoolConcurrent.getThreadsSize());
     }
 
     @Test
@@ -92,30 +58,26 @@ class ScalableThreadPoolConcurrentTest {
         ScalableThreadPoolConcurrent scalableThreadPoolConcurrent = new ScalableThreadPoolConcurrent(5, 10);
         scalableThreadPoolConcurrent.start();
         scalableThreadPoolConcurrent.stopNow();
-        synchronized (scalableThreadPoolConcurrent) {
-            Assertions.assertThrows(RuntimeException.class, () -> scalableThreadPoolConcurrent.execute(() -> {
-            }));
-        }
+        Assertions.assertThrows(RuntimeException.class, () -> scalableThreadPoolConcurrent.execute(() -> {
+        }));
+
     }
 
     @Test
     @DisplayName("checkStopBeforeStart")
     void checkStopBeforeStart() {
         ScalableThreadPoolConcurrent scalableThreadPoolConcurrent = new ScalableThreadPoolConcurrent(5, 10);
-        synchronized (scalableThreadPoolConcurrent) {
-            Assertions.assertThrows(IllegalStateException.class, () -> scalableThreadPoolConcurrent.stopNow());
-        }
+        Assertions.assertThrows(IllegalStateException.class, () -> scalableThreadPoolConcurrent.stopNow());
     }
 
     @Test
     @DisplayName("checkExecuteBeforeStart")
     void checkExecuteBeforeStart() {
         ScalableThreadPoolConcurrent scalableThreadPoolConcurrent = new ScalableThreadPoolConcurrent(5, 10);
-        synchronized (scalableThreadPoolConcurrent) {
-            Assertions.assertThrows(IllegalStateException.class,
-                    () -> scalableThreadPoolConcurrent.execute(() -> {
-                    }));
-        }
+        Assertions.assertThrows(IllegalStateException.class,
+                () -> scalableThreadPoolConcurrent.execute(() -> {
+                }));
+
     }
 
 

@@ -36,10 +36,9 @@ public class ScalableThreadPoolConcurrent implements ThreadPool {
      */
     @Override
     public void start() {
-        if (finish.get()) {
+        if (!finish.compareAndSet(false, true)) {
             throw new IllegalStateException("FixedTP is already started");
         }
-        finish.set(true);
         for (int i = 0; i < minCountThreads; i++) {
             threads.add(new ScalableThreadPoolConcurrent.ThreadWorker(i));
             threads.get(i).start();
@@ -53,13 +52,12 @@ public class ScalableThreadPoolConcurrent implements ThreadPool {
      */
     @Override
     public void stopNow() {
-        if (!finish.get()) {
+        if (!finish.compareAndSet(true, false)) {
             throw new IllegalStateException("FixedTP is already stopped or still isn't started");
         }
         rLock.lock();
         try {
             tasks.clear();
-            finish.set(false);
         } finally {
             rLock.unlock();
         }
@@ -89,8 +87,8 @@ public class ScalableThreadPoolConcurrent implements ThreadPool {
      */
     @Override
     public void execute(Runnable runnable) {
-        if (!finish.get()) {
-            throw new IllegalStateException("Work is already finished");
+        if (!finish.compareAndSet(true, true)) {
+            throw new IllegalStateException("Work is already finished or isn't started");
         }
         try {
             if ((threads.size() < maxCountThreads) && (freeThreads.get() <= 0)) {
@@ -145,8 +143,8 @@ public class ScalableThreadPoolConcurrent implements ThreadPool {
 
     }
 
-    public CopyOnWriteArrayList<Thread> getThreads() {
-        return threads;
+    public int getThreadsSize() {
+        return threads.size();
     }
 
     private class ThreadWorker extends Thread {

@@ -37,10 +37,9 @@ public class FixedThreadPoolConcurrent implements ThreadPool {
      */
     @Override
     public void start() {
-        if (finish.get()) {
+        if (!finish.compareAndSet(false, true)) {
             throw new IllegalStateException("FixedTP is already started");
         }
-        finish.set(true);
         for (int i = 0; i < countOfThreads; i++) {
             threads.add(new ThreadWorker(i));
             threads.get(i).start();
@@ -53,12 +52,11 @@ public class FixedThreadPoolConcurrent implements ThreadPool {
      */
     @Override
     public void stopNow() {
-        if (!finish.get()) {
+        if (!finish.compareAndSet(true, false)) {
             throw new IllegalStateException("FixedTP is already stopped or still isn't started");
         }
         synchronized (tasks) {
             tasks.clear();
-            finish.compareAndSet(true, false);
         }
         threads.forEach(Thread::interrupt);
     }
@@ -71,7 +69,7 @@ public class FixedThreadPoolConcurrent implements ThreadPool {
      */
     @Override
     public void execute(@NonNull Runnable runnable) {
-        if (!finish.get()) {
+        if (!finish.compareAndSet(true, true)) {
             throw new IllegalStateException("Work is already finished or isn't started");
         }
         synchronized (tasks) {
@@ -98,8 +96,8 @@ public class FixedThreadPoolConcurrent implements ThreadPool {
         return true;
     }
 
-    public CopyOnWriteArrayList<Thread> getThreads() {
-        return threads;
+    public int getThreadsSize() {
+        return threads.size();
     }
 
     private class ThreadWorker extends Thread {
