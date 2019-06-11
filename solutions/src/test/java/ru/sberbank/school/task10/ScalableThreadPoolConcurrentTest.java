@@ -112,8 +112,9 @@ class ScalableThreadPoolConcurrentTest {
     void checkExecuteBeforeStart() {
         ScalableThreadPoolConcurrent scalableThreadPoolConcurrent = new ScalableThreadPoolConcurrent(5, 10);
         synchronized (scalableThreadPoolConcurrent) {
-            Assertions.assertThrows(IllegalStateException.class, () -> scalableThreadPoolConcurrent.execute(() -> {
-            }));
+            Assertions.assertThrows(IllegalStateException.class,
+                    () -> scalableThreadPoolConcurrent.execute(() -> {
+                    }));
         }
     }
 
