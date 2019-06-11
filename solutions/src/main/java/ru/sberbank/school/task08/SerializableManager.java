@@ -25,10 +25,12 @@ public class SerializableManager extends SaveGameManager {
     @Override
     public void saveGame(@NonNull String filename, @NonNull Savable gameState) {
         try (FileOutputStream fos = new FileOutputStream(filesDirectory + filename);
-                ObjectOutputStream out = new ObjectOutputStream(fos)) {
-            out.writeObject(gameState);
+             ObjectOutputStream out = new ObjectOutputStream(fos)) {
+                out.writeObject(gameState);
+        } catch (FileNotFoundException ex) {
+            throw new SaveGameException("File not found", ex, SaveGameException.Type.USER, gameState);
         } catch (IOException ex) {
-            ex.printStackTrace();
+            throw new SaveGameException("I/O operation has been failed", ex, SaveGameException.Type.IO, gameState);
         }
     }
 
@@ -38,8 +40,10 @@ public class SerializableManager extends SaveGameManager {
         MapState mapState = null;
 
         try (FileInputStream fis = new FileInputStream(filesDirectory + filename);
-                ObjectInputStream inputStream = new ObjectInputStream(fis)) {
-            mapState = (MapState) inputStream.readObject();
+             ObjectInputStream inputStream = new ObjectInputStream(fis)) {
+                mapState = (MapState) inputStream.readObject();
+        } catch (FileNotFoundException ex) {
+            throw new SaveGameException("File not found", ex, SaveGameException.Type.USER, mapState);
         } catch (IOException e) {
             throw new SaveGameException("I/O operation has been failed", SaveGameException.Type.IO, mapState);
         } catch (ClassNotFoundException e) {

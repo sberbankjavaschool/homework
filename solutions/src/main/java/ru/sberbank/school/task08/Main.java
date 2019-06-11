@@ -13,7 +13,7 @@ public class Main {
     private final static String url = "D:\\";
     private final static String file = "def.txt";
 
-    public static void main(String[] args) throws SaveGameException {
+    public static void main(String[] args) {
 
 
 //        KryoSerializableManager man1 = new KryoSerializableManager(url);

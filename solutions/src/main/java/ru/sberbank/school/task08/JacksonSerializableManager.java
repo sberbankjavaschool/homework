@@ -35,25 +35,29 @@ public class JacksonSerializableManager extends SaveGameManager {
 
 
     @Override
-    public void saveGame(String filename, Savable gameState) {
+    public void saveGame(String filename, Savable gameState) throws SaveGameException {
         try (OutputStream outputStream = new FileOutputStream(filesDirectory + filename);
              Output output = new Output(outputStream)) {
-            new ObjectMapper().writeValue(output, gameState);
-        } catch (IOException e) {
-            e.printStackTrace();
+                new ObjectMapper().writeValue(output, gameState);
+        } catch (FileNotFoundException ex) {
+            throw new SaveGameException("File not found", ex, SaveGameException.Type.USER, gameState);
+        } catch (IOException ex) {
+            throw new SaveGameException("I/O operation has been failed", ex, SaveGameException.Type.IO, gameState);
         }
     }
 
     @Override
-    public Savable loadGame(String filename) {
+    public Savable loadGame(String filename) throws SaveGameException {
 
         MapState mapState = null;
 
         try (InputStream inputStream = new FileInputStream(filesDirectory + filename);
              Input input = new Input(inputStream)) {
-            mapState = new ObjectMapper().readValue(input, MapState.class);
-        } catch (IOException e) {
-            e.printStackTrace();
+                mapState = new ObjectMapper().readValue(input, MapState.class);
+        } catch (FileNotFoundException ex) {
+            throw new SaveGameException("File not found", ex, SaveGameException.Type.USER, mapState);
+        } catch (IOException ex) {
+            throw new SaveGameException("I/O operation has been failed", ex, SaveGameException.Type.IO, mapState);
         }
         return mapState;
     }
