@@ -23,7 +23,7 @@ public class SerializableManager extends SaveGameManager {
     }
 
     @Override
-    public void saveGame(@NonNull String filename, @NonNull Savable gameState) {
+    public void saveGame(String filename, Savable gameState) throws SaveGameException {
         try (FileOutputStream fos = new FileOutputStream(filesDirectory + filename);
              ObjectOutputStream out = new ObjectOutputStream(fos)) {
                 out.writeObject(gameState);
@@ -35,7 +35,7 @@ public class SerializableManager extends SaveGameManager {
     }
 
     @Override
-    public Savable loadGame(@NonNull String filename) throws SaveGameException {
+    public Savable loadGame(String filename) throws SaveGameException {
 
         MapState mapState = null;
 
