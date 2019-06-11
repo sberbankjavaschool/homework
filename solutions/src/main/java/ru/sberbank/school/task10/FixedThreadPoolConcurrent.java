@@ -76,24 +76,7 @@ public class FixedThreadPoolConcurrent implements ThreadPool {
             tasks.add(runnable);
             tasks.notify();
         }
-//        writeLock.lock();
-//        try {
-//            tasks.add(runnable);
-//        } finally {
-//            writeLock.unlock();
-//        }
 
-
-    }
-
-    public boolean checkThreads() throws IllegalStateException {
-        for (Thread t : threads) {
-            Thread.State currState = t.getState();
-            if (currState == Thread.State.RUNNABLE) {
-                return false;
-            }
-        }
-        return true;
     }
 
     public int getThreadsSize() {

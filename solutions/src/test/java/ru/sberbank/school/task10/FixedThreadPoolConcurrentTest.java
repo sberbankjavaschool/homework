@@ -31,26 +31,8 @@ class FixedThreadPoolConcurrentTest {
     }
 
     @Test
-    void checkIsActiveThreads() throws InterruptedException {
-        System.out.println("3d test");
-        CountDownLatch latch = new CountDownLatch(10);
-        FixedThreadPoolConcurrent fixedThreadPoolConcurrent = new FixedThreadPoolConcurrent(10);
-        fixedThreadPoolConcurrent.start();
-        for (int i = 0; i < 10; i++) {
-            fixedThreadPoolConcurrent.execute(() -> {
-                latch.countDown();
-            });
-        }
-        latch.await();
-        fixedThreadPoolConcurrent.stopNow();
-        boolean checkThreads = fixedThreadPoolConcurrent.checkThreads();
-        Assertions.assertEquals(checkThreads, true);
-
-    }
-
-    @Test
     void checkCallAfterStop() {
-        System.out.println("4th test");
+        System.out.println("3d test");
         FixedThreadPoolConcurrent fixedThreadPoolConcurrent = new FixedThreadPoolConcurrent(10);
         fixedThreadPoolConcurrent.start();
         fixedThreadPoolConcurrent.stopNow();
@@ -61,7 +43,7 @@ class FixedThreadPoolConcurrentTest {
 
     @Test
     void checkStopBeforeStart() {
-        System.out.println("5th test");
+        System.out.println("4th test");
         FixedThreadPoolConcurrent fixedThreadPoolConcurrent = new FixedThreadPoolConcurrent(10);
         Assertions.assertThrows(IllegalStateException.class, () -> fixedThreadPoolConcurrent.stopNow());
 
@@ -69,7 +51,7 @@ class FixedThreadPoolConcurrentTest {
 
     @Test
     void checkExecuteBeforeStart() {
-        System.out.println("6th test");
+        System.out.println("5th test");
         FixedThreadPoolConcurrent fixedThreadPoolConcurrent = new FixedThreadPoolConcurrent(10);
         Assertions.assertThrows(IllegalStateException.class, () -> fixedThreadPoolConcurrent.execute(() -> {
         }));
