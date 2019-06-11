@@ -1,6 +1,8 @@
 package ru.sberbank.school.task10;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 
@@ -11,6 +13,12 @@ class FixedThreadPoolTest {
     static void init() {
         threadPool = new FixedThreadPool(3);
         threadPool.start();
+    }
+
+    @Test
+    @DisplayName("Тест на выброс исключения при повторном запуске пула")
+    void restart() {
+        Assertions.assertThrows(IllegalStateException.class, () -> threadPool.start());
     }
 
     @Test
