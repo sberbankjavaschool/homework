@@ -16,17 +16,17 @@ public class Main {
     public static void main(String[] args) throws SaveGameException {
 
 
-        KryoSerializableManager man1 = new KryoSerializableManager(url);
-//        SerializableManager man1 = new SerializableManager(url);
+//        KryoSerializableManager man1 = new KryoSerializableManager(url);
+        SerializableManager man1 = new SerializableManager(url);
 //        JacksonSerializableManager man1 = new JacksonSerializableManager(url);
 
         List<GameObject> list = new ArrayList<>();
 
         list.add((GameObject) man1.createEntity(InstantiatableEntity.Type.ENEMY, InstantiatableEntity.Status.SPAWNED, 10L));
-        list.add((GameObject) man1.createEntity(InstantiatableEntity.Type.ENEMY, InstantiatableEntity.Status.KILLED, 1L));
-        list.add((GameObject) man1.createEntity(InstantiatableEntity.Type.ENEMY, InstantiatableEntity.Status.DESPAWNED, 1L));
+//        list.add((GameObject) man1.createEntity(InstantiatableEntity.Type.ENEMY, InstantiatableEntity.Status.KILLED, 1L));
+//        list.add((GameObject) man1.createEntity(InstantiatableEntity.Type.ENEMY, InstantiatableEntity.Status.DESPAWNED, 1L));
         man1.initialize();
-        MapState map = (MapState) man1.createSavable("Enemy-1", null);
+        MapState map = (MapState) man1.createSavable("Enemy-1", list);
         System.out.println(map.toString());
         man1.saveGame(file, map);
         System.out.println(man1.loadGame(file).toString());
