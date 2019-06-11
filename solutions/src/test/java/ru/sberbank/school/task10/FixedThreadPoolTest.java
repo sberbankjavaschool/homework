@@ -1,65 +1,117 @@
 package ru.sberbank.school.task10;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 class FixedThreadPoolTest {
 
     @Test
-    void workingTestRunnable() throws InterruptedException {
+    void allThreadsDoTheirWork() throws InterruptedException {
+        CountDownLatch latch = new CountDownLatch(200);
         FixedThreadPool pool = new FixedThreadPool(10);
+        AtomicInteger counter = new AtomicInteger(0);
         pool.start();
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 200; i++) {
             pool.execute(() -> {
-                try {
-                    System.out.println("Thread " + Thread.currentThread().getName() + " is working");
-                    TimeUnit.SECONDS.sleep(1);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                counter.getAndAdd(1);
+                latch.countDown();
             });
         }
-        TimeUnit.SECONDS.sleep(15);
+        latch.await();
+        Assertions.assertEquals(200, counter.get());
     }
+
 
     @Test
     void workingTestFuture() throws InterruptedException, ExecutionException {
+        CountDownLatch latch = new CountDownLatch(200);
         FixedThreadPool pool = new FixedThreadPool(10);
         pool.start();
         List<Future<String>> results = new ArrayList<>();
-        for (int i = 0; i < 100; i++) {
-            Callable<String> callable = () -> {
-                TimeUnit.SECONDS.sleep(1);
-                return "Thread " + Thread.currentThread().getName() + " is working";
-            };
-            results.add(pool.execute(callable));
+        for (int i = 0; i < 200; i++) {
+            int finalI = i;
+            results.add(pool.execute(() -> {
+                latch.countDown();
+                return " " + finalI + " ";
+            }));
         }
-        for (Future<String> future : results) {
-            System.out.println(future.get());
+        latch.await();
+        List<String> expectedList = new ArrayList<>();
+        for (int i = 0; i < 200; i++) {
+            expectedList.add(" " + i + " ");
         }
+        List<String> list = new ArrayList<>();
+        for (Future<String> result : results) {
+            String s = result.get();
+            list.add(s);
+        }
+        Assertions.assertEquals(expectedList, list);
+
     }
 
     @Test
-    void workingTestInterrupts() throws InterruptedException {
+    void threadPoolInterrupts() throws InterruptedException {
+        CountDownLatch latch = new CountDownLatch(50);
         FixedThreadPool pool = new FixedThreadPool(10);
+        AtomicInteger counter = new AtomicInteger(0);
         pool.start();
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 200; i++) {
             pool.execute(() -> {
                 try {
-                    System.out.println("Thread " + Thread.currentThread().getName() + " is working");
-                    TimeUnit.SECONDS.sleep(1);
+                    TimeUnit.MILLISECONDS.sleep(10);
                 } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
+                    e.printStackTrace();
                 }
+                counter.getAndAdd(1);
+                latch.countDown();
             });
         }
-        TimeUnit.SECONDS.sleep(3);
+        latch.await();
         pool.stopNow();
+        Assertions.assertAll(() -> {
+            Assertions.assertTrue(counter.get() < 100);
+            Assertions.assertEquals(0, pool.threadPoolSize());
+        });
+    }
+
+    @Test
+    void threadPoolInterruptedWhenIdle() {
+        FixedThreadPool pool = new FixedThreadPool(10);
+        pool.start();
+        pool.stopNow();
+        Assertions.assertEquals(0, pool.threadPoolSize());
+    }
+
+    @Test
+    void restartsThreadsWhenExceptionHappens() throws InterruptedException {
+        CountDownLatch latch = new CountDownLatch(10);
+        FixedThreadPool pool = new FixedThreadPool(5);
+        pool.start();
+        for (int i = 0; i < 10; i++) {
+            pool.execute(() -> {
+                latch.countDown();
+                throw new RuntimeException();
+
+            });
+        }
+        latch.await();
+        Assertions.assertEquals(5, pool.threadPoolSize());
+    }
+
+    @Test
+    void startTestDoesNotIncreaseThreadsOverPoolSize() {
+        FixedThreadPool pool = new FixedThreadPool(5);
+        pool.start();
+        pool.startNewThread(false);
+        pool.startNewThread(true);
+        Assertions.assertEquals(5, pool.threadPoolSize());
     }
 }

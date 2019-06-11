@@ -1,39 +1,40 @@
 package ru.sberbank.school.task10;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Queue;
-import java.util.concurrent.Callable;
-import java.util.concurrent.Future;
-import java.util.concurrent.FutureTask;
+import ru.sberbank.school.util.Solution;
 
+import java.util.LinkedList;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Queue;
+import java.util.concurrent.*;
+
+@Solution(11)
 public class FixedThreadPool implements ThreadPool {
 
-    private final List<Thread> threadPool;
-    private final Queue<Runnable> runnableQueue = new LinkedList<>();
-    private int threadUniqueNumber;
+    private final Queue<Thread> threadPool = new ConcurrentLinkedQueue<>();
+    private final BlockingQueue<Runnable> runnableQueue = new LinkedBlockingQueue<>();
+    private final Queue<Integer> threadNumbers = new LinkedList<>();
     private final int poolSize;
+    private boolean poolWorking;
 
     public FixedThreadPool(int poolSize) {
         this.poolSize = poolSize;
-        threadPool = new ArrayList<>(poolSize);
     }
 
     @Override
     public void start() {
         while (threadPool.size() < poolSize) {
-            Thread thread = new ThreadPoolWorker(runnableQueue, threadUniqueNumber++);
-            threadPool.add(thread);
-            thread.start();
+            startNewThread(false);
         }
+        poolWorking = true;
     }
 
     @Override
     public void stopNow() {
-        threadPool.forEach(Thread::interrupt);
         runnableQueue.clear();
+        poolWorking = false;
+        threadPool.forEach(Thread::interrupt);
+        threadPool.clear();
     }
 
     @Override
@@ -51,5 +52,43 @@ public class FixedThreadPool implements ThreadPool {
         FutureTask<T> futureTask = new FutureTask<>(callable);
         execute(futureTask);
         return futureTask;
+    }
+
+    void startNewThread(boolean temporary) {
+        if ((!temporary && threadPool.size() >= poolSize)
+                || (temporary && (!isPoolFull() || !poolWorking))) {
+            return;
+        }
+
+        int threadUniqueNumber = Optional.ofNullable(threadNumbers.poll()).orElse(threadPool.size());
+        Thread thread = new ThreadPoolWorker(runnableQueue, threadUniqueNumber, temporary);
+        threadPool.add(thread);
+        thread.setUncaughtExceptionHandler(this::threadDeadBabyThreadDead);
+        thread.start();
+    }
+
+    private void threadDeadBabyThreadDead(Thread thread, Throwable ex) {
+        if (poolWorking) {
+            threadNumbers.offer(Integer.valueOf(thread.getName().split("-")[1]));
+            threadPool.remove(thread);
+            if (!((ThreadPoolWorker) thread).isTemporary()) {
+                startNewThread(((ThreadPoolWorker) thread).isTemporary());
+            }
+            if (!ex.getClass().equals(HasNoWorkException.class)) {
+                ex.printStackTrace();
+            }
+        }
+    }
+
+    int threadPoolSize() {
+        return threadPool.size();
+    }
+
+    private boolean isPoolFull() {
+        return threadPool.stream().noneMatch(thread -> thread.getState() == Thread.State.WAITING);
+    }
+
+    public Queue<Integer> getThreadNumbers() {
+        return new LinkedList<>(threadNumbers);
     }
 }
