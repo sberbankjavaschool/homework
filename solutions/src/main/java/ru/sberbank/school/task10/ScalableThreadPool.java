@@ -102,12 +102,6 @@ public class ScalableThreadPool implements ThreadPool {
         }
     }
 
-    public void checkThreads() throws IllegalStateException {
-        for (Thread t : threads) {
-            Thread.State currState = t.getState();
-            System.out.println(currState);
-        }
-    }
 
     private class ThreadWorker extends Thread {
         String name;
