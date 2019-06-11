@@ -108,12 +108,12 @@ public class CollectionUtils {
      */
     public static <T extends Comparable<? super T>> List<T> range(List<? extends T> list, T min, T max) {
         TreeSet<T> set = new TreeSet<T>() {{
-            for (T t : list) {
-                if (t.compareTo(min) >= 0 && t.compareTo(max) <= 0) {
-                    add(t);
+                for (T t : list) {
+                    if (t.compareTo(min) >= 0 && t.compareTo(max) <= 0) {
+                        add(t);
+                    }
                 }
-            }
-        }};
+            }};
 
         return new ArrayList<>(set);
     }
@@ -130,13 +130,13 @@ public class CollectionUtils {
      */
     public static <T> List<T> range(List<? extends T> list, T min, T max, Comparator<T> comparator) {
         TreeSet<T> set = new TreeSet<T>() {{
-            for (T t : list) {
-                if (comparator.compare(t, min) >= 0 && comparator.compare(t, max) <= 0) {
-                    add(t);
+                for (T t : list) {
+                    if (comparator.compare(t, min) >= 0 && comparator.compare(t, max) <= 0) {
+                        add(t);
+                    }
                 }
-            }
 
-        }};
+            }};
 
         return new ArrayList<>(set);
     }

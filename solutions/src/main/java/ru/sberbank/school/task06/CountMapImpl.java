@@ -51,7 +51,8 @@ public class CountMapImpl<T> implements CountMap<T> {
     @Override
     public String toString() {
         return "CountMapImpl{" +
-                "map=" + map.toString() +
+                "map=" +
+                map.toString() +
                 '}';
     }
 }
