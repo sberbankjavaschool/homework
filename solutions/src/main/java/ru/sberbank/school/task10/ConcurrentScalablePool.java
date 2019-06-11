@@ -5,19 +5,23 @@ import ru.sberbank.school.util.Solution;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.locks.ReentrantLock;
 
-@Solution(10)
-public class ScalableThreadPool implements ThreadPool {
-    private final LinkedList<Runnable> tasks;
+@Solution(12)
+public class ConcurrentScalablePool implements ThreadPool {
+
+    private final BlockingQueue<Runnable> tasks;
     private List<ThreadWorker> threads;
     private final List<ThreadWorker> freeThreads;
+    private final ReentrantLock lock;
     private int min;
     private int max;
     private boolean[] nameThreads;
 
-    public ScalableThreadPool(int min, int max) {
+    public ConcurrentScalablePool(int min, int max) {
         if (max <= 0 || min <= 0) {
             throw new IllegalArgumentException("Максимальное и минимальное значения должны быть больше 0");
         }
@@ -28,11 +32,20 @@ public class ScalableThreadPool implements ThreadPool {
         this.min = min;
         this.max = max;
         this.freeThreads = new ArrayList<>(min);
-        tasks = new LinkedList<>();
+        tasks = new LinkedBlockingQueue<>(max);
         threads = new ArrayList<>(min);
+        lock = new ReentrantLock();
 
         nameThreads = new boolean[max];
         Arrays.fill(nameThreads, false);
+    }
+
+    public int getThreadsCount() {
+        return threads.size();
+    }
+
+    public int getTasksCount() {
+        return tasks.size();
     }
 
     @Override
@@ -51,9 +64,11 @@ public class ScalableThreadPool implements ThreadPool {
 
     @Override
     public void stopNow() {
-        synchronized (tasks) {
-            tasks.clear();
+        if (threads.isEmpty()) {
+            throw new IllegalStateException("Пул не может быть остановлен, если он не был запущен");
         }
+
+        tasks.clear();
 
         for (ThreadWorker thread : threads) {
             thread.interrupt();
@@ -61,9 +76,7 @@ public class ScalableThreadPool implements ThreadPool {
 
         threads = new ArrayList<>(min);
 
-        synchronized (freeThreads) {
-            freeThreads.clear();
-        }
+        freeThreads.clear();
 
         Arrays.fill(nameThreads, false);
     }
@@ -75,19 +88,53 @@ public class ScalableThreadPool implements ThreadPool {
             throw new IllegalStateException("Перед началом работы с пулом нужно вызвать start()");
         }
 
-        synchronized (tasks) {
-            synchronized (freeThreads) {
-                if (freeThreads.size() == 0 && threads.size() < max) {
-                    addThread();
-                } else if (tasks.isEmpty() && threads.size() > min) {
-                    deleteThreads();
-                }
+        try {
+            if (freeThreads.size() == 0 && threads.size() < max) {
+                addThread();
+            } else if (tasks.isEmpty() && threads.size() > min) {
+                deleteThreads();
             }
 
-            tasks.addLast(runnable);
-            tasks.notify();
+            tasks.put(runnable);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private void deleteThreads() {
+
+        lock.lock();
+        try {
+            while (threads.size() > min && freeThreads.size() > 0) {
+                ThreadWorker thread = freeThreads.get(0);
+
+                threads.remove(thread);
+                freeThreads.remove(thread);
+
+                nameThreads[thread.index] = false;
+                thread.interrupt();
+            }
+        } finally {
+            lock.unlock();
         }
     }
+
+    private void addThread() {
+        int index;
+
+        for (index = 0; index < nameThreads.length; index++) {
+            if (!nameThreads[index]) {
+                nameThreads[index] = true;
+                break;
+            }
+        }
+
+        ThreadWorker t = new ThreadWorker("ThreadPoolWorker-" + index, index);
+        threads.add(t);
+        t.start();
+    }
+
 
     private class ThreadWorker extends Thread {
 
@@ -104,66 +151,33 @@ public class ScalableThreadPool implements ThreadPool {
 
             while (!Thread.interrupted()) {
 
-                synchronized (freeThreads) {
-                    freeThreads.add(this);
-                }
-
-                synchronized (tasks) {
-                    while (tasks.isEmpty()) {
-                        try {
-                            tasks.wait();
-                        } catch (InterruptedException e) {
-                            Thread.currentThread().interrupt();
-                            return;
-                        }
-                    }
-                    r = tasks.removeFirst();
-                }
-
-                synchronized (freeThreads) {
-                    freeThreads.remove(this);
-                }
-
                 try {
+                    lock.lockInterruptibly();
+                    try {
+                        freeThreads.add(this);
+                    } finally {
+                        lock.unlock();
+                    }
+
+                    r = tasks.take();
+
+                    lock.lockInterruptibly();
+                    try {
+                        freeThreads.remove(this);
+                    } finally {
+                        lock.unlock();
+                    }
+
                     r.run();
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    return;
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+
             }
         }
-    }
-
-    private void deleteThreads() {
-
-        synchronized (freeThreads) {
-            while (threads.size() > min && freeThreads.size() > 0) {
-                ThreadWorker thread = freeThreads.get(0);
-
-                threads.remove(thread);
-                freeThreads.remove(thread);
-
-                nameThreads[thread.index] = false;
-                thread.interrupt();
-                System.out.println("Deleted " + thread.getName());
-            }
-        }
-
-    }
-
-    private void addThread() {
-        System.out.println("Add thread");
-        int index;
-
-        for (index = 0; index < nameThreads.length; index++) {
-            if (!nameThreads[index]) {
-                nameThreads[index] = true;
-                break;
-            }
-        }
-
-        ThreadWorker t = new ThreadWorker("ThreadPoolWorker-" + index, index);
-        threads.add(t);
-        t.start();
     }
 
 }
