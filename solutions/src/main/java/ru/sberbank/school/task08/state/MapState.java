@@ -1,10 +1,13 @@
 package ru.sberbank.school.task08.state;
 
+import java.io.Serializable;
 import java.util.List;
+import javax.xml.bind.annotation.*;
 
-public class MapState<T extends InstantiatableEntity> implements Savable<T> {
-    private final String name;
-    private final List<T> gameObjects;
+@XmlRootElement(name = "MapState")
+public class MapState<T extends GameObject> implements Savable<T>, Serializable {
+    private String name;
+    private List<T> gameObjects;
 
     private MapState() {
         gameObjects = null;
@@ -13,6 +16,15 @@ public class MapState<T extends InstantiatableEntity> implements Savable<T> {
 
     public MapState(String name, List<T> gameObjects) {
         this.name = name;
+        this.gameObjects = gameObjects;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @XmlElementWrapper(name = "gameObjects")
+    public void setGameObjects(List<T> gameObjects) {
         this.gameObjects = gameObjects;
     }
 
@@ -25,8 +37,12 @@ public class MapState<T extends InstantiatableEntity> implements Savable<T> {
     }
 
     public boolean equals(final Object o) {
-        if (o == this) return true;
-        if (!(o instanceof MapState)) return false;
+        if (o == this) {
+            return true;
+        }
+        if (!(o instanceof MapState)) {
+            return false;
+        }
         final MapState other = (MapState) o;
         final Object this$gameObjects = this.getGameObjects();
         final Object other$gameObjects = other.getGameObjects();
@@ -34,10 +50,10 @@ public class MapState<T extends InstantiatableEntity> implements Savable<T> {
     }
 
     public int hashCode() {
-        final int PRIME = 59;
+        final int prime = 59;
         int result = 1;
         final Object $gameObjects = this.getGameObjects();
-        result = result * PRIME + ($gameObjects == null ? 43 : $gameObjects.hashCode());
+        result = result * prime + ($gameObjects == null ? 43 : $gameObjects.hashCode());
         return result;
     }
 
