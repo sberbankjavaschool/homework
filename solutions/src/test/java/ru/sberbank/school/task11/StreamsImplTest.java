@@ -59,10 +59,10 @@ class StreamsImplTest {
         List<Integer> intList = Arrays.asList(6, 1, 7, 2, 8, 3, 3, 4, 9, 8, 2, 5, 7, 10);
         Map<Integer, String> sortedMap = StreamsImpl.of(intList)
                 .sorted(Comparator.naturalOrder())
-                .toMap(integer -> integer, integer -> " String int "+integer.toString());
+                .toMap(integer -> integer, integer -> " String int " + integer.toString());
         Map<Integer, String> equalMap = new HashMap<Integer, String>();
         for (int i = 0; i < intList.size(); i++) {
-            equalMap.put(intList.get(i), " String int "+intList.get(i));
+            equalMap.put(intList.get(i), " String int " + intList.get(i));
         }
         Assertions.assertEquals(sortedMap, equalMap);
     }

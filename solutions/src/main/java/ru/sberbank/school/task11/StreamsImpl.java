@@ -27,19 +27,21 @@ public class StreamsImpl<T> {
      * @param elements входные элементы
      * @return стрим элементов из elements
      */
+
     public static <T> StreamsImpl<T> of(@NonNull T... elements) {
         return new StreamsImpl(elements);
     }
 
     /**
      * Принимает на вход коллекцию элементов и возвращает стрим построенный на основе этих элементов.
-     *
      * @param elements входные элементы
      * @return стрим элементов из elements
      */
+
     public static <T> StreamsImpl<T> of(@NonNull Collection<T> elements) {
         return new StreamsImpl(elements);
     }
+
     /**
      * Фильтрация элементов по заданному правилу. Необходимо подобрать нужный интерфейс для передачи в этот метод.
      * Иными словами, этот метод оставляет в коллекции только те элементы, которые удовлетворяют условию в лямбде.
@@ -48,6 +50,7 @@ public class StreamsImpl<T> {
      * @param predicate - правило фильтрации элементов.
      * @return стрим
      */
+
     public StreamsImpl<T> filter(@NonNull Predicate<? super T> predicate) {
         List<T> tList = new ArrayList<>();
         for (T elem : myList) {
@@ -67,6 +70,7 @@ public class StreamsImpl<T> {
      * @param function - правило траснформации элементов.
      * @return стрим
      */
+
     public <R> StreamsImpl<R> transform(@NonNull Function<? super T, ? extends R> function) {
         List<R> tList = new ArrayList<>();
         for (T elem : myList) {
@@ -83,6 +87,7 @@ public class StreamsImpl<T> {
      * @param comparator - правило сортировки элементов.
      * @return стрим
      */
+
     public StreamsImpl<T> sorted(@NonNull Comparator<? super T> comparator) {
         List<T> tList = new ArrayList<>(myList);
         tList.sort(comparator);
@@ -97,6 +102,7 @@ public class StreamsImpl<T> {
      * @param valueMapper - правило создания значения.
      * @return Map, собранная по правилам keyMapper и valueMapper
      */
+
     public <K, V> Map<K, V> toMap(@NonNull Function<? super T, ? extends K> keyMapper,
                                   @NonNull Function<? super T, ? extends V> valueMapper) {
         Map<K, V> map = new HashMap<>();
@@ -108,14 +114,12 @@ public class StreamsImpl<T> {
 
     /**
      * Преобразование стрима в Set.
-     * <p>
      * Данный метод должен уметь преобразовать стрим в Set. Обратите внимание, что метод sorted должен учитываться
      * при вызове этого метода.
-     * <p>
      * Terminate операция.
-     *
      * @return Set элементов
      */
+
     public Set<T> toSet() {
         Set<T> set = new HashSet<>(myList);
         return set;
