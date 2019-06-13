@@ -5,6 +5,7 @@ import lombok.NonNull;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 /**
@@ -12,7 +13,7 @@ import java.util.stream.Stream;
  */
 public class StreamsImpl<T> {
     private final List<T> myList = new ArrayList<>();
-    private final List<Function> functions = new ArrayList<>();
+    private final List<Supplier<T>> functions = new ArrayList<>();
 
 
     private StreamsImpl(@NonNull T... elements) {
@@ -56,7 +57,7 @@ public class StreamsImpl<T> {
      */
 
     public StreamsImpl<T> filter(@NonNull Predicate<? super T> predicate) {
-        Function function = (f) -> {
+        Supplier function = () -> {
             List<T> tList = new ArrayList<>();
             for (T elem : myList) {
                 if (predicate.test(elem)) {
@@ -81,7 +82,7 @@ public class StreamsImpl<T> {
      */
 
     public <R> StreamsImpl<T> transform(@NonNull Function<? super T, ? extends R> function) {
-        Function myFunction = (f) -> {
+        Supplier myFunction = () -> {
             List<R> tList = new ArrayList<>();
             for (T elem : myList) {
                 tList.add(function.apply(elem));
@@ -103,7 +104,7 @@ public class StreamsImpl<T> {
      */
 
     public StreamsImpl<T> sorted(@NonNull Comparator<? super T> comparator) {
-        Function myFunction = (f) -> {
+        Supplier myFunction = () -> {
             List<T> tList = new ArrayList<>(myList);
             tList.sort(comparator);
             return tList;
@@ -158,8 +159,8 @@ public class StreamsImpl<T> {
 
     private List<T> applyFunctions() {
         List<T> tList = new ArrayList<>();
-        for (Function f : functions) {
-            tList = (List<T>) f.apply(myList);
+        for (Supplier f : functions) {
+            tList = (List<T>) f.get();
         }
         return tList;
     }
