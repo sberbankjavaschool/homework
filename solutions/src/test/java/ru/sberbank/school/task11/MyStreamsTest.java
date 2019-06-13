@@ -42,8 +42,8 @@ class MyStreamsTest {
 
     @Test
     void transform() {
-        List<Integer> integerList = MyStreams.of("apple", "banana", "orange", "lemon", "strawberry", "lemon", "strawberry").transform(String::length).toList();
-        List<Integer> integerList1 = Stream.of("apple", "banana", "orange", "lemon", "strawberry", "lemon", "strawberry").map(String::length).collect(Collectors.toList());
+        List<Integer> integerList = MyStreams.of("apple", "banana", "orange", "lemon", "strawberry", "lemon", "strawberry").transform(String::length).sorted(Integer::compareTo).toList();
+        List<Integer> integerList1 = Stream.of("apple", "banana", "orange", "lemon", "strawberry", "lemon", "strawberry").map(String::length).sorted(Integer::compareTo).collect(Collectors.toList());
 
         Assertions.assertIterableEquals(integerList, integerList1);
     }

@@ -1,11 +1,11 @@
 package ru.sberbank.school.task11;
 
 import lombok.NonNull;
-import org.apache.groovy.internal.util.UncheckedThrow;
 
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 /**
@@ -13,8 +13,8 @@ import java.util.stream.Stream;
  */
 public class MyStreams<T> {
 
-    private List<T> elements;
-    private List<Function> functions = new LinkedList<>();
+    private final List<T> elements;
+    private final List<Function<List<T>, List<?>>> functions = new ArrayList<>();
 
     @SafeVarargs
     private MyStreams(T...elements) {
@@ -60,7 +60,7 @@ public class MyStreams<T> {
      */
     public MyStreams<T> filter(@NonNull Predicate<? super T> predicate) {
 
-        functions.add((stub) -> {
+        functions.add((elements) -> {
             List<T> list = new ArrayList<>();
 
             for (T element : elements) {
@@ -91,7 +91,7 @@ public class MyStreams<T> {
 
     public <R> MyStreams<R> transform(@NonNull Function<? super T, ? extends R> function) {
 
-        functions.add((stub) -> {
+        functions.add((elements) -> {
             List<R> list = new ArrayList<>(elements.size());
 
             for (T element : elements) {
@@ -118,7 +118,7 @@ public class MyStreams<T> {
      */
     public MyStreams<T> sorted(@NonNull Comparator<? super T> comparator) {
 
-        functions.add((stub) -> {
+        functions.add((elements) -> {
             elements.sort(comparator);
             return elements;
         });
@@ -139,10 +139,10 @@ public class MyStreams<T> {
      */
     public <K, V> Map<K, V> toMap(@NonNull Function<? super T, ? extends K> keyMapper,
                                   @NonNull Function<? super T, ? extends V> valueMapper) {
-        execute();
+        List<T> list = execute();
         Map<K, V> map = new HashMap<>();
 
-        for (T element : elements) {
+        for (T element : list) {
             map.put(keyMapper.apply(element), valueMapper.apply(element));
         }
 
@@ -160,8 +160,7 @@ public class MyStreams<T> {
      * @return Set элементов
      */
     public Set<T> toSet() {
-        execute();
-        return new LinkedHashSet<>(elements);
+        return new LinkedHashSet<>(execute());
     }
 
     /**
@@ -174,14 +173,17 @@ public class MyStreams<T> {
      * @return List элементов
      */
     public List<T> toList() {
-        execute();
-        return new ArrayList<>(elements);
+        return new ArrayList<>(execute());
     }
 
-    private void execute() {
+    private List<T> execute() {
+        List<T> result = elements;
+
         for (Function function : functions) {
-            elements = (List<T>) function.apply(elements);
+            result = (List<T>) function.apply(result);
         }
+
+        return result;
     }
 
 }
