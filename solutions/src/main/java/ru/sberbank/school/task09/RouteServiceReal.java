@@ -3,7 +3,7 @@ package ru.sberbank.school.task09;
 import java.time.LocalDate;
 import java.util.List;
 
-public class RouteServiceReal extends RouteService {
+public class RouteServiceReal extends RouteService<City, Route<City>> {
     @Override
     public Route getRoute(String from, String to) {
         return null;
