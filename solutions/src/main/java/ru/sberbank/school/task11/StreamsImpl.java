@@ -11,11 +11,12 @@ import java.util.stream.Stream;
  * Облегченная версия класса {@link Stream}
  */
 public class StreamsImpl<T> {
-    private List<T> myList = new ArrayList<>();
+    private final List<T> myList = new ArrayList<>();
+    private List<Function> functions = new ArrayList<>();
 
 
     private StreamsImpl(@NonNull T... elements) {
-        myList = Arrays.asList(elements);
+        myList.addAll(Arrays.asList(elements));
     }
 
     private StreamsImpl(@NonNull Collection<? extends T> elements) {
@@ -24,6 +25,7 @@ public class StreamsImpl<T> {
 
     /**
      * Принимает на вход массив элементов и возвращает стрим построенный на основе этих элементов.
+     *
      * @param elements входные элементы
      * @return стрим элементов из elements
      */
@@ -34,6 +36,7 @@ public class StreamsImpl<T> {
 
     /**
      * Принимает на вход коллекцию элементов и возвращает стрим построенный на основе этих элементов.
+     *
      * @param elements входные элементы
      * @return стрим элементов из elements
      */
@@ -47,18 +50,23 @@ public class StreamsImpl<T> {
      * Иными словами, этот метод оставляет в коллекции только те элементы, которые удовлетворяют условию в лямбде.
      * Аналог Stream#map(Function).
      * Intermediate операция.
+     *
      * @param predicate - правило фильтрации элементов.
      * @return стрим
      */
 
     public StreamsImpl<T> filter(@NonNull Predicate<? super T> predicate) {
-        List<T> tList = new ArrayList<>();
-        for (T elem : myList) {
-            if (predicate.test(elem)) {
-                tList.add(elem);
+        Function function = (f) -> {
+            List<T> tList = new ArrayList<>();
+            for (T elem : myList) {
+                if (predicate.test(elem)) {
+                    tList.add(elem);
+                }
             }
-        }
-        return new StreamsImpl(tList);
+            return tList;
+        };
+        functions.add(function);
+        return this;
     }
 
     /**
@@ -67,16 +75,21 @@ public class StreamsImpl<T> {
      * Например, данный метод должен уметь извлекать какие-то поля из объектов исходного типа (если это возможно).
      * Аналог Stream#map.
      * Intermediate операция.
+     *
      * @param function - правило траснформации элементов.
      * @return стрим
      */
 
-    public <R> StreamsImpl<R> transform(@NonNull Function<? super T, ? extends R> function) {
-        List<R> tList = new ArrayList<>();
-        for (T elem : myList) {
-            tList.add(function.apply(elem));
-        }
-        return new StreamsImpl(tList);
+    public <R> StreamsImpl<T> transform(@NonNull Function<? super T, ? extends R> function) {
+        Function myFunction = (f) -> {
+            List<R> tList = new ArrayList<>();
+            for (T elem : myList) {
+                tList.add(function.apply(elem));
+            }
+            return tList;
+        };
+        functions.add(myFunction);
+        return this;
     }
 
     /**
@@ -84,20 +97,30 @@ public class StreamsImpl<T> {
      * Данный метод должен уметь сортировать элементы по заданному правилу.
      * Аналог Stream#sorted
      * Intermediate операция.
+     *
      * @param comparator - правило сортировки элементов.
      * @return стрим
      */
 
     public StreamsImpl<T> sorted(@NonNull Comparator<? super T> comparator) {
-        List<T> tList = new ArrayList<>(myList);
-        tList.sort(comparator);
-        return new StreamsImpl(tList);
+//        List<T> tList = new ArrayList<>(myList);
+//        tList.sort(comparator);
+//        return new StreamsImpl(tList);
+
+        Function myFunction = (f) -> {
+            List<T> tList = new ArrayList<>(myList);
+            tList.sort(comparator);
+            return tList;
+        };
+        functions.add(myFunction);
+        return this;
     }
 
     /**
      * Преобразование стрима в Map. Необходимо подобрать нужные интерфейсы для передачи в этот метод.
      * Данный метод должен уметь преобразовать стрим в Map используя keyMapper и valueMapper.
      * Terminate операция.
+     *
      * @param keyMapper   - правило создания ключа.
      * @param valueMapper - правило создания значения.
      * @return Map, собранная по правилам keyMapper и valueMapper
@@ -105,8 +128,12 @@ public class StreamsImpl<T> {
 
     public <K, V> Map<K, V> toMap(@NonNull Function<? super T, ? extends K> keyMapper,
                                   @NonNull Function<? super T, ? extends V> valueMapper) {
+        List<T> tList = new ArrayList<>();
+        for (Function f : functions) {
+            tList = (List<T>) f.apply(myList);
+        }
         Map<K, V> map = new HashMap<>();
-        for (T elem : myList) {
+        for (T elem : tList) {
             map.put(keyMapper.apply(elem), valueMapper.apply(elem));
         }
         return map;
@@ -117,22 +144,31 @@ public class StreamsImpl<T> {
      * Данный метод должен уметь преобразовать стрим в Set. Обратите внимание, что метод sorted должен учитываться
      * при вызове этого метода.
      * Terminate операция.
+     *
      * @return Set элементов
      */
 
     public Set<T> toSet() {
-        Set<T> set = new HashSet<>(myList);
-        return set;
+        List<T> tList = new ArrayList<>();
+        for (Function f : functions) {
+            tList = (List<T>) f.apply(myList);
+        }
+        return new HashSet<>(tList);
     }
 
     /**
      * Преобразование стрима в List.
      * Данный метод должен уметь преобразовать стрим в List.
      * Terminate операция.
+     *
      * @return List элементов
      */
     public List<T> toList() {
-        return new ArrayList(myList);
+        List<T> tList = new ArrayList<>();
+        for (Function f : functions) {
+            tList = (List<T>) f.apply(myList);
+        }
+        return new ArrayList(tList);
     }
 
 }
