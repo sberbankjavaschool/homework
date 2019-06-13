@@ -13,7 +13,7 @@ import java.util.stream.Stream;
  */
 public class StreamsImpl<T> {
     private final List<T> myList = new ArrayList<>();
-    private final List<Supplier<T>> functions = new ArrayList<>();
+    private final List<Supplier<List>> functions = new ArrayList<>();
 
 
     private StreamsImpl(@NonNull T... elements) {
@@ -57,7 +57,7 @@ public class StreamsImpl<T> {
      */
 
     public StreamsImpl<T> filter(@NonNull Predicate<? super T> predicate) {
-        Supplier function = () -> {
+        Supplier<List> function = () -> {
             List<T> tList = new ArrayList<>();
             for (T elem : myList) {
                 if (predicate.test(elem)) {
@@ -82,7 +82,7 @@ public class StreamsImpl<T> {
      */
 
     public <R> StreamsImpl<T> transform(@NonNull Function<? super T, ? extends R> function) {
-        Supplier myFunction = () -> {
+        Supplier<List> myFunction = () -> {
             List<R> tList = new ArrayList<>();
             for (T elem : myList) {
                 tList.add(function.apply(elem));
@@ -104,7 +104,7 @@ public class StreamsImpl<T> {
      */
 
     public StreamsImpl<T> sorted(@NonNull Comparator<? super T> comparator) {
-        Supplier myFunction = () -> {
+        Supplier<List> myFunction = () -> {
             List<T> tList = new ArrayList<>(myList);
             tList.sort(comparator);
             return tList;
@@ -159,8 +159,8 @@ public class StreamsImpl<T> {
 
     private List<T> applyFunctions() {
         List<T> tList = new ArrayList<>();
-        for (Supplier f : functions) {
-            tList = (List<T>) f.get();
+        for (Supplier<List> f : functions) {
+            tList = f.get();
         }
         return tList;
     }
