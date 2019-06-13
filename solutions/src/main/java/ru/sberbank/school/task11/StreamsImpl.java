@@ -12,7 +12,7 @@ import java.util.stream.Stream;
  */
 public class StreamsImpl<T> {
     private final List<T> myList = new ArrayList<>();
-    private List<Function> functions = new ArrayList<>();
+    private final List<Function> functions = new ArrayList<>();
 
 
     private StreamsImpl(@NonNull T... elements) {
@@ -103,10 +103,6 @@ public class StreamsImpl<T> {
      */
 
     public StreamsImpl<T> sorted(@NonNull Comparator<? super T> comparator) {
-//        List<T> tList = new ArrayList<>(myList);
-//        tList.sort(comparator);
-//        return new StreamsImpl(tList);
-
         Function myFunction = (f) -> {
             List<T> tList = new ArrayList<>(myList);
             tList.sort(comparator);
@@ -128,10 +124,7 @@ public class StreamsImpl<T> {
 
     public <K, V> Map<K, V> toMap(@NonNull Function<? super T, ? extends K> keyMapper,
                                   @NonNull Function<? super T, ? extends V> valueMapper) {
-        List<T> tList = new ArrayList<>();
-        for (Function f : functions) {
-            tList = (List<T>) f.apply(myList);
-        }
+        List<T> tList = applyFunctions();
         Map<K, V> map = new HashMap<>();
         for (T elem : tList) {
             map.put(keyMapper.apply(elem), valueMapper.apply(elem));
@@ -149,11 +142,7 @@ public class StreamsImpl<T> {
      */
 
     public Set<T> toSet() {
-        List<T> tList = new ArrayList<>();
-        for (Function f : functions) {
-            tList = (List<T>) f.apply(myList);
-        }
-        return new HashSet<>(tList);
+        return new LinkedHashSet<>(applyFunctions());
     }
 
     /**
@@ -164,11 +153,15 @@ public class StreamsImpl<T> {
      * @return List элементов
      */
     public List<T> toList() {
+        return new ArrayList(applyFunctions());
+    }
+
+    private List<T> applyFunctions() {
         List<T> tList = new ArrayList<>();
         for (Function f : functions) {
             tList = (List<T>) f.apply(myList);
         }
-        return new ArrayList(tList);
+        return tList;
     }
 
 }
