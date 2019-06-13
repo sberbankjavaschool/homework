@@ -17,6 +17,7 @@ public enum SchoolTask {
     THREAD_POOL_FIXED("Пул потоков", 10),
     THREAD_POOL_WITH_CONCURRENT("Пул потоков с продвинутой многопоточкой и хорошими тестами", 11),
     STREAM_API("Stream API", 12),
+    REFLECTIONS("Annotations, Reflections, Proxy", 13),
     END("ЭТА КАНЕЦ!", 99);
 
     private final String name;
