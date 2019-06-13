@@ -2,23 +2,40 @@ package ru.sberbank.school.task11;
 
 import ru.sberbank.school.util.Solution;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 /** Облегченная версия класса {@link Stream}.
  */
 @Solution(12)
 public class StreamsImpl<T> {
+    private final Supplier<List<T>> supplier;
+
+    private StreamsImpl(Supplier<List<T>> supplier) {
+        this.supplier = supplier;
+    }
 
     /** Принимает на вход массив элементов и возвращает стрим построенный на основе этих элементов.
      *
      * @param elements входные элементы
      * @return стрим элементов из elements
      */
+    @SafeVarargs
     public static <T> StreamsImpl<T> of(T... elements) {
-        return null;
+        Supplier<List<T>> supplier = () -> Arrays.asList(elements);
+        return new StreamsImpl<>(supplier);
     }
 
     /** Принимает на вход коллекцию элементов и возвращает стрим построенный на основе этих элементов.
@@ -27,7 +44,9 @@ public class StreamsImpl<T> {
      * @return стрим элементов из elements
      */
     public static <T> StreamsImpl<T> of(Collection<T> elements) {
-        return null;
+        Supplier<List<T>> supplier = () -> new ArrayList<>(elements);
+        return new StreamsImpl<>(supplier);
+
     }
 
     /** Фильтрация элементов по заданному правилу. Необходимо подобрать нужый интерфейс для передачи в этот метод.
@@ -42,7 +61,16 @@ public class StreamsImpl<T> {
      * @return стрим
      */
     public StreamsImpl<T> filter(Predicate<? super T> object) {
-        return null;
+        Supplier<List<T>> newSupplier = () -> {
+            List<T> resultList = new ArrayList<>();
+            for (T element : supplier.get()) {
+                if (object.test(element)) {
+                    resultList.add(element);
+                }
+            }
+            return resultList;
+        };
+        return new StreamsImpl<>(newSupplier);
     }
 
     /** Преобразование элементов в какие-то другие элементы.
@@ -58,7 +86,14 @@ public class StreamsImpl<T> {
      * @return стрим
      */
     public <R> StreamsImpl<R> transform(Function<? super T, ? extends R> object) {
-        return null;
+        Supplier<List<R>> newSupplier = () -> {
+            List<R> resultList = new ArrayList<>();
+            for (T element : supplier.get()) {
+                resultList.add(object.apply(element));
+            }
+            return resultList;
+        };
+        return new StreamsImpl<>(newSupplier);
     }
 
     /** Сортировка элементов. Необходимо подобрать нужый интерфейс для передачи в этот метод.
@@ -73,7 +108,12 @@ public class StreamsImpl<T> {
      * @return стрим
      */
     public StreamsImpl<T> sorted(Comparator<? super T> object) {
-        return null;
+        Supplier<List<T>> newSupplier = () -> {
+            List<T> sortedList = new ArrayList<>(supplier.get());
+            sortedList.sort(object);
+            return sortedList;
+        };
+        return new StreamsImpl<>(newSupplier);
     }
 
     /** Преобразование стрима в Map. Необходимо подобрать нужные интерфейсы для передачи в этот метод.
@@ -88,7 +128,11 @@ public class StreamsImpl<T> {
      */
     public <K, V> Map<K, V> toMap(Function<? super T, ? extends K> keyMapper,
                                     Function<? super T, ? extends V> valueMapper) {
-        return null;
+        Map<K, V> map = new HashMap<>();
+        for (T element : supplier.get()) {
+            map.put(keyMapper.apply(element), valueMapper.apply(element));
+        }
+        return map;
     }
 
     /** Преобразование стрима в Set.
@@ -101,7 +145,7 @@ public class StreamsImpl<T> {
      * @return Set элементов
      */
     public Set<T> toSet() {
-        return null;
+        return new LinkedHashSet<>(supplier.get());
     }
 
     /** Преобразование стрима в List.
@@ -113,7 +157,28 @@ public class StreamsImpl<T> {
      * @return List элементов
      */
     public List<T> toList() {
-        return null;
+        return new ArrayList<>(supplier.get());
     }
 
+    @Override
+    public String toString() {
+        return "StreamsImpl{" + "items=" + supplier.get() + '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        StreamsImpl<?> streams = (StreamsImpl<?>) o;
+        return supplier.get().equals(streams.supplier.get());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(supplier.get());
+    }
 }
