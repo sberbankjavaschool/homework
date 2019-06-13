@@ -5,6 +5,7 @@ import lombok.NonNull;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 /**
@@ -12,7 +13,8 @@ import java.util.stream.Stream;
  */
 public class MyStreams<T> {
 
-    private List<T> elements;
+    private final List<T> elements;
+    private final List<Function<List<T>, List<?>>> functions = new ArrayList<>();
 
     @SafeVarargs
     private MyStreams(T...elements) {
@@ -57,15 +59,20 @@ public class MyStreams<T> {
      * @return стрим
      */
     public MyStreams<T> filter(@NonNull Predicate<? super T> predicate) {
-        List<T> list = new ArrayList<>();
 
-        for (T element : elements) {
-            if (predicate.test(element)) {
-                list.add(element);
+        functions.add((elements) -> {
+            List<T> list = new ArrayList<>();
+
+            for (T element : elements) {
+                if (predicate.test(element)) {
+                    list.add(element);
+                }
             }
-        }
 
-        return new MyStreams<>(list);
+            return list;
+        });
+
+        return this;
     }
 
     /**
@@ -80,14 +87,21 @@ public class MyStreams<T> {
      * @param function - правило траснформации элементов.
      * @return стрим
      */
+
+
     public <R> MyStreams<R> transform(@NonNull Function<? super T, ? extends R> function) {
-        List<R> list = new ArrayList<>(elements.size());
 
-        for (T element : elements) {
-            list.add(function.apply(element));
-        }
+        functions.add((elements) -> {
+            List<R> list = new ArrayList<>(elements.size());
 
-        return new MyStreams<>(list);
+            for (T element : elements) {
+                list.add(function.apply(element));
+            }
+
+            return list;
+        });
+
+        return (MyStreams<R>) this;
     }
 
     /**
@@ -103,7 +117,12 @@ public class MyStreams<T> {
      * @return стрим
      */
     public MyStreams<T> sorted(@NonNull Comparator<? super T> comparator) {
-        elements.sort(comparator);
+
+        functions.add((elements) -> {
+            elements.sort(comparator);
+            return elements;
+        });
+
         return this;
     }
 
@@ -120,9 +139,10 @@ public class MyStreams<T> {
      */
     public <K, V> Map<K, V> toMap(@NonNull Function<? super T, ? extends K> keyMapper,
                                   @NonNull Function<? super T, ? extends V> valueMapper) {
+        List<T> list = execute();
         Map<K, V> map = new HashMap<>();
 
-        for (T element : elements) {
+        for (T element : list) {
             map.put(keyMapper.apply(element), valueMapper.apply(element));
         }
 
@@ -140,7 +160,7 @@ public class MyStreams<T> {
      * @return Set элементов
      */
     public Set<T> toSet() {
-        return new HashSet<>(elements);
+        return new LinkedHashSet<>(execute());
     }
 
     /**
@@ -153,7 +173,17 @@ public class MyStreams<T> {
      * @return List элементов
      */
     public List<T> toList() {
-        return new ArrayList<>(elements);
+        return new ArrayList<>(execute());
+    }
+
+    private List<T> execute() {
+        List<T> result = elements;
+
+        for (Function function : functions) {
+            result = (List<T>) function.apply(result);
+        }
+
+        return result;
     }
 
 }
