@@ -20,10 +20,10 @@ class MyStreamsTest {
 
     @Test
     void toSet() {
-        Set<String> strings = MyStreams.of("apple", "banana", "orange", "lemon", "strawberry", "lemon", "strawberry").toSet();
-        Set<String> set = Stream.of("apple", "banana", "orange", "lemon", "strawberry", "lemon", "strawberry").collect(Collectors.toSet());
+        Set<String> strings = MyStreams.of("apple", "banana", "orange", "lemon", "strawberry", "lemon", "strawberry").sorted(String::compareTo).toSet();
+        List<String> list = Stream.of("apple", "banana", "orange", "lemon", "strawberry", "lemon", "strawberry").distinct().sorted(String::compareTo).collect(Collectors.toList());
 
-        Assertions.assertIterableEquals(set, strings);
+        Assertions.assertIterableEquals(list, strings);
     }
 
     @Test
@@ -53,7 +53,7 @@ class MyStreamsTest {
         List<String> list = MyStreams.of("lemon", "strawberry", "apple", "banana", "orange", "lemon", "strawberry").sorted(String::compareTo).toList();
         List<String> list1 = Stream.of("lemon", "strawberry", "apple", "banana", "orange", "lemon", "strawberry").sorted(String::compareTo).collect(Collectors.toList());
 
-        Assertions.assertIterableEquals(list, list1);
+        Assertions.assertIterableEquals(list1, list);
     }
 
     @Test
