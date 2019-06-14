@@ -25,8 +25,8 @@ public class SerializableManager extends SaveGameManager {
     @Override
     public void saveGame(String filename, Savable gameState) throws SaveGameException {
         try (FileOutputStream fos = new FileOutputStream(filesDirectory + filename);
-             ObjectOutputStream out = new ObjectOutputStream(fos)) {
-                out.writeObject(gameState);
+               ObjectOutputStream out = new ObjectOutputStream(fos)) {
+           out.writeObject(gameState);
         } catch (FileNotFoundException ex) {
             throw new SaveGameException("File not found", ex, SaveGameException.Type.USER, gameState);
         } catch (IOException ex) {

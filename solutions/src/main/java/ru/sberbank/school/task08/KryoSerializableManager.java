@@ -45,8 +45,8 @@ public class KryoSerializableManager extends SaveGameManager {
     public void saveGame(String filename, Savable gameState) throws SaveGameException {
 
         try (OutputStream outputStream = new FileOutputStream(filesDirectory + filename);
-             Output output = new Output(outputStream)) {
-                kryo.writeObject(output, gameState);
+               Output output = new Output(outputStream)) {
+           kryo.writeObject(output, gameState);
         } catch (FileNotFoundException ex) {
             throw new SaveGameException("File not found", ex, SaveGameException.Type.USER, gameState);
         } catch (IOException ex) {
@@ -60,8 +60,8 @@ public class KryoSerializableManager extends SaveGameManager {
         MapState mapState = null;
 
         try (InputStream inputStream = new FileInputStream(filesDirectory + filename);
-             Input input = new Input(inputStream)) {
-                mapState = kryo.readObject(input, MapState.class);
+               Input input = new Input(inputStream)) {
+           mapState = kryo.readObject(input, MapState.class);
         } catch (FileNotFoundException ex) {
             throw new SaveGameException("File not found", ex, SaveGameException.Type.USER, mapState);
         } catch (IOException ex) {
