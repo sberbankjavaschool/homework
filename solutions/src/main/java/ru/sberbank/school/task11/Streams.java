@@ -110,7 +110,8 @@ public class Streams<T> {
      * @param valueMapper - правило создания значения.
      * @return Map, собранная по правилам keyMapper и valueMapper
      */
-    public <K,V> Map<K,V> toMap(Function<? super T, ? extends K> keyMapper, Function<? super T, ? extends V> valueMapper) {
+    public <K,V> Map<K,V> toMap(Function<? super T, ? extends K> keyMapper,
+                                Function<? super T, ? extends V> valueMapper) {
         return list.stream()
                 .collect(Collectors.toMap(keyMapper, valueMapper));
     }
