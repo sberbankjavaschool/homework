@@ -14,7 +14,7 @@ public class DifferentWordsImpl implements DifferentWords {
 
 
     @Override
-    public LinkedHashSet findSortedDifferentWords(String pathToFile) throws FileNotFoundException {
+    public Set findSortedDifferentWords(String pathToFile) throws FileNotFoundException {
         List<String> list = fileParser.parse(pathToFile);
         return list.stream()
                 .map(s -> s.split("[^a-zA-Z]"))
