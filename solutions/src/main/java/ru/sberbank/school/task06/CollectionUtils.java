@@ -1,6 +1,9 @@
 package ru.sberbank.school.task06;
 
 import java.util.*;
+import java.util.stream.Collectors;
+
+import static org.codehaus.groovy.runtime.DefaultGroovyMethods.collect;
 
 public class CollectionUtils {
 
@@ -107,15 +110,18 @@ public class CollectionUtils {
      * @return отфильрованный по минимальному и максимальному значению список
      */
     public static <T extends Comparable<? super T>> List<T> range(List<? extends T> list, T min, T max) {
-        TreeSet<T> set = new TreeSet<T>() {{
-                for (T t : list) {
-                    if (t.compareTo(min) >= 0 && t.compareTo(max) <= 0) {
-                        add(t);
-                    }
-                }
-            }};
+//        TreeSet<T> set = new TreeSet<T>() {{
+//                for (T t : list) {
+//                    if (t.compareTo(min) >= 0 && t.compareTo(max) <= 0) {
+//                        add(t);
+//                    }
+//                }
+//            }};
 
-        return new ArrayList<>(set);
+        return list.stream()
+                .filter((T t) -> t.compareTo(min) >= 0 && t.compareTo(max) <= 0)
+                .sorted()
+                .collect(Collectors.toList());
     }
 
     /**
@@ -129,15 +135,18 @@ public class CollectionUtils {
      * @return отфильрованный по минимальному и максимальному значению список
      */
     public static <T> List<T> range(List<? extends T> list, T min, T max, Comparator<T> comparator) {
-        TreeSet<T> set = new TreeSet<T>() {{
-                for (T t : list) {
-                    if (comparator.compare(t, min) >= 0 && comparator.compare(t, max) <= 0) {
-                        add(t);
-                    }
-                }
+//        TreeSet<T> set = new TreeSet<T>() {{
+//                for (T t : list) {
+//                    if (comparator.compare(t, min) >= 0 && comparator.compare(t, max) <= 0) {
+//                        add(t);
+//                    }
+//                }
+//
+//            }};
 
-            }};
-
-        return new ArrayList<>(set);
+        return list.stream()
+                .filter((T t) ->comparator.compare(t, min) >= 0 && comparator.compare(t, max) <= 0)
+                .sorted()
+                .collect(Collectors.toList());
     }
 }

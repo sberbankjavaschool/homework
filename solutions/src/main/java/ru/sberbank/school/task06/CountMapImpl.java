@@ -47,12 +47,4 @@ public class CountMapImpl<T> implements CountMap<T> {
     public void toMap(Map<? super T, Integer> destination) {
         destination = new HashMap<>(map);
     }
-
-    @Override
-    public String toString() {
-        return "CountMapImpl{" +
-                "map=" +
-                map.toString() +
-                '}';
-    }
 }
