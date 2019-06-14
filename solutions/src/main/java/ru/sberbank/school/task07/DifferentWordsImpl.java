@@ -14,19 +14,20 @@ public class DifferentWordsImpl implements DifferentWords {
 
 
     @Override
-    public Object findSortedDifferentWords(String pathToFile) throws FileNotFoundException {
+    public LinkedHashSet findSortedDifferentWords(String pathToFile) throws FileNotFoundException {
         List<String> list = fileParser.parse(pathToFile);
         return list.stream()
                 .map(s -> s.split("[^a-zA-Z]"))
                 .flatMap(Arrays::stream)
                 .filter(strings -> !strings.equals(""))
-                .sorted(((o1, o2) -> {if (o1.length() == o2.length()) {
-                    return o1.compareTo(o2);
-                }
-                    return o1.length() - o2.length();}))
+                .sorted(((o1, o2) -> {
+                    if (o1.length() == o2.length()) {
+                        return o1.compareTo(o2);
+                    }
+                    return o1.length() - o2.length();
+                }))
                 .collect(Collectors.toCollection(LinkedHashSet::new));
     }
-
 
 
 }

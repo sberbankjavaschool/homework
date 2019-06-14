@@ -16,7 +16,7 @@ public class WordFrequencyImpl implements WordFrequency {
     }
 
     @Override
-    public Object countWords(String pathToFile) throws FileNotFoundException {
+    public Map<String, Integer> countWords(String pathToFile) throws FileNotFoundException {
 
         List<String> list = fileParser.parse(pathToFile);
         list.stream()
