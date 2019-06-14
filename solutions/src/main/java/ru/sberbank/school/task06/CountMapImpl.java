@@ -18,12 +18,21 @@ public class CountMapImpl<T> implements CountMap<T> {
     }
 
     public int getCount(T o) {
-        return map.get(o);
+        try {
+            return map.get(o);
+        } catch (NullPointerException ex){
+            return 0;
+        }
+
     }
 
     @Override
     public int remove(T o) {
-        return map.remove(o);
+        try {
+            return  map.remove(o);
+        } catch (NullPointerException ex){
+            return 0;
+        }
     }
 
     @Override
@@ -46,5 +55,12 @@ public class CountMapImpl<T> implements CountMap<T> {
     @Override
     public void toMap(Map<? super T, Integer> destination) {
         destination = new HashMap<>(map);
+    }
+
+    @Override
+    public String toString() {
+        return "CountMapImpl{" +
+                "map=" + map +
+                '}';
     }
 }
