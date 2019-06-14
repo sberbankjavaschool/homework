@@ -2,6 +2,7 @@ package ru.sberbank.school.task07;
 
 import java.io.FileNotFoundException;
 import java.util.*;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class DifferentWordsImpl implements DifferentWords {
@@ -12,21 +13,26 @@ public class DifferentWordsImpl implements DifferentWords {
         this.fileParser = fileParser;
     }
 
-
+    @SuppressWarnings("unchecked")
     @Override
     public Set findSortedDifferentWords(String pathToFile) throws FileNotFoundException {
         List<String> list = fileParser.parse(pathToFile);
-        return list.stream()
+        return (Set) list.stream()
                 .map(s -> s.split("[^a-zA-Z]"))
                 .flatMap(Arrays::stream)
                 .filter(strings -> !strings.equals(""))
-                .sorted(((o1, o2) -> {
-                    if (o1.length() == o2.length()) {
-                        return o1.compareTo(o2);
-                    }
-                    return o1.length() - o2.length();
-                }))
-                .collect(Collectors.toCollection(LinkedHashSet::new));
+                .collect(Collectors.toCollection(getSupplier()));
+    }
+
+    private static Supplier getSupplier() {
+        Comparator<String> comparator = (o1, o2) -> {
+            if (o1.length() == o2.length()) {
+                return o1.compareTo(o2);
+            }
+            return o1.length() - o2.length();
+        };
+
+        return () -> new TreeSet<>(comparator);
     }
 
 
