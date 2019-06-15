@@ -57,10 +57,10 @@ public class StreamsTest {
     @Test
     void sortedSetTest() {
         Set<String> actual = Streams.of(list)
-                .sorted(Comparator.comparing(String::length))
+                .sorted(Comparator.comparing(String::length).reversed())
                 .toSet();
         List<String> expect = list.stream()
-                .sorted(Comparator.comparing(String::length))
+                .sorted(Comparator.comparing(String::length).reversed())
                 .distinct()
                 .collect(toList());
         Assertions.assertIterableEquals(expect, actual);
@@ -81,11 +81,9 @@ public class StreamsTest {
     void  toSetTest() {
         Set<String> actual = Streams.of("Java", "Ada", "Perl", "Prolog", "C++", "Java")
                 .filter(x -> x.length() > 4)
-                .filter(x -> x.length() == 5)
                 .toSet();
         Set<String> expect = Stream.of("Java", "Ada", "Perl", "Prolog", "C++", "Java")
                 .filter(x -> x.length() > 4)
-                .filter(x -> x.length() == 5)
                 .collect(toSet());
         Assertions.assertEquals(expect, actual);
     }

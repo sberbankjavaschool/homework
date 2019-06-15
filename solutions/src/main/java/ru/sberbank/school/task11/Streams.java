@@ -146,7 +146,7 @@ public class Streams<T> {
      * @return Set элементов
      */
     public Set<T> toSet() {
-        return new TreeSet<>(supplier.get());
+        return new LinkedHashSet<>(supplier.get());
     }
 
     /**
