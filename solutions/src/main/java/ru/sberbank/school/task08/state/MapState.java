@@ -1,17 +1,18 @@
 package ru.sberbank.school.task08.state;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class MapState<T extends InstantiatableEntity> implements Savable<T> {
+public class MapState<T extends InstantiatableEntity> implements Savable<GameObject>, Serializable {
     private final String name;
-    private final List<T> gameObjects;
+    private final List<GameObject> gameObjects;
 
     private MapState() {
         gameObjects = null;
         name = null;
     }
 
-    public MapState(String name, List<T> gameObjects) {
+    public MapState(String name, List<GameObject> gameObjects) {
         this.name = name;
         this.gameObjects = gameObjects;
     }
@@ -20,7 +21,7 @@ public class MapState<T extends InstantiatableEntity> implements Savable<T> {
         return name;
     }
 
-    public List<T> getGameObjects() {
+    public List<GameObject> getGameObjects() {
         return this.gameObjects;
     }
 
