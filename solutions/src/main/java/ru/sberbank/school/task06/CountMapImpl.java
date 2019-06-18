@@ -18,21 +18,18 @@ public class CountMapImpl<T> implements CountMap<T> {
     }
 
     public int getCount(T o) {
-        try {
-            return map.get(o);
-        } catch (NullPointerException ex) {
-            return 0;
-        }
+        return map.getOrDefault(o, 0);
 
     }
 
     @Override
     public int remove(T o) {
-        try {
-            return map.remove(o);
-        } catch (NullPointerException ex) {
-            return 0;
-        }
+//        if (map.containsKey(o)){
+//            return map.remove(o);
+//        } else {
+//            return 0;
+//        }
+        return (map.getOrDefault(o, 0).equals(0)) ? 0 : map.remove(o);
     }
 
     @Override
@@ -42,8 +39,14 @@ public class CountMapImpl<T> implements CountMap<T> {
 
     @Override
     public void addAll(CountMap<? extends T> source) {
-        for (T t : source.toMap().keySet()) {
-            add(t);
+
+        for (Map.Entry<? extends T, Integer> e : source.toMap().entrySet()) {
+            if (map.containsKey(e.getKey())) {
+                map.put(e.getKey(), map.get(e.getKey()) + e.getValue());
+            } else {
+                map.put(e.getKey(), e.getValue());
+            }
+
         }
     }
 
@@ -54,7 +57,9 @@ public class CountMapImpl<T> implements CountMap<T> {
 
     @Override
     public void toMap(Map<? super T, Integer> destination) {
-        destination = new HashMap<>(map);
+ //       if (!(destination == null)) {
+            destination.putAll(map);
+ //       }
     }
 
     @Override

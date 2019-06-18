@@ -44,7 +44,7 @@ public class CollectionUtils {
      * @param size   необходимое число элементов
      * @return сокращенный список
      */
-    public static List limit(List source, int size) {
+    public static <T> List<T> limit(List<T> source, int size) {
         return source.subList(0, size);
     }
 
@@ -134,7 +134,7 @@ public class CollectionUtils {
      * @param max  максимальнео значение
      * @return отфильрованный по минимальному и максимальному значению список
      */
-    public static <T> List<T> range(List<? extends T> list, T min, T max, Comparator<T> comparator) {
+    public static <T> List<T> range(List<? extends T> list, T min, T max, Comparator<? super T> comparator) {
 //        TreeSet<T> set = new TreeSet<T>() {{
 //                for (T t : list) {
 //                    if (comparator.compare(t, min) >= 0 && comparator.compare(t, max) <= 0) {
@@ -146,7 +146,7 @@ public class CollectionUtils {
 
         return list.stream()
                 .filter((T t) -> comparator.compare(t, min) >= 0 && comparator.compare(t, max) <= 0)
-                .sorted()
+                .sorted(comparator)
                 .collect(Collectors.toList());
     }
 }
