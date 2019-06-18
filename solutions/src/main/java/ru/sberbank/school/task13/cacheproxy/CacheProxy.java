@@ -50,17 +50,17 @@ public class CacheProxy<T> {
                 ourMethodResult = method.invoke(service, args);
             } else {
                 Cache annotationParams = method.getDeclaredAnnotation(Cache.class);
-                if (annotationParams.cacheType() == Cache.cacheType.FILE) {
+                if (annotationParams.cacheType() == Cache.Cachetype.FILE) {
                     ourMethodResult = toFile(method, args, annotationParams);
                 } else {
-                    ourMethodResult = toJVMMemory(method, args, annotationParams);
+                    ourMethodResult = toJvmMemory(method, args, annotationParams);
                 }
             }
 
             return ourMethodResult;
         }
 
-        private Object toJVMMemory(Method method, Object[] args, Cache annotationParams) {
+        private Object toJvmMemory(Method method, Object[] args, Cache annotationParams) {
             Object ourMethod = null;
             String key = getKey(annotationParams, method, args);
             if (cachedResults.containsKey(key)) {

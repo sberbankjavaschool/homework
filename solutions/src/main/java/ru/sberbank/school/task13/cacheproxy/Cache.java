@@ -9,9 +9,9 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Cache {
-    enum cacheType {MEMORY, FILE}
+    enum Cachetype { MEMORY, FILE }
 
-    cacheType cacheType() default cacheType.FILE;
+    Cachetype cacheType() default Cachetype.FILE;
 
     Class[] uniqueFields() default {};
 

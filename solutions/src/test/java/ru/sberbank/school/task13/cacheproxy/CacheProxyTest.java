@@ -65,13 +65,14 @@ class CacheProxyTest {
         TestClass proxyService = (TestClass) cacheProxy.cache(new TestClassImpl("test"));
         String res1 = proxyService.getResFromZip();
         String res2 = proxyService.getResFromZip();
-        deleteAllFilesFolder(pathRoot);
         Assertions.assertEquals(res1, res2);
         Assertions.assertEquals(1, proxyService.getCountCalls());
+        deleteAllFilesFolder(pathRoot);
     }
 
     public static void deleteAllFilesFolder(String path) {
-        for (File myFile : new File(path).listFiles())
-            if (myFile.isFile()) myFile.delete();
+        for (File myFile : new File(path).listFiles()) {
+            myFile.delete();
+        }
     }
 }
