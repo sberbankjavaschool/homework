@@ -3,6 +3,7 @@ package ru.sberbank.school.task09;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
+import lombok.NonNull;
 import ru.sberbank.school.task09.kryo.CitySerializer;
 import ru.sberbank.school.task09.kryo.RouteSerializer;
 import ru.sberbank.school.util.Solution;
@@ -17,6 +18,11 @@ public class RouteCacheService extends RouteService<City, Route<City>> {
     private Kryo kryo;
     private HashMap<String, Route<City>> routeHashMap = new HashMap<>();
 
+    public RouteCacheService(@NonNull String path) {
+        super(path);
+        initialize();
+    }
+
 
     public void initialize() {
         this.kryo = new Kryo();
@@ -30,7 +36,7 @@ public class RouteCacheService extends RouteService<City, Route<City>> {
 
 
     public void saveRoute(String key, Route route) {
-        try (OutputStream outputStream = new FileOutputStream(key + ".txt");
+        try (OutputStream outputStream = new FileOutputStream(path + File.separator + key);
              Output output = new Output(outputStream)) {
             kryo.writeObject(output, route);
         } catch (IOException ex) {
@@ -41,7 +47,7 @@ public class RouteCacheService extends RouteService<City, Route<City>> {
 
     public Route loadRoutes(String key) {
         Route routes = null;
-        try (InputStream inputStream = new FileInputStream(key + ".txt");
+        try (InputStream inputStream = new FileInputStream(path + File.separator + key);
              Input input = new Input(inputStream)) {
             routes = kryo.readObject(input, Route.class);
         } catch (IOException ex) {
@@ -55,7 +61,6 @@ public class RouteCacheService extends RouteService<City, Route<City>> {
     public Route<City> getRoute(String from, String to) {
         String key = from + "_" + to;
         Route<City> route = routeHashMap.get(key);
-        initialize();
 
         if (route == null) {
             route = super.getRouteInner(from, to);
