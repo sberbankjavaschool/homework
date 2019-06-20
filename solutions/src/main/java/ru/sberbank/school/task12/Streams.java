@@ -6,6 +6,7 @@ import ru.sberbank.school.util.Solution;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 /**
@@ -15,10 +16,10 @@ import java.util.stream.Stream;
 @Solution(12)
 public class Streams<T> {
 
-    private final Collection<? extends T> source;
+    private final Supplier<Collection<? extends T>> supplier;
 
-    private Streams(Collection<? extends T> elements) {
-        this.source = Collections.unmodifiableList(new ArrayList<>(elements));
+    private Streams(Supplier<Collection<? extends T>> elements) {
+        this.supplier = elements;
     }
 
     /**
@@ -29,7 +30,7 @@ public class Streams<T> {
      */
     @SuppressWarnings("unchecked")
     public static <T> Streams<T> of(@NonNull T... elements) {
-        return new Streams<>(Arrays.asList(elements));
+        return new Streams<>(() -> Arrays.asList(elements));
     }
 
     /**
@@ -40,7 +41,7 @@ public class Streams<T> {
      */
     @SuppressWarnings("unchecked")
     public static <T> Streams<T> of(@NonNull Collection<? extends T> elements) {
-        return new Streams<>(elements);
+        return new Streams<>(() -> elements);
     }
 
     /**
@@ -53,13 +54,15 @@ public class Streams<T> {
      * @return стрим
      */
     public Streams<T> filter(@NonNull Predicate<? super T> predicate) {
-        List<T> result = new ArrayList<>();
-        for (T t : source) {
-            if (predicate.test(t)) {
-                result.add(t);
+        return new Streams<>(() -> {
+            List<T> result = new ArrayList<>();
+            for (T t : supplier.get()) {
+                if (predicate.test(t)) {
+                    result.add(t);
+                }
             }
-        }
-        return new Streams<>(result);
+            return result;
+        });
     }
 
     /**
@@ -73,11 +76,13 @@ public class Streams<T> {
      * @return стрим
      */
     public <R> Streams<R> transform(@NonNull Function<? super T, ? extends R> mapper) {
-        List<R> result = new ArrayList<>();
-        for (T t : source) {
-            result.add(mapper.apply(t));
-        }
-        return new Streams<>(result);
+        return new Streams<>(() -> {
+            List<R> result = new ArrayList<>();
+            for (T t : supplier.get()) {
+                result.add(mapper.apply(t));
+            }
+            return result;
+        });
     }
 
     /**
@@ -90,9 +95,11 @@ public class Streams<T> {
      * @return стрим
      */
     public Streams<T> sorted(@NonNull Comparator<? super T> comparator) {
-        List<T> result = new ArrayList<>(source);
-        result.sort(comparator);
-        return new Streams<>(result);
+        return new Streams<>(() -> {
+            List<T> result = new ArrayList<>(supplier.get());
+            result.sort(comparator);
+            return result;
+        });
     }
 
     /**
@@ -107,7 +114,7 @@ public class Streams<T> {
     public <K, V> Map<K, V> toMap(@NonNull Function<? super T, ? extends K> keyMapper,
                                   @NonNull Function<? super T, ? extends V> valueMapper) {
         Map<K, V> map = new HashMap<>();
-        for (T t : source) {
+        for (T t : supplier.get()) {
             map.put(keyMapper.apply(t), valueMapper.apply(t));
         }
         return map;
@@ -122,7 +129,7 @@ public class Streams<T> {
      * @return Set элементов
      */
     public Set<T> toSet() {
-        return new LinkedHashSet<>(source);
+        return new LinkedHashSet<>(supplier.get());
     }
 
     /**
@@ -133,6 +140,6 @@ public class Streams<T> {
      * @return List элементов
      */
     public List<T> toList() {
-        return new ArrayList<>(source);
+        return new ArrayList<>(supplier.get());
     }
 }
