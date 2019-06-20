@@ -17,14 +17,14 @@ public class DifferentWordsImpl implements DifferentWords {
     @Override
     public Set findSortedDifferentWords(String pathToFile) throws FileNotFoundException {
         List<String> list = fileParser.parse(pathToFile);
-        return (Set) list.stream()
+        return list.stream()
                 .map(s -> s.split("[^a-zA-Z]"))
                 .flatMap(Arrays::stream)
                 .filter(strings -> !strings.equals(""))
                 .collect(Collectors.toCollection(getSupplier()));
     }
 
-    private static Supplier getSupplier() {
+    private static Supplier<Set> getSupplier() {
         Comparator<String> comparator = (o1, o2) -> {
             if (o1.length() == o2.length()) {
                 return o1.compareTo(o2);
