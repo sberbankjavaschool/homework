@@ -61,16 +61,20 @@ public class RouteCacheService extends RouteService<City, Route<City>> {
         String key = from + "_" + to;
 
         File file = new File(path + File.separator + key);
+        System.out.println(file.getPath());
         Route<City> route;
 
         if (!file.exists()) {
             route = super.getRouteInner(from, to);
+
             saveRoute(key, route);
-            System.out.println("Serialized:");
+            System.out.println("Serialized: " + key);
+            System.out.println("Route: " + route.toString());
             return route;
         } else {
-            System.out.println("Deserialized:");
+            System.out.println("Deserialized: " + key);
             route = loadRoutes(key);
+            System.out.println("Route: " + route.toString());
             return route;
         }
 
