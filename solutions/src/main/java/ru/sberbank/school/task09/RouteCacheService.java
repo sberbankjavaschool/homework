@@ -5,11 +5,13 @@ import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 import ru.sberbank.school.task09.kryo.CitySerializer;
 import ru.sberbank.school.task09.kryo.RouteSerializer;
+import ru.sberbank.school.util.Solution;
 
 import java.io.*;
 import java.time.LocalDate;
 import java.util.*;
 
+@Solution(9)
 public class RouteCacheService extends RouteService<City, Route<City>> {
 
     private Kryo kryo;
