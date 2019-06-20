@@ -39,9 +39,9 @@ public class CitySerializer extends Serializer<City> {
         kryo.reference(city);
         city.setId(input.readInt());
         city.setCityName(input.readString());
-        city.setFoundDate((LocalDate) kryo.readClassAndObject(input));
+        city.setFoundDate(kryo.readObjectOrNull(input, LocalDate.class));
         city.setNumberOfInhabitants(input.readLong());
-        city.setNearCities((List<City>) kryo.readClassAndObject(input));
+        city.setNearCities((List<City>) kryo.readObjectOrNull(input, ArrayList.class));
 
         return city;
     }

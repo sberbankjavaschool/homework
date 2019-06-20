@@ -29,7 +29,7 @@ public class RouteSerializer extends Serializer<Route<City>> {
 //        kryo.setReferences(true);
         kryo.reference(route);
         route.setRouteName(input.readString());
-        route.setCities((List) kryo.readClassAndObject(input));
+        route.setCities(kryo.readObjectOrNull(input, LinkedList.class));
         return route;
     }
 }

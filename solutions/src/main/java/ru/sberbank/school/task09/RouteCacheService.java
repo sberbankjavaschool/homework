@@ -16,7 +16,6 @@ import java.util.*;
 public class RouteCacheService extends RouteService<City, Route<City>> {
 
     private Kryo kryo;
-    private HashMap<String, Route<City>> routeHashMap = new HashMap<>();
 
     public RouteCacheService(@NonNull String path) {
         super(path);
@@ -45,7 +44,7 @@ public class RouteCacheService extends RouteService<City, Route<City>> {
 
     }
 
-    public Route loadRoutes(String key) {
+    public Route<City> loadRoutes(String key) {
         Route routes = null;
         try (InputStream inputStream = new FileInputStream(path + File.separator + key);
              Input input = new Input(inputStream)) {
@@ -60,16 +59,17 @@ public class RouteCacheService extends RouteService<City, Route<City>> {
     @Override
     public Route<City> getRoute(String from, String to) {
         String key = from + "_" + to;
-        Route<City> route = routeHashMap.get(key);
 
-        if (route == null) {
+        File file = new File(path + File.separator + key);
+        Route<City> route;
+
+        if (!file.exists()) {
             route = super.getRouteInner(from, to);
             saveRoute(key, route);
-            routeHashMap.put(key, route);
-            System.out.println("Serialized:");
+ //           System.out.println("Serialized:");
             return route;
         } else {
-            System.out.println("Deserialized:");
+//            System.out.println("Deserialized:");
             route = loadRoutes(key);
             return route;
         }
