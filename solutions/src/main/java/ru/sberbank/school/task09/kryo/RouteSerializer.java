@@ -25,9 +25,9 @@ public class RouteSerializer extends Serializer<Route<City>> {
     @SuppressWarnings("unchecked")
     @Override
     public Route<City> read(Kryo kryo, Input input, Class<? extends Route<City>> type) {
-        Route route = kryo.newInstance(type);
+        Route<City> route = kryo.newInstance(type);
 //        kryo.setReferences(true);
-        kryo.reference(route);
+//        kryo.reference(route);
         route.setRouteName(input.readString());
         route.setCities(kryo.readObjectOrNull(input, LinkedList.class));
         return route;
