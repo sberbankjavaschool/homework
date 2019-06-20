@@ -25,7 +25,7 @@ public class ReverseOrderIteratorImpl<E> implements ReverseOrderIterator<E> {
             e = list.get(cursor);
             cursor--;
         } catch (IndexOutOfBoundsException ex) {
-            ex.printStackTrace();
+            throw ex;
         }
         return e;
     }
