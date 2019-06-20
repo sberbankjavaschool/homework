@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -13,7 +14,8 @@ import java.util.stream.Stream;
  */
 public class Streams<T> {
 
-    private final List<T> list;
+    private final List<Supplier<List<T>>> suppliers = new ArrayList<>();
+    private List<T> list;
 
     @SafeVarargs
     public Streams(T... list) {
@@ -30,7 +32,7 @@ public class Streams<T> {
      * @param elements входные элементы
      * @return стрим элементов из elements
      */
-    public static <T> Streams of(T... elements) {
+    public static <T> Streams<T> of(T... elements) {
         return new Streams<>(elements);
     }
 
@@ -40,7 +42,7 @@ public class Streams<T> {
      * @param elements входные элементы
      * @return стрим элементов из elements
      */
-    public static <T> Streams of(Collection<T> elements) {
+    public static <T> Streams<T> of(Collection<T> elements) {
         return new Streams<>(elements);
     }
 
@@ -58,9 +60,11 @@ public class Streams<T> {
      */
     public Streams<T> filter(Predicate<? super T> predicate) {
 
-        return new Streams<>(list.stream()
+        suppliers.add(() -> list.stream()
                 .filter(predicate)
                 .collect(Collectors.toList()));
+
+        return this;
     }
 
     /**
@@ -76,9 +80,16 @@ public class Streams<T> {
      * @return стрим
      */
     public <R> Streams<R> transform(Function<? super T, ? extends R> function) {
-        return new Streams<>(list.stream()
-                .map(function)
-                .collect(Collectors.toList()));
+
+        List<R> listR = new ArrayList<>();
+        suppliers.add(() -> {
+            listR.addAll(list.stream()
+                    .map(function)
+                    .collect(Collectors.toList()));
+            return (List<T>) listR;
+        });
+
+        return (Streams<R>) this;
     }
 
     /**
@@ -94,9 +105,12 @@ public class Streams<T> {
      * @return стрим
      */
     public Streams<T> sorted(Comparator<? super T> comparator) {
-        return new Streams<>(list.stream()
+
+        suppliers.add(() -> list.stream()
                 .sorted(comparator)
                 .collect(Collectors.toList()));
+
+        return this;
     }
 
     /**
@@ -110,9 +124,10 @@ public class Streams<T> {
      * @param valueMapper - правило создания значения.
      * @return Map, собранная по правилам keyMapper и valueMapper
      */
-    public <K,V> Map<K,V> toMap(Function<? super T, ? extends K> keyMapper,
-                                Function<? super T, ? extends V> valueMapper) {
-        return list.stream()
+    public <K, V> Map<K, V> toMap(Function<? super T, ? extends K> keyMapper,
+                                  Function<? super T, ? extends V> valueMapper) {
+
+        return terminate().stream()
                 .collect(Collectors.toMap(keyMapper, valueMapper));
     }
 
@@ -127,7 +142,7 @@ public class Streams<T> {
      * @return Set элементов
      */
     public Set<T> toSet() {
-        return new HashSet<>(list);
+        return new LinkedHashSet<>(terminate());
     }
 
     /**
@@ -140,7 +155,16 @@ public class Streams<T> {
      * @return List элементов
      */
     public List<T> toList() {
-        return new ArrayList<>(list);
+        return new ArrayList<>(terminate());
+    }
+
+    private List<T> terminate() {
+        if (!suppliers.isEmpty()) {
+            for (Supplier<List<T>> supplier : suppliers) {
+                list = supplier.get();
+            }
+        }
+        return list;
     }
 
 }
