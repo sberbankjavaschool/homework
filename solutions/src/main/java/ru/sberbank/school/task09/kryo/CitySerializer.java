@@ -7,6 +7,7 @@ import com.esotericsoftware.kryo.io.Output;
 import ru.sberbank.school.task09.City;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 public class CitySerializer extends Serializer<City> {
@@ -24,9 +25,9 @@ public class CitySerializer extends Serializer<City> {
 
         output.writeInt(city.getId());
         output.writeString(city.getCityName());
-        kryo.writeClassAndObject(output, city.getFoundDate());
+        kryo.writeObjectOrNull(output, city.getFoundDate(), LocalDate.class);
         output.writeLong(city.getNumberOfInhabitants());
-        kryo.writeClassAndObject(output, city.getNearCities());
+        kryo.writeObjectOrNull(output, city.getNearCities(), ArrayList.class);
     }
 
     @SuppressWarnings("unchecked")

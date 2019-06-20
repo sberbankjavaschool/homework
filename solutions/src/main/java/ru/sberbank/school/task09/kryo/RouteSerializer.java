@@ -19,7 +19,7 @@ public class RouteSerializer extends Serializer<Route<City>> {
     @Override
     public void write(Kryo kryo, Output output, Route<City> route) {
         output.writeString(route.getRouteName());
-        kryo.writeClassAndObject(output, route.getCities());
+        kryo.writeObjectOrNull(output, route.getCities(), LinkedList.class);
     }
 
     @SuppressWarnings("unchecked")
