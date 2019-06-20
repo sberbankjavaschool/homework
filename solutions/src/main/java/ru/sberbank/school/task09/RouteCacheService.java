@@ -53,6 +53,7 @@ public class RouteCacheService extends RouteService<City, Route<City>> {
     public Route<City> getRoute(String from, String to) {
         String key = from + "_" + to;
         Route<City> route = routeHashMap.get(key);
+        initialize();
 
         if (route == null) {
             route = super.getRouteInner(from, to);
