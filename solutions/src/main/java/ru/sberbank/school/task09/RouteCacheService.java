@@ -34,8 +34,8 @@ public class RouteCacheService extends RouteService<City, Route<City>> {
     }
 
 
-    public void saveRoute(String key, Route route) {
-        try (OutputStream outputStream = new FileOutputStream(path + File.separator + key);
+    public void saveRoute(File file, Route route) {
+        try (OutputStream outputStream = new FileOutputStream(file);
              Output output = new Output(outputStream)) {
             kryo.writeObject(output, route);
         } catch (IOException ex) {
@@ -44,9 +44,9 @@ public class RouteCacheService extends RouteService<City, Route<City>> {
 
     }
 
-    public Route<City> loadRoutes(String key) {
+    public Route<City> loadRoutes(File file) {
         Route routes = null;
-        try (InputStream inputStream = new FileInputStream(path + File.separator + key);
+        try (InputStream inputStream = new FileInputStream(file);
              Input input = new Input(inputStream)) {
             routes = kryo.readObjectOrNull(input, Route.class);
         } catch (IOException ex) {
@@ -65,16 +65,22 @@ public class RouteCacheService extends RouteService<City, Route<City>> {
         Route<City> route;
 
         if (!file.exists()) {
-            route = super.getRouteInner(from, to);
+            route = getRouteInner(from, to);
 
-            saveRoute(key, route);
+            saveRoute(file, route);
+
             System.out.println("Serialized: " + key);
             System.out.println("Route: " + route.toString());
+
             return route;
         } else {
+
             System.out.println("Deserialized: " + key);
-            route = loadRoutes(key);
+
+            route = loadRoutes(file);
+
             System.out.println("Route: " + route.toString());
+
             return route;
         }
 
