@@ -79,9 +79,10 @@ class BeanFieldCopierServiceTest {
         Integer age;
         BigDecimal height;
         String climateZone;
+
         public String toString() {
-            return "(evergreen=" + this.isEvergreen() + ", age=" + this.getAge() + ", " +
-                    "height=" + this.getHeight() + ", climateZone=" + this.getClimateZone() + ")";
+            return "(evergreen=" + this.isEvergreen() + ", age=" + this.getAge() + ", "
+                    + "height=" + this.getHeight() + ", climateZone=" + this.getClimateZone() + ")";
         }
     }
 
