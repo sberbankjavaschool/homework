@@ -1,7 +1,8 @@
 package ru.sberbank.school.task13;
 
 import lombok.NonNull;
-import ru.sberbank.school.task13.exception.BeanFieldCopierServiceException;
+import ru.sberbank.school.task13.exceptions.BeanFieldCopierServiceException;
+import ru.sberbank.school.util.Solution;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -10,7 +11,21 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+@Solution(13)
 public class BeanFieldCopierService implements BeanFieldCopier {
+
+    private static final Map<String, Class> PRIMITIVES = new HashMap<>();
+
+    static {
+        PRIMITIVES.put("byte", Byte.class);
+        PRIMITIVES.put("short", Short.class);
+        PRIMITIVES.put("int", Integer.class);
+        PRIMITIVES.put("long", Long.class);
+        PRIMITIVES.put("float", Float.class);
+        PRIMITIVES.put("double", Double.class);
+        PRIMITIVES.put("char", Character.class);
+        PRIMITIVES.put("boolean", Boolean.class);
+    }
 
     @Override
     public void copy(@NonNull Object from, @NonNull Object to) {
@@ -20,6 +35,7 @@ public class BeanFieldCopierService implements BeanFieldCopier {
         for (Map.Entry<String, Method> getEntry : getters.entrySet()) {
             Method getter = getEntry.getValue();
             Method setter = setters.get(getEntry.getKey());
+//            if (!Objects.isNull(setter)) {
             if (!Objects.isNull(setter) && compatibleTypes(getter, setter)) {
                 boolean getterNotAccessible = false;
                 boolean setterNotAccessible = false;
@@ -79,6 +95,12 @@ public class BeanFieldCopierService implements BeanFieldCopier {
     private boolean compatibleTypes(Method getter, Method setter) {
         Class getterReturnType = getter.getReturnType();
         Class setterParameterType = setter.getParameterTypes()[0];
+        if (setterParameterType.isPrimitive()) {
+            setterParameterType = PRIMITIVES.get(setterParameterType.getName());
+        }
+        if (getterReturnType.isPrimitive()) {
+            getterReturnType = PRIMITIVES.get(getterReturnType.getName());
+        }
         while (!Objects.isNull(getterReturnType)) {
             if (getterReturnType == setterParameterType) {
                 return true;

@@ -1,4 +1,4 @@
-package ru.sberbank.school.task13.exception;
+package ru.sberbank.school.task13.exceptions;
 
 public class BeanFieldCopierServiceException extends RuntimeException {
 
