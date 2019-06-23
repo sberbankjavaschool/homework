@@ -1,21 +1,20 @@
 package ru.sberbank.school.task13.cacheproxy;
 
-import org.junit.Before;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import ru.sberbank.school.task13.cacheproxy.exception.CachedException;
-import ru.sberbank.school.task13.cacheproxy.util.TestInterface;
-import ru.sberbank.school.task13.cacheproxy.util.TestInterfaceImpl;
+import ru.sberbank.school.task13.cacheproxy.util.TestClass;
 
 import java.io.File;
+import java.util.concurrent.TimeUnit;
 
 class CacheProxyTest {
 
     @Test
-    void testMemoryCache() {
+    void testMemoryCache() throws InterruptedException {
         CacheProxy proxy = new CacheProxy("./src/test/java/ru/sberbank/school/task13/cacheproxy/cachefiles");
-        TestInterface proxyInstance = (TestInterface) proxy.cache(new TestInterfaceImpl());
+        TestClass proxyInstance = (TestClass) proxy.cache(new TestClass());
         String resultFirstCall = proxyInstance.getResultUseMemoryCache();
+        TimeUnit.SECONDS.sleep(1);
         String resultSecondCall = proxyInstance.getResultUseMemoryCache();
         Assertions.assertEquals(resultFirstCall, resultSecondCall);
     }
@@ -23,7 +22,7 @@ class CacheProxyTest {
     @Test
     void testFileCache() {
         CacheProxy proxy = new CacheProxy("./src/test/java/ru/sberbank/school/task13/cacheproxy/cachefiles");
-        TestInterface proxyInstance = (TestInterface) proxy.cache(new TestInterfaceImpl());
+        TestClass proxyInstance = (TestClass) proxy.cache(new TestClass());
         String resultFirstCall = proxyInstance.getResultUseFileCache("str", 3.14, 42);
         String resultSecondCall = proxyInstance.getResultUseFileCache("str", 3.14, 0);
         Assertions.assertEquals(resultFirstCall, resultSecondCall);

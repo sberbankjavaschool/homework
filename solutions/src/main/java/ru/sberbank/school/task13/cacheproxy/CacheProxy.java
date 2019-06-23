@@ -1,15 +1,16 @@
 package ru.sberbank.school.task13.cacheproxy;
 
 import lombok.NonNull;
+import net.sf.cglib.proxy.Enhancer;
+import net.sf.cglib.proxy.MethodInterceptor;
+import net.sf.cglib.proxy.MethodProxy;
 import ru.sberbank.school.task13.cacheproxy.exception.CachedException;
 import ru.sberbank.school.task13.cacheproxy.util.Cache;
 import ru.sberbank.school.task13.cacheproxy.util.CacheType;
 
 import java.io.*;
-import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,29 +27,29 @@ public class CacheProxy {
     }
 
     public Object cache(@NonNull Object service) {
-        Handler handler = new Handler(service);
+        Enhancer enhancer = new Enhancer();
+        enhancer.setSuperclass(service.getClass());
+        enhancer.setCallback(new MyMethodInterceptor(service));
 
-        return Proxy.newProxyInstance(service.getClass().getClassLoader(),
-                service.getClass().getInterfaces(),
-                handler);
+        return enhancer.create();
     }
 
     public String getDirectory() {
         return directory;
     }
 
-    private class Handler implements InvocationHandler {
+    private class MyMethodInterceptor implements MethodInterceptor {
+
         private final Object service;
         private final Map<String, Object> methodMap;
 
-        Handler(Object service) {
+        MyMethodInterceptor(Object service) {
             this.service = service;
             this.methodMap = new HashMap<>();
         }
 
-        public Object invoke(Object proxy, Method method, Object[] args)
-                throws IllegalAccessException, IllegalArgumentException,
-                InvocationTargetException {
+        @Override
+        public Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy) throws Throwable {
             if (!method.getReturnType().equals(void.class) && method.isAnnotationPresent(Cache.class)) {
                 String methodWithArgsName = getMethodWithArgsName(method, args);
                 try {
