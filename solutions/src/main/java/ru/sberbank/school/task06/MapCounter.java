@@ -41,7 +41,7 @@ public class MapCounter implements CountMap<Employee> {
     @Override
     public void addAll(CountMap<? extends Employee> source) {
         for (Employee e : source.toMap().keySet()) {
-           add(e);
+            add(e);
         }
     }
 
