@@ -1,7 +1,6 @@
 package ru.sberbank.school.task13.copier;
 
 import ru.sberbank.school.task13.BeanFieldCopier;
-import ru.sberbank.school.task13.copier.exception.CopierException;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -54,21 +53,16 @@ public class Copier implements BeanFieldCopier {
 
     private boolean isSuitable(String name, Method method) {
         if (name.equals("(get|is)")) {
-            if (method.getParameterTypes().length != 0 || method.getReturnType().equals(void.class)) {
-                throw new CopierException("У метода get/is не должно быть параметров "
-                        + "и должен быть тип возвращаемого значения!");
-            } else {
+            if (method.getParameterTypes().length == 0 || !method.getReturnType().equals(void.class)) {
                 return true;
             }
-        } else if (name.equals("set")) {
-            if (method.getParameterTypes().length != 1 || !method.getReturnType().equals(void.class)) {
-                throw new CopierException("У метода set должен "
-                        + "быть один параметр и не должно быть возвращаемого значения!");
-            } else {
+        }
+        if (name.equals("set")) {
+            if (method.getParameterTypes().length == 1 || method.getReturnType().equals(void.class)) {
                 return true;
             }
         }
         return false;
     }
-
 }
+

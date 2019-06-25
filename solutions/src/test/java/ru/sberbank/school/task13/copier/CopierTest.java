@@ -55,12 +55,4 @@ class CopierTest {
         Assertions.assertEquals(girl.getAnimal().getAge(), trainer.getAnimal().getAge());
         Assertions.assertEquals(girl.getAnimal().getWeight(), trainer.getAnimal().getWeight());
     }
-
-    @Test
-    @DisplayName("Выброс исключения при некорректных методах set и get.")
-    void incorrectSetGet() {
-        Figure f1 = new Figure(12);
-        Figure f2 = new Figure(15);
-        Assertions.assertThrows(CopierException.class, () -> copier.copy(f1, f2));
-    }
 }
