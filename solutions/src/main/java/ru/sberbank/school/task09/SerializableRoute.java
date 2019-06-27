@@ -9,7 +9,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 
-public class SerializableRoute extends Serializer<Route<City>>{
+public class SerializableRoute extends Serializer<Route<City>> {
 
 
     @Override
