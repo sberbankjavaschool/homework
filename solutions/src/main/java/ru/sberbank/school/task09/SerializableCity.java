@@ -13,19 +13,20 @@ public class SerializableCity extends Serializer<City> {
     public void write(Kryo kryo, Output output, City object) {
         output.writeInt(object.getId());
         output.writeString(object.getCityName());
-        kryo.writeObject(output, object.getFoundDate());
+        kryo.writeObjectOrNull(output, object.getFoundDate(), LocalDate.class);
         output.writeLong(object.getNumberOfInhabitants());
-        kryo.writeObject(output, object.getNearCities());
+        kryo.writeObjectOrNull(output, object.getNearCities(), List.class);
     }
 
     @Override
     public City read(Kryo kryo, Input input, Class<? extends City> type) {
         City city = kryo.newInstance(type);
+        kryo.reference(city);
         city.setId(input.readInt());
         city.setCityName(input.readString());
-        city.setFoundDate(kryo.readObject(input, LocalDate.class));
+        city.setFoundDate(kryo.readObjectOrNull(input, LocalDate.class));
         city.setNumberOfInhabitants(input.readLong());
-        city.setNearCities(kryo.readObject(input, List.class));
+        city.setNearCities(kryo.readObjectOrNull(input, List.class));
         return city;
     }
 }

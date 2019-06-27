@@ -31,15 +31,16 @@ public class InMemoryRouteServiceSerializableManager extends RouteService<City, 
         kryo.register(ArrayList.class);
         kryo.register(LinkedList.class);
         kryo.register(LocalDate.class);
+        kryo.register(List.class);
     }
 
     @Override
     public Route getRoute(@NonNull String from, @NonNull String to) {
         String fileName = from + to;
-        Route route;
+        Route<City> route;
         File file = new File(path + File.separator + fileName);
         if (file.exists()) {
-            route = deserializeRoute(file, from, to);
+            route = deserializeRoute(file);
         } else {
             route = getRouteInner(from, to);
             serializeRoute(file, route);
@@ -56,7 +57,7 @@ public class InMemoryRouteServiceSerializableManager extends RouteService<City, 
         }
     }
 
-    public Route deserializeRoute(File file, String from, String to) {
+    public Route deserializeRoute(File file) {
         try (InputStream in = new FileInputStream(file);
                 Input input = new Input(in)) {
             return (Route<City>) kryo.readObjectOrNull(input, Route.class);
