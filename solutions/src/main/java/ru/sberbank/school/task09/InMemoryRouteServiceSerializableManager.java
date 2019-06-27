@@ -14,10 +14,14 @@ import java.util.List;
 import java.util.UUID;
 
 @Solution(9)
-public class InMemoryRouteServiceSerializableManager extends RouteService {
+public class InMemoryRouteServiceSerializableManager extends RouteService<City, Route<City>> {
 
     private Kryo kryo;
 
+    InMemoryRouteServiceSerializableManager(@NonNull String path) {
+        super(path);
+        initialize();
+    }
 
     public void initialize() {
         kryo = new Kryo();
