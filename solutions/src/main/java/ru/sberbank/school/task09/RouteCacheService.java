@@ -34,10 +34,10 @@ public class RouteCacheService extends RouteService<City, Route<City>> {
     }
 
 
-    public void saveRoute(File file, Route route) {
+    public void saveRoute(File file, Route<City> route) {
         try (OutputStream outputStream = new FileOutputStream(file);
              Output output = new Output(outputStream)) {
-            kryo.writeObject(output, route);
+            kryo.writeObjectOrNull(output, route, Route.class);
         } catch (IOException ex) {
             ex.printStackTrace();
         }

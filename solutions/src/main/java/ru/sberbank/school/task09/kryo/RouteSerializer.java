@@ -7,6 +7,7 @@ import com.esotericsoftware.kryo.io.Output;
 import ru.sberbank.school.task09.City;
 import ru.sberbank.school.task09.Route;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -19,7 +20,7 @@ public class RouteSerializer extends Serializer<Route<City>> {
     @Override
     public void write(Kryo kryo, Output output, Route<City> route) {
         output.writeString(route.getRouteName());
-        kryo.writeObjectOrNull(output, route.getCities(), LinkedList.class);
+        kryo.writeObject(output, route.getCities());
     }
 
     @SuppressWarnings("unchecked")
@@ -29,7 +30,7 @@ public class RouteSerializer extends Serializer<Route<City>> {
 //        kryo.setReferences(true);
 //        kryo.reference(route);
         route.setRouteName(input.readString());
-        route.setCities(kryo.readObjectOrNull(input, LinkedList.class));
+        route.setCities((List<City>) kryo.readObject(input, ArrayList.class));
         return route;
     }
 }
