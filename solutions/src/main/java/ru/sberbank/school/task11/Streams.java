@@ -11,7 +11,9 @@ import java.util.stream.Stream;
  * Облегченная версия класса {@link Stream}
  */
 public class Streams<T> {
-    private List<T> list = new ArrayList<>();
+    private final List<T> list = new ArrayList<>();
+
+    private final List<Function <List<T>, List<?>>> functions = new ArrayList<>();
 
     private Streams(@NonNull T... elements) {
         list.addAll(Arrays.asList(elements));
@@ -54,7 +56,7 @@ public class Streams<T> {
      * @return стрим
      */
     public Streams<T> filter(@NonNull Predicate<T> object) {
-        Function<List<T>, List<T>> operation = (toFilter) -> {
+        functions.add((toFilter) -> {
             List<T> result = new ArrayList<>();
             for (T it : toFilter) {
                 if (object.test(it)) {
@@ -62,8 +64,8 @@ public class Streams<T> {
                 }
             }
             return result;
-        };
-        return new Streams<>(operation.apply(list));
+        });
+        return this;
     }
 
     /**
@@ -78,15 +80,16 @@ public class Streams<T> {
      * @param function - правило траснформации элементов.
      * @return стрим
      */
+    @SuppressWarnings("unchecked")
     public <R> Streams<R> transform(@NonNull Function<T, R> function) {
-        Function<List<T>, List<R>> operation = (toTransform) -> {
+        functions.add((toTransform) -> {
             List<R> result = new ArrayList<>();
             for (T it : toTransform) {
                 result.add(function.apply(it));
             }
             return result;
-        };
-        return new Streams<>(operation.apply(list));
+        });
+        return (Streams<R>) this;
     }
 
     /**
@@ -102,11 +105,11 @@ public class Streams<T> {
      * @return стрим
      */
     public Streams<T> sorted(@NonNull Comparator<? super T> comparator) {
-        Function<List<T>, List<T>> operation = (toSort) -> {
+        functions.add((toSort) -> {
             toSort.sort(comparator);
             return toSort;
-        };
-        return new Streams<>(operation.apply(list));
+        });
+        return this;
     }
 
     /**
@@ -121,9 +124,8 @@ public class Streams<T> {
      * @return Map, собранная по правилам keyMapper и valueMapper
      */
     public <K, V> Map<K, V> toMap(@NonNull Function<T , K> keyMapper,@NonNull  Function<T , V> valueMapper) {
-        List<T> resultList = new ArrayList<>(list);
         Map<K, V> map = new HashMap<>();
-        for (T it : resultList) {
+        for (T it : doFunctions()) {
             map.put(keyMapper.apply(it), valueMapper.apply(it));
         }
         return map;
@@ -139,8 +141,9 @@ public class Streams<T> {
      *
      * @return Set элементов
      */
+    @SuppressWarnings("unchecked")
     public Set toSet() {
-        return new LinkedHashSet(list);
+        return new LinkedHashSet(doFunctions());
     }
 
     /**
@@ -153,6 +156,24 @@ public class Streams<T> {
      * @return List элементов
      */
     public List toList() {
-        return new ArrayList<>(list);
+        return new ArrayList<>(doFunctions());
+    }
+
+    @SuppressWarnings("unchecked")
+    private List <T> doFunctions() {
+        if (functions.isEmpty()) {
+            return list;
+        }else {
+            List <?> result = new ArrayList<>(list);
+            for (Function f : functions) {
+                result = doFunction(result, f);
+            }
+            return  (List<T>)result;
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<?> doFunction( List<?> fList, Function f) {
+        return (List<?>) f.apply(fList);
     }
 }
