@@ -160,11 +160,11 @@ public class Streams<T> {
     }
 
     @SuppressWarnings("unchecked")
-    private List <T> doFunctions() {
+    private List<T> doFunctions() {
         if (functions.isEmpty()) {
             return list;
-        }else {
-            List <?> result = new ArrayList<>(list);
+        } else {
+            List<?> result = new ArrayList<>(list);
             for (Function f : functions) {
                 result = doFunction(result, f);
             }
@@ -173,7 +173,7 @@ public class Streams<T> {
     }
 
     @SuppressWarnings("unchecked")
-    private List<?> doFunction( List<?> fList, Function f) {
+    private List<?> doFunction(List<?> fList, Function f) {
         return (List<?>) f.apply(fList);
     }
 }
