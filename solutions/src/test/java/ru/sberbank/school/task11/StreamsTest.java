@@ -8,7 +8,6 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -90,6 +89,7 @@ class StreamsTest {
 
     @Test
     @DisplayName("filter than transform test")
+    @SuppressWarnings("unchecked")
     void filterAndTransformList() {
         List<String> list = intList.stream()
                 .filter(integer -> integer > 9)
@@ -127,6 +127,7 @@ class StreamsTest {
 
     @Test
     @DisplayName("filter than list test")
+    @SuppressWarnings("unchecked")
     void filterThanList() {
         List<Integer> list = intList.stream()
                 .filter(integer -> integer > 9)
@@ -141,6 +142,7 @@ class StreamsTest {
 
     @Test
     @DisplayName("Transforn than sort test")
+    @SuppressWarnings("unchecked")
     void transformThanFilterList() {
         Comparator<Double> comparator = Comparator.reverseOrder();
         List<Double> doubles = intList.stream()
