@@ -36,6 +36,8 @@ dependencies {
     implementation 'commons-cli:commons-cli:1.4'
     implementation 'org.codehaus.groovy:groovy-all:2.5.6'
 
+    compile group: 'cglib', name: 'cglib', version: '3.2.12'
+
     testCompile 'org.projectlombok:lombok:1.18.6'
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.6'
     
