@@ -16,7 +16,7 @@ public class SerializableManager extends SaveGameManager<MapState<GameObject>, G
 
     @Override
     public void initialize() {
-        throw new UnsupportedOperationException("Implement me!");
+
     }
 
     @Override
