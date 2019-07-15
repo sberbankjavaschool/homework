@@ -10,8 +10,8 @@ public class ScalableThreadPool implements ThreadPool {
     private int max;
 
     private ArrayList<Thread> threads;
-    private Queue<Runnable> tasks;
-    private volatile HashMap<String , Boolean> nThreads;
+    private final Queue<Runnable> tasks;
+
 
 
     public ScalableThreadPool(int min, int max) {
@@ -19,11 +19,7 @@ public class ScalableThreadPool implements ThreadPool {
         this.max = max;
         this.tasks = new LinkedList<>();
         this.threads = new ArrayList<>(max);
-        this.nThreads = new HashMap<>() {{
-            for (int i = 0; i < max; i++) {
-                put("Thread-" + i, false);
-            }
-        }};
+
     }
 
     @Override
@@ -45,11 +41,9 @@ public class ScalableThreadPool implements ThreadPool {
             throw new NoSuchElementException("No threads running! Call start() first");
         }
         synchronized (tasks) {
-            synchronized (threads) {
-                if ((threads.size() >= min) && (threads.size() < max) && !(tasks.isEmpty())) {
+                if ((threads.size() < max) && !(tasks.isEmpty())) {
                     newThread().start();
                 }
-            }
             tasks.add(runnable);
             tasks.notify();
         }
@@ -58,7 +52,7 @@ public class ScalableThreadPool implements ThreadPool {
 
     private Thread newThread() {
 
-        Thread thread = new Thread("Thread-" + threads.size() + 1) {
+        Thread thread = new Thread("Thread-" + (threads.size() + 1)) {
 
             @Override
             public void run() {
@@ -80,7 +74,10 @@ public class ScalableThreadPool implements ThreadPool {
                         }
                         runnable = tasks.poll();
                     }
-                    runnable.run();
+                    if (runnable != null) {
+//                        System.out.println( Thread.currentThread().getName());
+                        runnable.run();
+                    }
                 }
             }
         };

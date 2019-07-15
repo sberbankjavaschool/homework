@@ -9,7 +9,7 @@ import java.util.concurrent.Future;
 public class FixedThreadPool implements ThreadPool {
 
     private int scale;
-    private Queue<Runnable> tasks;
+    private final Queue<Runnable> tasks;
     private ArrayList<Thread> threads;
 
 
@@ -24,7 +24,8 @@ public class FixedThreadPool implements ThreadPool {
 
 
         for (int i = 0; i < scale; i++) {
-            Thread thread = new Thread("Thread-" + i) {
+            Thread thread = new Thread("Thread-" + (i + 1)) {
+
 
                 @Override
                 public void run() {
@@ -35,12 +36,15 @@ public class FixedThreadPool implements ThreadPool {
                                 try {
                                     tasks.wait();
                                 } catch (InterruptedException e) {
-                                    e.printStackTrace();
+//                                    e.printStackTrace();
                                 }
                             }
                             runnable = tasks.poll();
                         }
-                        runnable.run();
+                        if (runnable != null) {
+                            System.out.println(Thread.currentThread().getName());
+                            runnable.run();
+                        }
                     }
                 }
             };
