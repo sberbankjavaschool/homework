@@ -1,6 +1,7 @@
 package ru.sberbank.school.task02;
 
 import lombok.Getter;
+import lombok.NonNull;
 import ru.sberbank.school.task02.exception.FxConversionException;
 import ru.sberbank.school.task02.util.ClientOperation;
 import ru.sberbank.school.task02.util.Quote;
@@ -19,8 +20,10 @@ public class ConversionService implements FxConversionService {
     }
 
     @Override
-    public BigDecimal convert(ClientOperation operation, Symbol symbol, BigDecimal amount) {
-        if (operation == null || symbol == null || amount.compareTo(BigDecimal.ZERO) < 0 || amount == null) {
+    public BigDecimal convert(@NonNull ClientOperation operation,
+                              @NonNull Symbol symbol,
+                              @NonNull BigDecimal amount) {
+        if (amount.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException();
         }
         if (amount.compareTo(BigDecimal.ZERO) == 0) {

@@ -1,6 +1,7 @@
 package ru.sberbank.school.task02;
 
 
+import lombok.NonNull;
 import ru.sberbank.school.task02.util.*;
 
 import java.math.BigDecimal;
@@ -14,10 +15,12 @@ public class ExtendedConversionService extends ConversionService implements Exte
     }
 
     @Override
-    public Optional<BigDecimal> convertReversed(ClientOperation operation, Symbol symbol,
-                                                BigDecimal amount, Beneficiary beneficiary) {
+    public Optional<BigDecimal> convertReversed(@NonNull ClientOperation operation,
+                                                @NonNull Symbol symbol,
+                                                @NonNull BigDecimal amount,
+                                                @NonNull Beneficiary beneficiary) {
 
-        if (operation == null || symbol == null || amount.compareTo(BigDecimal.ZERO) < 0 || amount == null) {
+        if (amount.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException();
         }
 
