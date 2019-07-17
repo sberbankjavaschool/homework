@@ -23,12 +23,12 @@ public class ConversionService implements FxConversionService {
     public BigDecimal convert(@NonNull ClientOperation operation,
                               @NonNull Symbol symbol,
                               @NonNull BigDecimal amount) {
-        if (amount.compareTo(BigDecimal.ZERO) < 0) {
+        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException();
         }
-        if (amount.compareTo(BigDecimal.ZERO) == 0) {
+/*        if (amount.compareTo(BigDecimal.ZERO) == 0) {
             return BigDecimal.ZERO;
-        }
+        }*/
         Quote quote = getQuote(symbol, amount);
         return getPrice(operation, quote);
     }
