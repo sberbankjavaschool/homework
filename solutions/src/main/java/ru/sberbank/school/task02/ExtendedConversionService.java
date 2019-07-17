@@ -16,6 +16,11 @@ public class ExtendedConversionService extends ConversionService implements Exte
     @Override
     public Optional<BigDecimal> convertReversed(ClientOperation operation, Symbol symbol,
                                                 BigDecimal amount, Beneficiary beneficiary) {
+
+        if (operation == null || symbol == null || amount.compareTo(BigDecimal.ZERO) < 0 || amount == null) {
+            throw new IllegalArgumentException();
+        }
+
         if (amount.compareTo(BigDecimal.ZERO) == 0) {
             return Optional.of(BigDecimal.ZERO);
         }
@@ -36,12 +41,12 @@ public class ExtendedConversionService extends ConversionService implements Exte
         return Optional.empty();
     }
 
-    private List<BigDecimal> getPriceList(ClientOperation operation, Symbol symbol,BigDecimal amount) {
+    private List<BigDecimal> getPriceList(ClientOperation operation, Symbol symbol, BigDecimal amount) {
         List<Quote> quotes = getExternalQuotesService().getQuotes(symbol);
         List<BigDecimal> foundPrices = new ArrayList<>();
         BigDecimal priceQuote;
         BigDecimal amountCoverted;
-        for (Quote quoteEl: quotes) {
+        for (Quote quoteEl : quotes) {
             priceQuote = getPrice(operation, quoteEl);
             amountCoverted = amount.divide(priceQuote, 100, RoundingMode.HALF_DOWN);
             if (amountCoverted.compareTo(quoteEl.getVolumeSize()) < 0 || quoteEl.isInfinity()) {

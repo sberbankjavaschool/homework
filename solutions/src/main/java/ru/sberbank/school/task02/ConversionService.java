@@ -1,6 +1,7 @@
 package ru.sberbank.school.task02;
 
 import lombok.Getter;
+import ru.sberbank.school.task02.exception.FxConversionException;
 import ru.sberbank.school.task02.util.ClientOperation;
 import ru.sberbank.school.task02.util.Quote;
 import ru.sberbank.school.task02.util.Symbol;
@@ -19,13 +20,8 @@ public class ConversionService implements FxConversionService {
 
     @Override
     public BigDecimal convert(ClientOperation operation, Symbol symbol, BigDecimal amount) {
-        try {
-            if (operation == null || symbol == null || amount.compareTo(BigDecimal.ZERO) < 0 || amount == null) {
-                throw new IllegalArgumentException();
-            }
-        } catch (IllegalArgumentException ex) {
-            //System.out.println("incorrect data entered");
-            return null;
+        if (operation == null || symbol == null || amount.compareTo(BigDecimal.ZERO) < 0 || amount == null) {
+            throw new IllegalArgumentException();
         }
         if (amount.compareTo(BigDecimal.ZERO) == 0) {
             return BigDecimal.ZERO;
@@ -34,8 +30,11 @@ public class ConversionService implements FxConversionService {
         return getPrice(operation, quote);
     }
 
-    private Quote getQuote(Symbol symbol,BigDecimal amount) {
+    private Quote getQuote(Symbol symbol, BigDecimal amount) {
         List<Quote> quotes = externalQuotesService.getQuotes(symbol);
+        if (quotes == null || quotes.isEmpty()) {
+            throw new FxConversionException("Нет квот");
+        }
         return getNearQuoteOfVolume(quotes, amount);
     }
 
