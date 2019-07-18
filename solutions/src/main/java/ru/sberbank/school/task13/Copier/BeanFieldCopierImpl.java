@@ -1,5 +1,7 @@
-package ru.sberbank.school.task13;
+package ru.sberbank.school.task13.Copier;
 
+
+import ru.sberbank.school.task13.BeanFieldCopier;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
