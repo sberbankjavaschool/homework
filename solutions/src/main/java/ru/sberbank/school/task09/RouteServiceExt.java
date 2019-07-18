@@ -1,7 +1,6 @@
 package ru.sberbank.school.task09;
 
 import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.KryoException;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 import com.esotericsoftware.kryo.util.DefaultInstantiatorStrategy;
@@ -17,11 +16,11 @@ import java.util.List;
 import java.util.UUID;
 
 @Solution(9)
-public class RouteServiceReal extends RouteService<City, Route<City>> {
+public class RouteServiceExt extends RouteService<City, Route<City>> {
 
     private Kryo kryo;
 
-    public RouteServiceReal(@NonNull String path) {
+    public RouteServiceExt(@NonNull String path) {
         super(path);
         this.kryo = new Kryo();
         kryo.register(Route.class, new RouteKryoSerializer());
@@ -35,15 +34,26 @@ public class RouteServiceReal extends RouteService<City, Route<City>> {
     }
 
     @Override
-    public Route getRoute(@NonNull String from,@NonNull String to) {//TODO
-        String key = from + "_" + to;
-        return null;
+    public Route<City> getRoute(@NonNull String from,@NonNull String to) {
+        Route<City> route;
+        File file = getFile(from, to);
+        if (file.exists()) {
+            route = readRoute(file);
+        } else {
+            route = getRouteInner(from, to);
+            writeRoute(file, route);
+        }
+        return route;
     }
 
-    private Route<City> readRoute(String key) {
-        String file = path + File.separator + key + ".txt";
+    private File getFile(String from, String to) {
+        String fileName = from + "_" + to;
+        return new File(path + File.separator + fileName);
+    }
+
+    private Route<City> readRoute(File file) {
         try (FileInputStream fis = new FileInputStream(file);
-             Input input = new Input(fis)) {
+                Input input = new Input(fis)) {
             return (Route<City>) kryo.readObjectOrNull(input, Route.class);
         } catch (IOException e) {
             e.printStackTrace();
@@ -51,10 +61,9 @@ public class RouteServiceReal extends RouteService<City, Route<City>> {
         return null;
     }
 
-    private void writeRoute(String key, Route<City> route) {
-        String file = path + File.separator + key + ".txt";
+    private void writeRoute(File file, Route<City> route) {
         try (FileOutputStream fos = new FileOutputStream(file);
-             Output output = new Output(fos)) {
+                Output output = new Output(fos)) {
             kryo.writeObjectOrNull(output, route, Route.class);
         } catch (IOException e) {
             e.printStackTrace();
@@ -67,7 +76,7 @@ public class RouteServiceReal extends RouteService<City, Route<City>> {
     }
 
     @Override
-    protected Route createRoute(@NonNull List cities) {
+    protected Route<City> createRoute(@NonNull List cities) {
         if (cities.isEmpty()) {
             throw new IllegalArgumentException();
         }

@@ -27,7 +27,6 @@ public class CityKryoSerializer extends Serializer<City> {
     @Override
     public City read(Kryo kryo, Input input, Class<? extends City> type) {
         City city = kryo.newInstance(type);
-        //kryo.reference(city);
         city.setId(input.readInt());
         city.setCityName(input.readString());
         city.setNumberOfInhabitants(input.readLong());
