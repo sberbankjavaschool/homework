@@ -1,6 +1,7 @@
 package ru.sberbank.school.task02;
 
 
+import lombok.NonNull;
 import ru.sberbank.school.task02.util.*;
 
 import java.math.BigDecimal;
@@ -14,11 +15,15 @@ public class ExtendedConversionService extends ConversionService implements Exte
     }
 
     @Override
-    public Optional<BigDecimal> convertReversed(ClientOperation operation, Symbol symbol,
-                                                BigDecimal amount, Beneficiary beneficiary) {
-        if (amount.compareTo(BigDecimal.ZERO) == 0) {
-            return Optional.of(BigDecimal.ZERO);
+    public Optional<BigDecimal> convertReversed(@NonNull ClientOperation operation,
+                                                @NonNull Symbol symbol,
+                                                @NonNull BigDecimal amount,
+                                                @NonNull Beneficiary beneficiary) {
+
+        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException();
         }
+
         List<BigDecimal> foundPrices = getPriceList(operation, symbol, amount);
         BigDecimal priceResult;
         if (foundPrices.isEmpty()) {
@@ -36,12 +41,12 @@ public class ExtendedConversionService extends ConversionService implements Exte
         return Optional.empty();
     }
 
-    private List<BigDecimal> getPriceList(ClientOperation operation, Symbol symbol,BigDecimal amount) {
+    private List<BigDecimal> getPriceList(ClientOperation operation, Symbol symbol, BigDecimal amount) {
         List<Quote> quotes = getExternalQuotesService().getQuotes(symbol);
         List<BigDecimal> foundPrices = new ArrayList<>();
         BigDecimal priceQuote;
         BigDecimal amountCoverted;
-        for (Quote quoteEl: quotes) {
+        for (Quote quoteEl : quotes) {
             priceQuote = getPrice(operation, quoteEl);
             amountCoverted = amount.divide(priceQuote, 100, RoundingMode.HALF_DOWN);
             if (amountCoverted.compareTo(quoteEl.getVolumeSize()) < 0 || quoteEl.isInfinity()) {
