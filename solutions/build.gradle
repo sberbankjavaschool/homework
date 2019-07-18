@@ -21,7 +21,9 @@ javadoc {
 
 dependencies {
     implementation project(":tasks")
-    implementation project(":common")
+    implementation (project(":common")) {
+        exclude module: 'tasks'
+    }
 
     implementation 'com.esotericsoftware:kryo:5.0.0-RC4'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.9.9'
