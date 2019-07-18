@@ -53,11 +53,7 @@ public class RouteServiceExt extends RouteService<City, Route<City>> {
 
     private Route<City> readRoute(File file) {
         try (FileInputStream fis = new FileInputStream(file);
-<<<<<<< HEAD
                 Input input = new Input(fis)) {
-=======
-             Input input = new Input(fis)) {
->>>>>>> a74517ca69f0dbbb085e7da973da37a50ddcfb07
             return (Route<City>) kryo.readObjectOrNull(input, Route.class);
         } catch (IOException e) {
             e.printStackTrace();
@@ -67,11 +63,7 @@ public class RouteServiceExt extends RouteService<City, Route<City>> {
 
     private void writeRoute(File file, Route<City> route) {
         try (FileOutputStream fos = new FileOutputStream(file);
-<<<<<<< HEAD
                 Output output = new Output(fos)) {
-=======
-             Output output = new Output(fos)) {
->>>>>>> a74517ca69f0dbbb085e7da973da37a50ddcfb07
             kryo.writeObjectOrNull(output, route, Route.class);
         } catch (IOException e) {
             e.printStackTrace();
