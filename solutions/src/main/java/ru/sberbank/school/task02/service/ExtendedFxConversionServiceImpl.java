@@ -1,5 +1,6 @@
 package ru.sberbank.school.task02.service;
 
+import lombok.NonNull;
 import ru.sberbank.school.task02.ExtendedFxConversionService;
 import ru.sberbank.school.task02.ExternalQuotesService;
 import ru.sberbank.school.task02.util.Beneficiary;
@@ -22,10 +23,13 @@ public class ExtendedFxConversionServiceImpl extends FxConversionServiceImpl imp
     }
 
     @Override
-    public Optional<BigDecimal> convertReversed(ClientOperation operation,
-                                                Symbol symbol,
-                                                BigDecimal amount,
-                                                Beneficiary beneficiary) {
+    public Optional<BigDecimal> convertReversed(@NonNull ClientOperation operation,
+                                                @NonNull Symbol symbol,
+                                                @NonNull BigDecimal amount,
+                                                @NonNull Beneficiary beneficiary) {
+        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException();
+        }
 
         this.list = externalQuotesService.getQuotes(symbol);
 

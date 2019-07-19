@@ -1,7 +1,9 @@
 package ru.sberbank.school.task02.service;
 
+import lombok.NonNull;
 import ru.sberbank.school.task02.ExternalQuotesService;
 import ru.sberbank.school.task02.FxConversionService;
+import ru.sberbank.school.task02.exception.FxConversionException;
 import ru.sberbank.school.task02.util.ClientOperation;
 import ru.sberbank.school.task02.util.Quote;
 import ru.sberbank.school.task02.util.Symbol;
@@ -22,9 +24,19 @@ public class FxConversionServiceImpl implements FxConversionService {
     protected List<Quote> list;
 
     @Override
-    public BigDecimal convert(ClientOperation operation, Symbol symbol, BigDecimal amount) {
+    public BigDecimal convert(@NonNull ClientOperation operation,
+                              @NonNull Symbol symbol,
+                              @NonNull BigDecimal amount) {
+
+        if (amount.compareTo(BigDecimal.ZERO) <= 0){
+            throw new IllegalArgumentException();
+        }
 
         this.list = externalQuotesService.getQuotes(symbol);
+
+        if (list == null || list.isEmpty()){
+            throw new FxConversionException("The quotes are not found!");
+        }
 
         BigDecimal upperVolume = getUpperVolume(amount);
 
