@@ -9,8 +9,12 @@ public class ScalableThreadPool implements ThreadPool {
     private int min;
     private int max;
 
-    private ArrayList<Thread> threads;
+    private final ArrayList<Thread> threads;
     private final Queue<Runnable> tasks;
+    private final Queue<Integer> threadID;
+    private volatile int count;
+    private volatile int countThreads;
+
 
 
 
@@ -19,40 +23,74 @@ public class ScalableThreadPool implements ThreadPool {
         this.max = max;
         this.tasks = new LinkedList<>();
         this.threads = new ArrayList<>(max);
+        this.threadID = new LinkedList<>();
+        this.count = min;
+
 
     }
 
     @Override
     public void start() {
+        synchronized (threads) {
 
-        for (int i = 0; i < min; i++) {
-            newThread().start();
+            if (!threads.isEmpty()) {
+                throw new IllegalStateException("This method is already start!");
+            }
+
+            for (int i = 0; i < min; i++) {
+                threadID.add(i + 1);
+                newThread().start();
+            }
         }
     }
 
     @Override
     public void stopNow() {
+        synchronized (tasks) {
+
+            tasks.clear();
+
+            synchronized (threads) {
+
+                for (Thread t : threads) {
+                    t.interrupt();
+                }
+                threads.clear();
+            }
+        }
 
     }
 
     @Override
     public void execute(Runnable runnable) {
-        if (threads.isEmpty()) {
-            throw new NoSuchElementException("No threads running! Call start() first");
+        synchronized (threads) {
+            if (threads.isEmpty()) {
+                throw new NoSuchElementException("No threads running! Call start() first");
+            }
         }
         synchronized (tasks) {
-                if ((threads.size() < max) && !(tasks.isEmpty())) {
-                    newThread().start();
+
+            if ((threads.size() < max) && !(tasks.isEmpty())) {
+                if (count > max) {
+                    count++;
+                    threadID.add(count);
                 }
+                newThread().start();
+            }
+
             tasks.add(runnable);
+
             tasks.notify();
+
         }
 
     }
 
     private Thread newThread() {
 
-        Thread thread = new Thread("Thread-" + (threads.size() + 1)) {
+        int id = threadID.poll();
+
+        Thread thread = new Thread("Thread-" + id) {
 
             @Override
             public void run() {
@@ -62,8 +100,9 @@ public class ScalableThreadPool implements ThreadPool {
                         if (tasks.isEmpty()) {
                             try {
                                 if (threads.size() > min) {
-                                    Thread.currentThread().interrupt();
+                                    threadID.add(id);
                                     threads.remove(Thread.currentThread());
+                                    Thread.currentThread().interrupt();
                                 } else {
                                     tasks.wait();
                                 }
@@ -74,9 +113,10 @@ public class ScalableThreadPool implements ThreadPool {
                         }
                         runnable = tasks.poll();
                     }
-                    if (runnable != null) {
-//                        System.out.println( Thread.currentThread().getName());
+                    try {
                         runnable.run();
+                    } catch (NullPointerException ignored) {
+
                     }
                 }
             }
