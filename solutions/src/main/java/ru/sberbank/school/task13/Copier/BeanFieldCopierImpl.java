@@ -10,17 +10,6 @@ import java.util.stream.Collectors;
 
 public class BeanFieldCopierImpl implements BeanFieldCopier {
 
-
-
-    public static void main(String[] args) {
-        BeanFieldCopier bn = new BeanFieldCopierImpl();
-        Ruzik Рузель1 = new Ruzik(17, "Рузель", "мужик");
-        Ruzik Рузель2 = new Ruzik();
-        bn.copy(Рузель1, Рузель2);
-        System.out.println(Рузель2);
-    }
-
-
     @Override
     public void copy(Object from, Object to) {
 
