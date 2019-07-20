@@ -52,7 +52,7 @@ public class Client implements FxClientController {
             throw new FxConversionException("Сan't calculate the response", e);
         }
 
-        if (response.isEmpty()) {
+        if (response.isPresent()) {
             throw new FxConversionException("Response is not found, got a space.");
         }
 
