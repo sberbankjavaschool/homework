@@ -11,11 +11,9 @@ public class ScalableThreadPool implements ThreadPool {
 
     private final ArrayList<Thread> threads;
     private final Queue<Runnable> tasks;
-    private final Queue<Integer> threadID;
+    public final Queue<Integer> threadID;
     private volatile int count;
     private volatile int countThreads;
-
-
 
 
     public ScalableThreadPool(int min, int max) {
@@ -36,10 +34,12 @@ public class ScalableThreadPool implements ThreadPool {
             if (!threads.isEmpty()) {
                 throw new IllegalStateException("This method is already start!");
             }
-
-            for (int i = 0; i < min; i++) {
-                threadID.add(i + 1);
-                newThread().start();
+            synchronized (threadID) {
+                for (int i = 0; i < min; i++) {
+                    threadID.add(i + 1);
+                    System.out.println(threadID.size());
+                    newThread().start();
+                }
             }
         }
     }
@@ -70,15 +70,18 @@ public class ScalableThreadPool implements ThreadPool {
         }
         synchronized (tasks) {
 
-            if ((threads.size() < max) && !(tasks.isEmpty())) {
-                if (count > max) {
-                    count++;
-                    threadID.add(count);
+            tasks.add(runnable);
+
+            synchronized (threadID) {
+                if ((threads.size() < max) && (threadID.size() == 0)) {
+                    if (count < max) {
+                        ++count;
+                        threadID.add(count);
+                    }
+                    newThread().start();
                 }
-                newThread().start();
             }
 
-            tasks.add(runnable);
 
             tasks.notify();
 
@@ -99,8 +102,8 @@ public class ScalableThreadPool implements ThreadPool {
                     synchronized (tasks) {
                         if (tasks.isEmpty()) {
                             try {
+                                threadID.add(id);
                                 if (threads.size() > min) {
-                                    threadID.add(id);
                                     threads.remove(Thread.currentThread());
                                     Thread.currentThread().interrupt();
                                 } else {
