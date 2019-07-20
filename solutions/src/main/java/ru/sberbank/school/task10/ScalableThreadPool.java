@@ -12,8 +12,9 @@ public class ScalableThreadPool implements ThreadPool {
     private final ArrayList<Thread> threads;
     private final Queue<Runnable> tasks;
     public final Queue<Integer> threadID;
+
     private volatile int count;
-    private volatile int countThreads;
+    private volatile boolean stopped;
 
 
     public ScalableThreadPool(int min, int max) {
@@ -23,6 +24,7 @@ public class ScalableThreadPool implements ThreadPool {
         this.threads = new ArrayList<>(max);
         this.threadID = new LinkedList<>();
         this.count = min;
+        this.stopped = false;
 
 
     }
@@ -31,7 +33,7 @@ public class ScalableThreadPool implements ThreadPool {
     public void start() {
         synchronized (threads) {
 
-            if (!threads.isEmpty()) {
+            if (!threads.isEmpty() && !stopped) {
                 throw new IllegalStateException("This method is already start!");
             }
             synchronized (threadID) {
@@ -41,11 +43,16 @@ public class ScalableThreadPool implements ThreadPool {
                     newThread().start();
                 }
             }
+            stopped = false;
         }
     }
 
     @Override
     public void stopNow() {
+        if (stopped) {
+            throw new IllegalStateException("This method is already invoke!");
+        }
+
         synchronized (tasks) {
 
             tasks.clear();
@@ -58,7 +65,7 @@ public class ScalableThreadPool implements ThreadPool {
                 threads.clear();
             }
         }
-
+        stopped = true;
     }
 
     @Override
@@ -82,7 +89,6 @@ public class ScalableThreadPool implements ThreadPool {
                 }
             }
 
-
             tasks.notify();
 
         }
@@ -90,6 +96,7 @@ public class ScalableThreadPool implements ThreadPool {
     }
 
     private Thread newThread() {
+
 
         int id = threadID.poll();
 
@@ -111,7 +118,8 @@ public class ScalableThreadPool implements ThreadPool {
                                 }
 
                             } catch (InterruptedException e) {
-                                e.printStackTrace();
+                                System.out.println();
+                                Thread.currentThread().interrupt();
                             }
                         }
                         runnable = tasks.poll();
