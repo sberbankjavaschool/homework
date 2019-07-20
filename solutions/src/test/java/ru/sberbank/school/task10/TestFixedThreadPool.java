@@ -4,6 +4,10 @@ import org.junit.After;
 import org.junit.jupiter.api.Assertions;
 import org.junit.Before;
 import org.junit.Test;
+import ru.sberbank.school.task06.CountMap;
+import ru.sberbank.school.task06.CountMapImpl;
+
+import java.util.Map;
 
 
 public class TestFixedThreadPool {
@@ -15,53 +19,41 @@ public class TestFixedThreadPool {
     private int thread_1;
     private int thread_2;
     private int thread_3;
+    private CountMap<String> countMapThreads;
 
     @Before
     public void initialize() {
        pool = new ScalableThreadPool(3, 5);
+       countMapThreads = new CountMapImpl<>();
 //        pool = new FixedThreadPool(3);
         pool.start();
     }
 
     @Test
-    public void checkRepeatStart() {
-        Assertions.assertThrows(IllegalStateException.class, () -> pool.start());
+    public void checkAdequacy() throws InterruptedException {
+        checkAdequacy(pool, 10000, 1000);
     }
 
-    @Test
-    public void checkIncrement() throws InterruptedException {
-        for (int i = 0; i < 1000000; i++) {
+    void checkAdequacy(ThreadPool pool, int countTasks, int sleep) throws InterruptedException {
+
+        for (int i = 0; i < countTasks; i++) {
             pool.execute(() -> {
                 synchronized (lock) {
-                    count++;
+                    countMapThreads.add(Thread.currentThread().getName());
+
                 }
             });
         }
-        Thread.sleep(1000);
+        Thread.sleep(sleep);
 
-        Assertions.assertEquals(1000000, count);
-    }
-
-    @Test
-    public void check() throws InterruptedException {
-        for (int i = 0; i < 10000; i++) {
-            pool.execute(() -> {
-                synchronized (lock) {
-                    if (Thread.currentThread().getName().equals("Thread-1")) {
-                        thread_1++;
-                    }
-                    if (Thread.currentThread().getName().equals("Thread-2")) {
-                        thread_2++;
-                    }
-                    if (Thread.currentThread().getName().equals("Thread-3")) {
-                        thread_3++;
-                    }
-                }
-            });
+        int countCompletedTasks = 0;
+        Map<String, Integer> mapThreads = countMapThreads.toMap();
+        for (String threadName : mapThreads.keySet()) {
+            countCompletedTasks += countMapThreads.getCount(threadName);
         }
-        Thread.sleep(1000);
 
-        Assertions.assertEquals(10000, thread_1 + thread_2 + thread_3);
+        System.out.println(mapThreads.toString());
+        Assertions.assertEquals(countTasks, countCompletedTasks);
     }
 
     @After
