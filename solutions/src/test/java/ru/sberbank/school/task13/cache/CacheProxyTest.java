@@ -36,7 +36,6 @@ class CacheProxyTest {
 
     }
 
-
     @Test
     @DisplayName("Выброс исключения при создании прокси с некорректной дирректорией.")
     void incorrectFilesDirectory() {
@@ -84,7 +83,4 @@ class CacheProxyTest {
         assertNotEquals(det1, det2);
         assertEquals(det1.toString(), det2.toString());
     }
-
-
-
 }

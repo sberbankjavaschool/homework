@@ -115,7 +115,9 @@ public class CacheProxy {
             return result;
         }
 
-        private Object invokeFile(Method method, Object[] args) throws InvocationTargetException, IllegalAccessException {
+        private Object invokeFile(Method method, Object[] args)
+                throws InvocationTargetException, IllegalAccessException {
+
             String key = getKeyToCache(method, args);
             String fileName = key + ".cache";
 
@@ -150,7 +152,9 @@ public class CacheProxy {
         }
 
         private File findInDirectory(File toFind) {
-            String fullNameToFind = isZip(toFind.getAbsolutePath()) ? (toFind.getAbsolutePath() + ".zip") : toFind.getAbsolutePath();
+            String fullNameToFind = isZip(toFind.getAbsolutePath())
+                    ? (toFind.getAbsolutePath() + ".zip") : toFind.getAbsolutePath();
+
             File result = null;
             File toCheck = new File(fullNameToFind);
 
@@ -178,7 +182,7 @@ public class CacheProxy {
             try (FileInputStream fin = new FileInputStream(file);
                  ObjectInputStream oin = new ObjectInputStream(fin)) {
 
-                result = oin.readObject();
+                    result = oin.readObject();
 
             } catch (ClassNotFoundException | IOException e) {
                 throw new CacheProxyException("Error occurred while loading file: " + file.getName(), e);
@@ -193,7 +197,8 @@ public class CacheProxy {
 
                 if (zipFileToGet.exists()) {
                     try (ZipFile zipFile = new ZipFile(file.getAbsolutePath())) {
-                        ZipEntry zipEntry = zipFile.getEntry(file.getName().replace(".zip", ""));
+                        ZipEntry zipEntry = zipFile.getEntry(
+                                file.getName().replace(".zip", ""));
 
                         try (InputStream in = zipFile.getInputStream(zipEntry)) {
                             byte[] bytes = getBytes(in);
@@ -205,8 +210,8 @@ public class CacheProxy {
                     }
                 }
             } catch (IOException | ClassNotFoundException e) {
-                throw new CacheProxyException("Error occurred while loading file: " + file.getName() +
-                        "from a zip", e);
+                throw new CacheProxyException("Error occurred while loading file: "
+                        + file.getName() + "from a zip", e);
             }
 
             return result;
@@ -226,18 +231,17 @@ public class CacheProxy {
         }
 
         private void writeToCacheFile(File file, Object toSave) {
-           try {
-               isSerializableCheck(toSave);
+            try {
+                isSerializableCheck(toSave);
 
-               if (isZip(file.getName())) {
-                   writeZipFile(file, toSave);
-               } else {
-                   writeToFile(file, toSave);
-               }
-
+                if (isZip(file.getName())) {
+                    writeZipFile(file, toSave);
+                } else {
+                    writeToFile(file, toSave);
+                }
             } catch (IOException e) {
-                throw new CacheProxyException("Error occurred while writing object: " +
-                        toSave + " to file: " + file.getName(), e);
+                throw new CacheProxyException("Error occurred while writing object: "
+                        + toSave + " to file: " + file.getName(), e);
             }
         }
 
@@ -269,8 +273,8 @@ public class CacheProxy {
             Cache annotation = method.getAnnotation(Cache.class);
             StringBuilder key = new StringBuilder();
             boolean isZip = annotation.zip();
-            String methodName = !annotation.serviceName().isEmpty() ?
-                    annotation.serviceName() : method.getName();
+            String methodName = !annotation.serviceName().isEmpty()
+                    ? annotation.serviceName() : method.getName();
 
             if (isZip) {
                 key.append("zip");
