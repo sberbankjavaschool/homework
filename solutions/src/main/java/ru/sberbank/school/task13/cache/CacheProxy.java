@@ -180,9 +180,9 @@ public class CacheProxy {
             Object result = null;
 
             try (FileInputStream fin = new FileInputStream(file);
-                 ObjectInputStream oin = new ObjectInputStream(fin)) {
+                    ObjectInputStream oin = new ObjectInputStream(fin)) {
 
-                    result = oin.readObject();
+                result = oin.readObject();
 
             } catch (ClassNotFoundException | IOException e) {
                 throw new CacheProxyException("Error occurred while loading file: " + file.getName(), e);
@@ -197,7 +197,7 @@ public class CacheProxy {
 
                 if (zipFileToGet.exists()) {
                     try (ZipFile zipFile = new ZipFile(file.getAbsolutePath())) {
-                        ZipEntry zipEntry = zipFile.getEntry(
+                            ZipEntry zipEntry = zipFile.getEntry(
                                 file.getName().replace(".zip", ""));
 
                         try (InputStream in = zipFile.getInputStream(zipEntry)) {
@@ -220,8 +220,8 @@ public class CacheProxy {
         private byte[] getBytes(InputStream in) throws IOException {
             byte[] buffer = new byte[in.available()];
             try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-                int r;
 
+                int r;
                 while ((r = in.read(buffer)) != -1) {
                     baos.write(buffer,0, r);
                 }
@@ -250,8 +250,8 @@ public class CacheProxy {
 
             File zipFile = new File(file.getAbsolutePath() + ".zip");
             try (ZipOutputStream zout = new ZipOutputStream(new FileOutputStream(zipFile));
-                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                 ObjectOutputStream oos = new ObjectOutputStream(baos)) {
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    ObjectOutputStream oos = new ObjectOutputStream(baos)) {
 
                 ZipEntry zipEntry = new ZipEntry(file.getName());
                 zout.putNextEntry(zipEntry);
@@ -264,7 +264,8 @@ public class CacheProxy {
 
         private void writeToFile(File file, Object toSave) throws IOException {
             try (FileOutputStream fout = new FileOutputStream(file);
-                ObjectOutputStream out = new ObjectOutputStream(fout)) {
+                    ObjectOutputStream out = new ObjectOutputStream(fout)) {
+
                 out.writeObject(toSave);
             }
         }
