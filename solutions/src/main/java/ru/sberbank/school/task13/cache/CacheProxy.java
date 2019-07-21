@@ -197,8 +197,9 @@ public class CacheProxy {
 
                 if (zipFileToGet.exists()) {
                     try (ZipFile zipFile = new ZipFile(file.getAbsolutePath())) {
-                            ZipEntry zipEntry = zipFile.getEntry(
-                                file.getName().replace(".zip", ""));
+
+                        ZipEntry zipEntry = zipFile.getEntry(
+                                    file.getName().replace(".zip", ""));
 
                         try (InputStream in = zipFile.getInputStream(zipEntry)) {
                             byte[] bytes = getBytes(in);
