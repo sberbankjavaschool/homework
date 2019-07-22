@@ -20,10 +20,14 @@ public class RouteServiceTest {
         Route<City> falseRoute = routeService.getRoute(cityTwo, cityOne);
 
         Assertions.assertEquals(route.getRouteName(), otherRoute.getRouteName());
+        Assertions.assertEquals(route.toString(), otherRoute.toString());
         Assertions.assertIterableEquals(route.getCities(), otherRoute.getCities());
+
+        Assertions.assertNotSame(route, otherRoute);
 
         Assertions.assertNotEquals(otherRoute.getRouteName(), falseRoute.getRouteName());
         Assertions.assertNotEquals(otherRoute.getCities().get(0), falseRoute.getCities().get(0));
+        Assertions.assertNotEquals(route.toString(), falseRoute.toString());
     }
 
     @Test
@@ -34,6 +38,34 @@ public class RouteServiceTest {
     @Test
     public void unknownCityExceptionTest() {
         Assertions.assertThrows(UnknownCityException.class, () -> routeService.getRoute("Black Mesa", "Aperture"));
+    }
+
+    @Test
+    public void nullAndFailArgumentsTest() {
+        Assertions.assertThrows(IllegalArgumentException.class, () -> routeService.getRoute("", cityTwo));
+        Assertions.assertThrows(NullPointerException.class, () -> routeService.getRoute(cityOne, null));
+        Assertions.assertThrows(NullPointerException.class, () -> routeService.getRoute("", null));
+    }
+
+    @Test
+    public void checkDataTest() {
+        Route<City> route = routeService.getRoute(cityOne, cityTwo);
+        Route<City> otherRoute = routeService.getRoute(cityOne, cityTwo);
+
+        System.out.println(route.getCities().get(0).getId());
+        System.out.println(otherRoute.getCities().get(0).getId());
+
+        System.out.println(route.getCities().get(0).getCityName());
+        System.out.println(otherRoute.getCities().get(0).getCityName());
+
+        System.out.println(route.getCities().get(0).getNumberOfInhabitants());
+        System.out.println(otherRoute.getCities().get(0).getNumberOfInhabitants());
+
+        System.out.println(route.getCities().get(0).getFoundDate());
+        System.out.println(otherRoute.getCities().get(0).getFoundDate());
+
+        System.out.println(route.getCities().get(0).getNearCities());
+        System.out.println(otherRoute.getCities().get(0).getNearCities());
     }
 
     @AfterAll

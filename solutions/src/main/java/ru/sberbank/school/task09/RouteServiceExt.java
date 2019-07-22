@@ -23,10 +23,10 @@ public class RouteServiceExt extends RouteService<City, Route<City>> {
     public RouteServiceExt(@NonNull String path) {
         super(path);
         this.kryo = new Kryo();
-        kryo.register(Route.class, new RouteKryoSerializer());
-        kryo.register(City.class, new CityKryoSerializer());
         kryo.setReferences(true);
         kryo.setInstantiatorStrategy(new DefaultInstantiatorStrategy(new StdInstantiatorStrategy()));
+        kryo.register(Route.class, new RouteKryoSerializer());
+        kryo.register(City.class, new CityKryoSerializer());
         kryo.register(String.class);
         kryo.register(LocalDate.class);
         kryo.register(LinkedList.class);
@@ -35,6 +35,9 @@ public class RouteServiceExt extends RouteService<City, Route<City>> {
 
     @Override
     public Route<City> getRoute(@NonNull String from,@NonNull String to) {
+        if (from.isEmpty() || to.isEmpty()) {
+            throw new IllegalArgumentException("Имя города не может быть пустое");
+        }
         Route<City> route;
         File file = getFile(from, to);
         if (file.exists()) {
