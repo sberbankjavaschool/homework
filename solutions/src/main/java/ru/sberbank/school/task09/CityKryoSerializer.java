@@ -5,8 +5,7 @@ import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 import lombok.NonNull;
-import ru.sberbank.school.task08.state.GameObject;
-import ru.sberbank.school.task08.state.MapState;
+
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -24,6 +23,7 @@ public class CityKryoSerializer extends Serializer<City> {
         kryo.writeObjectOrNull(output, object.getNearCities(), ArrayList.class);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public City read(Kryo kryo, Input input, Class<? extends City> type) {
         City city = kryo.newInstance(type);
