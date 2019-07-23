@@ -24,13 +24,11 @@ public class RouteServiceExt extends RouteService<City, Route<City>> {
         super(path);
         this.kryo = new Kryo();
         kryo.setReferences(true);
-        kryo.setInstantiatorStrategy(new DefaultInstantiatorStrategy(new StdInstantiatorStrategy()));
         kryo.register(Route.class, new RouteKryoSerializer());
         kryo.register(City.class, new CityKryoSerializer());
-        kryo.register(String.class);
-        kryo.register(LocalDate.class);
-        kryo.register(LinkedList.class);
         kryo.register(ArrayList.class);
+        kryo.register(LinkedList.class);
+        kryo.register(LocalDate.class);
     }
 
     @Override
