@@ -54,7 +54,7 @@ class ExtendedFxConversionServiceImplTest {
         amounts.add(BigDecimal.valueOf(100000));
         amounts.add(BigDecimal.valueOf(10000000));
 
-        Beneficiary beneficiary= Beneficiary.BANK;
+        Beneficiary beneficiary = Beneficiary.BANK;
         ClientOperation operation = ClientOperation.BUY;
         amounts.forEach(i -> System.out.println(
                         converter.convertReversed(operation, symbol, i, beneficiary).orElse(BigDecimal.ZERO)));

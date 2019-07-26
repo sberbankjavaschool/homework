@@ -29,15 +29,6 @@ public class ExtendedFxConversionServiceImpl extends FxConversionServiceImpl imp
         return convertReversed(operation, symbol, amount,0, beneficiary);
     }
 
-    /**
-     *
-     * @param operation   вид операции
-     * @param symbol      Инструмент
-     * @param amount      Объем
-     * @param delta       допустимое отклонение при отсутствии точного попадания в котируемой валюте
-     * @param beneficiary В чью пользу осуществляется округление
-     * @return
-     */
     @Override
     public Optional<BigDecimal> convertReversed(@NonNull ClientOperation operation,
                                                 @NonNull Symbol symbol,
