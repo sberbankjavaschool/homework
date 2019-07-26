@@ -20,6 +20,10 @@ public class FxConversionServiceImpl implements FxConversionService {
         this.quotesService = externalQuotesService;
     }
 
+    public ExternalQuotesService getQuotesService() {
+        return quotesService;
+    }
+
     @Override
     public BigDecimal convert(ClientOperation operation, Symbol symbol, BigDecimal amount) {
         Objects.requireNonNull(operation);
@@ -37,7 +41,14 @@ public class FxConversionServiceImpl implements FxConversionService {
             throw new FxConversionException("list of quotes is empty or null");
         }
 
-        Quote correctQuote = quotes.stream()
+        Quote correctQuote = findQuote(amount, quotes);
+
+        return operation == ClientOperation.BUY ? correctQuote.getOffer() : correctQuote.getBid();
+    }
+
+    Quote findQuote( BigDecimal amount, List<Quote> quotes) {
+
+        return  quotes.stream()
                 .filter(quote -> (amount.compareTo(quote.getVolumeSize()) < 0
                 && amount.compareTo(BigDecimal.valueOf(0)) > 0) || quote.isInfinity())
                 .min((q1, q2) -> {
@@ -50,7 +61,5 @@ public class FxConversionServiceImpl implements FxConversionService {
                     }
                 })
                 .orElse(quotes.get(quotes.size() - 1));
-
-        return operation == ClientOperation.BUY ? correctQuote.getOffer() : correctQuote.getBid();
     }
 }
